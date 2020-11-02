@@ -15,7 +15,7 @@ class TestSqsProcessor(TestCase):
                 print('len list of messgrs = ', len(list_of_messages))
             else:
                 attemps += 1
-                time.sleep(2)
+                time.sleep(1)
             print('attemps =', attemps)
         if attemps == 3:
             print('out of attemps')
@@ -29,7 +29,7 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(len(req_receive) == 0)
 
         for i in range(10):
-            processor.send_message('test_message_body_' + str(i))
+            processor.send_message('{ \"inferenceId\":\"similarity-test\",  \"messageType\":\"SIMILARITY\", \"orderId\":' + str(i)+'}')
 
         req_receive = self.pull_messages(processor, 3)
         self.assertTrue(len(req_receive) == 3)
@@ -42,3 +42,8 @@ class TestSqsProcessor(TestCase):
         print('len req_receive = ', len(req_receive))
 
         self.assertTrue(len(req_receive) == 7)
+        print('get attr values: ===================')
+
+        for message in req_receive:
+            req_get_attr = processor.get_attr_value(message, 'messageType')
+            self.assertEqual(req_get_attr, 'SIMILARITY')
