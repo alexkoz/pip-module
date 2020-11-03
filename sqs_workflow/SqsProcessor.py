@@ -2,6 +2,7 @@ import boto3
 import os
 import time
 import json
+from sqs_workflow.aws.s3.S3Helper import S3Helper
 
 boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'],
                             region_name=os.environ['REGION_NAME'])
@@ -18,7 +19,7 @@ class SqsProcessor:
 
     def get_attr_value(self, message, attribute_name):
         attr_value = json.loads(message.body)[attribute_name]
-        print('yay, attr_value =', attr_value)
+        print('attr_value =', attr_value)
         return attr_value
 
     def send_message(self, message_body):
@@ -39,7 +40,7 @@ class SqsProcessor:
             messages_received = self.receive_messages(1)
             if len(messages_received) > 0:
                 list_of_messages += messages_received
-                print('len list of messgrs = ', len(list_of_messages))
+                print('len list of messages = ', len(list_of_messages))
             else:
                 attemps += 1
                 time.sleep(2)
@@ -55,3 +56,8 @@ class SqsProcessor:
         sqs_client = boto3.client('sqs')
         req_purge = sqs_client.purge_queue(QueueUrl=self.queue_str)
         return req_purge
+
+    @staticmethod
+    def create_result_s3_key(path_to_s3: str, inference_type: str, inference_id: str, filename: str) -> str:
+        s3_path = os.path.join(path_to_s3, inference_type, inference_id, filename)
+        return s3_path

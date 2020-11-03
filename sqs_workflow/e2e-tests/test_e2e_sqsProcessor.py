@@ -1,6 +1,10 @@
 from unittest import TestCase
 from sqs_workflow.SqsProcessor import SqsProcessor
+from sqs_workflow.aws.s3.S3Helper import S3Helper
 import time
+import os
+import subprocess
+import sys
 
 
 class TestSqsProcessor(TestCase):
@@ -21,7 +25,7 @@ class TestSqsProcessor(TestCase):
             print('out of attemps')
         return list_of_messages
 
-    def test_e2e(self):
+    def test_read_write_messages(self):
         processor = SqsProcessor()
 
         processor.purge_queue()
@@ -29,7 +33,8 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(len(req_receive) == 0)
 
         for i in range(10):
-            processor.send_message('{ \"inferenceId\":\"similarity-test\",  \"messageType\":\"SIMILARITY\", \"orderId\":' + str(i)+'}')
+            processor.send_message(
+                '{ \"inferenceId\":\"similarity-test\",  \"messageType\":\"similarity\", \"orderId\":' + str(i) + '}')
 
         req_receive = self.pull_messages(processor, 3)
         self.assertTrue(len(req_receive) == 3)
@@ -46,4 +51,23 @@ class TestSqsProcessor(TestCase):
 
         for message in req_receive:
             req_get_attr = processor.get_attr_value(message, 'messageType')
-            self.assertEqual(req_get_attr, 'SIMILARITY')
+            self.assertEqual(req_get_attr, 'similarity')
+
+    def test_e2e(self):
+        s3_helper = S3Helper()
+        s3_helper.clear_directory('api/inference/similarity/similarity')
+        processor = SqsProcessor()
+
+        processor.purge_queue()
+        req_receive = processor.receive_messages(5)
+        self.assertTrue(len(req_receive) == 0)
+
+        for i in range(10):
+            processor.send_message(
+                '{ \"inferenceId\":\"similarity\", \"messageType\":\"similarity\", \"orderId\":' + str(i) + '}')
+
+        for i in range(10):
+            subprocess.run([sys.executable,  # path to python
+                            '/Users/alexkoz/projects/sqs_workflow/sqs_workflow/main.py'],  # path to MAIN
+                           universal_newlines=True)
+        self.assertTrue(s3_helper.is_processing_complete('api/inference/similarity/similarity', 10))
