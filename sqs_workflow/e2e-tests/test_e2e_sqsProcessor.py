@@ -53,10 +53,18 @@ class TestSqsProcessor(TestCase):
             req_get_attr = processor.get_attr_value(message, 'messageType')
             self.assertEqual(req_get_attr, 'similarity')
 
+    def clear_directory(self, path_to_folder_in_bucket: str):
+        sync_command = f"aws s3 --profile {os.environ['AWS_PROFILE']} rm s3://{os.environ['S3_BUCKET']}/{path_to_folder_in_bucket} --recursive"
+        print(sync_command)
+        stream = os.popen(sync_command)
+        output = stream.read()
+        print(output)
+
     def test_e2e(self):
         s3_helper = S3Helper()
-        s3_helper.clear_directory('api/inference/similarity/similarity')
         processor = SqsProcessor()
+
+        self.clear_directory('api/inference/similarity/similarity')
 
         processor.purge_queue()
         req_receive = processor.receive_messages(5)

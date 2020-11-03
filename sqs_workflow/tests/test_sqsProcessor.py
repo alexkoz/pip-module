@@ -26,5 +26,7 @@ class TestSqsProcessor(TestCase):
         self.processor.delete_message('text-2')
         self.assertTrue(len(self.processor.queue.queue_messages) == 2)
 
-
-
+    def test_create_result_s3_key(self):
+        self.assertEqual(
+            self.processor.create_result_s3_key('path_to_s3', 'test_inference_type', 'test_inference_id', 'filename'),
+            'path_to_s3/test_inference_type/test_inference_id/filename')
