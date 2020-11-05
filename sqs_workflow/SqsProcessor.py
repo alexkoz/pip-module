@@ -2,7 +2,8 @@ import boto3
 import os
 import time
 import json
-from sqs_workflow.aws.s3.S3Helper import S3Helper
+import subprocess
+import sys
 
 boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'],
                             region_name=os.environ['REGION_NAME'])
@@ -31,6 +32,8 @@ class SqsProcessor:
     def receive_messages(self, max_number_of_messages: int):
         response_messages = self.queue.receive_messages(QueueUrl=self.queue_str,
                                                         MaxNumberOfMessages=max_number_of_messages)
+        if len(response_messages) != 0:
+            print('response_message = ', response_messages[0].body)
         return response_messages
 
     def pull_messages(self, number_of_messages: int) -> list:
@@ -56,6 +59,23 @@ class SqsProcessor:
         sqs_client = boto3.client('sqs')
         req_purge = sqs_client.purge_queue(QueueUrl=self.queue_str)
         return req_purge
+
+    def runs_of_process(self, message_type, message_body):
+        if message_type == 'similarity':
+            result = subprocess.run([sys.executable,  # path to python
+                                     os.environ['PATH_TO_DOOMY_SIMILAR'],  # path to script
+                                     message_body], universal_newlines=True)
+            if not result.returncode == 0:
+                print('start panic')
+                assert False
+
+        if message_type == 'roombox':
+            result = subprocess.run([sys.executable,  # path to python
+                                     os.environ['PATH_TO_DOOMY_ROOMBOX'],  # path to script
+                                     message_body], universal_newlines=True)
+            if not result.returncode == 0:
+                print('start panic')
+                assert False
 
     @staticmethod
     def create_result_s3_key(path_to_s3: str, inference_type: str, inference_id: str, filename: str) -> str:

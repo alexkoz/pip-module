@@ -18,11 +18,11 @@ class S3Helper:
         pass
 
     def is_object_exist(self, s3_key: str) -> bool:
-        logging.info(f"Start checking object: {s3_key}")
+        logging.info(f'Start checking object: {s3_key}')
         return False
 
     def save_object_on_s3(self, s3_key: str, object_body: str):
-        print(f"Start saving object: {s3_key} ")
+        print(f'Start saving object: {s3_key}')
         session = boto3.Session(
             aws_access_key_id=os.environ['ACCESS'],
             aws_secret_access_key=os.environ['SECRET']
@@ -49,6 +49,5 @@ class S3Helper:
 
     def is_processing_complete(self, prefix: str, num_of_expected_results: int) -> bool:
         list_of_objects = self.list_s3_objects(prefix)
-        print('Len of s3_objects_list =', len(list_of_objects))
+        print(f'Len of s3_objects_list w/ prefix: {prefix} =', len(list_of_objects))
         return len(list_of_objects) == num_of_expected_results
-

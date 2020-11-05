@@ -5,6 +5,7 @@ import time
 import os
 import subprocess
 import sys
+from pathlib import Path
 
 
 class TestSqsProcessor(TestCase):
@@ -16,7 +17,7 @@ class TestSqsProcessor(TestCase):
             messages_received = processor.receive_messages(1)
             if len(messages_received) > 0:
                 list_of_messages += messages_received
-                print('len list of messgrs = ', len(list_of_messages))
+                print('len list of messages = ', len(list_of_messages))
             else:
                 attemps += 1
                 time.sleep(1)
@@ -64,18 +65,31 @@ class TestSqsProcessor(TestCase):
         s3_helper = S3Helper()
         processor = SqsProcessor()
 
-        self.clear_directory('api/inference/similarity/similarity')
+        self.clear_directory('api/inference/')
 
         processor.purge_queue()
+
+        # checks that queue is empty
         req_receive = processor.receive_messages(5)
         self.assertTrue(len(req_receive) == 0)
 
         for i in range(10):
             processor.send_message(
-                '{ \"inferenceId\":\"similarity\", \"messageType\":\"similarity\", \"orderId\":' + str(i) + '}')
+                '{\"inferenceId\":\"'f'similarity_{i}\", \"messageType\":\"similarity\", \"orderId\":' + str(i) + '}')
 
         for i in range(10):
+            processor.send_message(
+                '{\"inferenceId\":\"'f'roombox_{i}\", \"messageType\":\"roombox\", \"orderId\":' + str(i) + '}')
+
+        main_script_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow') + '/main.py'
+        for i in range(20):
             subprocess.run([sys.executable,  # path to python
-                            '/Users/alexkoz/projects/sqs_workflow/sqs_workflow/main.py'],  # path to MAIN
+                            main_script_path],  # path to main.py
                            universal_newlines=True)
-        self.assertTrue(s3_helper.is_processing_complete('api/inference/similarity/similarity', 10))
+
+        object_list = s3_helper.list_s3_objects('api/inference')
+        print('Object list =', object_list)
+        print('Len of obj list =', len(object_list))
+
+        self.assertTrue(s3_helper.is_processing_complete('api/inference/similarity/', 10))
+        self.assertTrue(s3_helper.is_processing_complete('api/inference/roombox/', 10))
