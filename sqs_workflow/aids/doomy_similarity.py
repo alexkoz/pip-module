@@ -1,3 +1,8 @@
+import logging
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+
+
 if __name__ == '__main__':
-    print('similarity - ok\n')
+    logging.info('similarity - ok\n')
+
 

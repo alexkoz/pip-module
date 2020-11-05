@@ -2,7 +2,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath('../'))
-from sqs_workflow.SqsProcessor import SqsProcessor
+from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 
 
 def dummy_function(message):

@@ -4,12 +4,19 @@ import time
 import json
 import subprocess
 import sys
+from datetime import datetime
+from sqs_workflow.AlertService import AlertService
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'],
                             region_name=os.environ['REGION_NAME'])
 
 
 class SqsProcessor:
+    alert_service = AlertService()
+
     sqs_client = boto3.resource('sqs')
 
     queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
@@ -20,20 +27,20 @@ class SqsProcessor:
 
     def get_attr_value(self, message, attribute_name):
         attr_value = json.loads(message.body)[attribute_name]
-        print('attr_value =', attr_value)
         return attr_value
 
     def send_message(self, message_body):
         req_send = self.queue.send_message(QueueUrl=self.queue_str, MessageBody=message_body)
-        print(req_send)
-        print(message_body)
+        logging.info(req_send)
+        logging.info(f'Message body: {message_body}')
         return req_send
 
     def receive_messages(self, max_number_of_messages: int):
         response_messages = self.queue.receive_messages(QueueUrl=self.queue_str,
                                                         MaxNumberOfMessages=max_number_of_messages)
         if len(response_messages) != 0:
-            print('response_message = ', response_messages[0].body)
+            logging.info(f'response_message: {response_messages[0].body}')
+
         return response_messages
 
     def pull_messages(self, number_of_messages: int) -> list:
@@ -43,41 +50,52 @@ class SqsProcessor:
             messages_received = self.receive_messages(1)
             if len(messages_received) > 0:
                 list_of_messages += messages_received
-                print('len list of messages = ', len(list_of_messages))
+                logging.info(f'Len list of messages =: {len(list_of_messages)}')
+
             else:
                 attemps += 1
                 time.sleep(2)
-            print('attemps =', attemps)
+            logging.info(f'attemps = {attemps}')
         if attemps == 7:
-            print('out of attemps')
+            logging.info(f'Out of attemps')
         return list_of_messages
 
     def delete_message(self, message):
         message.delete()
+        logging.info(f'Message: {message} is deleted')
 
     def purge_queue(self):
         sqs_client = boto3.client('sqs')
         req_purge = sqs_client.purge_queue(QueueUrl=self.queue_str)
+        logging.info(f'Queue is purged')
+
         return req_purge
 
-    def runs_of_process(self, message_type, message_body):
+    def process_message_in_subprocess(self, message_type, message_body):
+
         if message_type == 'similarity':
             result = subprocess.run([sys.executable,  # path to python
                                      os.environ['PATH_TO_DOOMY_SIMILAR'],  # path to script
                                      message_body], universal_newlines=True)
             if not result.returncode == 0:
-                print('start panic')
+                at_moment_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                message = f'{at_moment_time}\nWarning message with similarity message type in subprocess.'
+                self.alert_service.send_slack_message(message, 0)
+                logging.info(f'Sent alert message in Slack')
                 assert False
 
-        if message_type == 'roombox':
+        elif message_type == 'roombox':
             result = subprocess.run([sys.executable,  # path to python
                                      os.environ['PATH_TO_DOOMY_ROOMBOX'],  # path to script
                                      message_body], universal_newlines=True)
             if not result.returncode == 0:
-                print('start panic')
+                at_moment_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+                message = f'{at_moment_time}\nWarning message with roombox message type in subprocess.'
+                self.alert_service.send_slack_message(message, 0)
                 assert False
 
     @staticmethod
     def create_result_s3_key(path_to_s3: str, inference_type: str, inference_id: str, filename: str) -> str:
         s3_path = os.path.join(path_to_s3, inference_type, inference_id, filename)
+        logging.info(f'Created s3 path')
         return s3_path

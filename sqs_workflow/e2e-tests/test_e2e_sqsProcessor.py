@@ -1,11 +1,14 @@
 from unittest import TestCase
-from sqs_workflow.SqsProcessor import SqsProcessor
+from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 import time
 import os
 import subprocess
 import sys
 from pathlib import Path
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 
 class TestSqsProcessor(TestCase):
@@ -23,7 +26,7 @@ class TestSqsProcessor(TestCase):
                 time.sleep(1)
             print('attemps =', attemps)
         if attemps == 3:
-            print('out of attemps')
+            logging.info('out of attemps')
         return list_of_messages
 
     def test_read_write_messages(self):
@@ -42,13 +45,13 @@ class TestSqsProcessor(TestCase):
 
         for message in req_receive:
             processor.delete_message(message)
-        print('len req_receive after delete = ', len(req_receive))
+        logging.info(f'len req_receive after delete = ', len(req_receive))
 
         req_receive = self.pull_messages(processor, 10)
-        print('len req_receive = ', len(req_receive))
+        logging.info(f'len req_receive = ', len(req_receive))
 
         self.assertTrue(len(req_receive) == 7)
-        print('get attr values: ===================')
+        logging.info('get attr values: ===================')
 
         for message in req_receive:
             req_get_attr = processor.get_attr_value(message, 'messageType')
@@ -56,10 +59,10 @@ class TestSqsProcessor(TestCase):
 
     def clear_directory(self, path_to_folder_in_bucket: str):
         sync_command = f"aws s3 --profile {os.environ['AWS_PROFILE']} rm s3://{os.environ['S3_BUCKET']}/{path_to_folder_in_bucket} --recursive"
-        print(sync_command)
+        logging.info(f'sync command: {sync_command}')
         stream = os.popen(sync_command)
         output = stream.read()
-        print(output)
+        logging.info(f'output: {output}')
 
     def test_e2e(self):
         s3_helper = S3Helper()
@@ -76,6 +79,7 @@ class TestSqsProcessor(TestCase):
         for i in range(10):
             processor.send_message(
                 '{\"inferenceId\":\"'f'similarity_{i}\", \"messageType\":\"similarity\", \"orderId\":' + str(i) + '}')
+            logging.info('sent message')
 
         for i in range(10):
             processor.send_message(

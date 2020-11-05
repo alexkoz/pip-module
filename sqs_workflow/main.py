@@ -1,8 +1,11 @@
-from sqs_workflow.SqsProcessor import SqsProcessor
+from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 import os
 import sys
 from datetime import datetime
 from sqs_workflow.aws.s3.S3Helper import S3Helper
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 processor = SqsProcessor()
 aws_profile = os.environ['AWS_PROFILE']
@@ -11,9 +14,14 @@ region_name = os.environ['REGION_NAME']
 
 if __name__ == '__main__':
     list_of_messages = processor.pull_messages(1)
+    logging.info('Pulled message')
     for message in list_of_messages:
         message_type = processor.get_attr_value(message, 'messageType')
+        logging.info(f'Message type: {message_type}')
+
         inference_id = processor.get_attr_value(message, 'inferenceId')
+        logging.info(f'Inference ID: {inference_id}')
+
 
         now = datetime.now()
         dt_string = now.strftime("%H-%M-%S")
@@ -22,8 +30,6 @@ if __name__ == '__main__':
         s3_helper = S3Helper()
         s3_helper.save_object_on_s3(s3_path, 'some-content-inside')
 
-        print(f'message_type: {message_type}, inference_id: {inference_id}')
-
-        processor.runs_of_process(message_type, message.body)
+        processor.process_message_in_subprocess(message_type, message.body)
         processor.delete_message(message)
 sys.exit()

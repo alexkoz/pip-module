@@ -2,6 +2,8 @@ import boto3
 import os
 import logging
 
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+
 
 class S3Helper:
     s3_bucket = os.environ['S3_BUCKET']
@@ -22,7 +24,8 @@ class S3Helper:
         return False
 
     def save_object_on_s3(self, s3_key: str, object_body: str):
-        print(f'Start saving object: {s3_key}')
+        logging.info(f'Start saving object: {s3_key}')
+
         session = boto3.Session(
             aws_access_key_id=os.environ['ACCESS'],
             aws_secret_access_key=os.environ['SECRET']
@@ -30,7 +33,7 @@ class S3Helper:
         s3 = session.resource('s3')
         obj = s3.Object(self.s3_bucket, s3_key)
         obj.put(Body=object_body)
-        print('Uploaded new file to s3')
+        logging.info(f'Uploaded new file to s3')
 
     def read_object_and_save_as_file(self, s3_key, file_absolute_path) -> str:
         obj = self.s3_client.Object(self.s3_bucket, s3_key)
@@ -49,5 +52,5 @@ class S3Helper:
 
     def is_processing_complete(self, prefix: str, num_of_expected_results: int) -> bool:
         list_of_objects = self.list_s3_objects(prefix)
-        print(f'Len of s3_objects_list w/ prefix: {prefix} =', len(list_of_objects))
+        logging.info(f'Len of s3_objects_list w/ prefix: {prefix} =', len(list_of_objects))
         return len(list_of_objects) == num_of_expected_results

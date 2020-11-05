@@ -1,2 +1,3 @@
 if __name__ == '__main__':
-    print('roombox - ok\n')
+    assert False
+    # print('roombox - ok\n')

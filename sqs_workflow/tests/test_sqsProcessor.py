@@ -1,5 +1,5 @@
 from unittest import TestCase
-from sqs_workflow.SqsProcessor import SqsProcessor
+from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.QueueMock import QueueMock
 
 
@@ -30,3 +30,7 @@ class TestSqsProcessor(TestCase):
         self.assertEqual(
             self.processor.create_result_s3_key('path_to_s3', 'test_inference_type', 'test_inference_id', 'filename'),
             'path_to_s3/test_inference_type/test_inference_id/filename')
+
+    def test_process_message_in_subprocess(self):
+        self.assertIsNone(self.processor.process_message_in_subprocess('similarity', 'test-message-body'))
+        self.assertIsNone(self.processor.process_message_in_subprocess('roombox', 'test-message-body'))
