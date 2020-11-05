@@ -72,27 +72,30 @@ class SqsProcessor:
         return req_purge
 
     def process_message_in_subprocess(self, message_type, message_body):
+        python_execut = sys.executable
+        similarity_script = os.environ['PATH_TO_DOOMY_SIMILAR']
+        roombox_script = os.environ['PATH_TO_DOOMY_ROOMBOX']
+        rmatrix_script = os.environ['PATH_TO_DOOMY_FAILED']
 
         if message_type == 'similarity':
-            result = subprocess.run([sys.executable,  # path to python
-                                     os.environ['PATH_TO_DOOMY_SIMILAR'],  # path to script
-                                     message_body], universal_newlines=True)
-            if not result.returncode == 0:
-                at_moment_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-                message = f'{at_moment_time}\nWarning message with similarity message type in subprocess.'
-                self.alert_service.send_slack_message(message, 0)
-                logging.info(f'Sent alert message in Slack')
-                assert False
+            self.run_process(python_execut, similarity_script, message_body)
 
         elif message_type == 'roombox':
-            result = subprocess.run([sys.executable,  # path to python
-                                     os.environ['PATH_TO_DOOMY_ROOMBOX'],  # path to script
-                                     message_body], universal_newlines=True)
-            if not result.returncode == 0:
-                at_moment_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-                message = f'{at_moment_time}\nWarning message with roombox message type in subprocess.'
-                self.alert_service.send_slack_message(message, 0)
-                assert False
+            self.run_process(python_execut, roombox_script, message_body)
+
+        elif message_type == 'R_MATRIX':
+            self.run_process(python_execut, rmatrix_script, message_body)
+
+    def run_process(self, python_execut, script, message_body):
+        result = subprocess.run([python_execut,  # path to python
+                                 script,  # path to script
+                                 message_body], universal_newlines=True)
+        if not result.returncode == 0:
+            at_moment_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            message = f'{at_moment_time}\nWarning message in subprocess.'
+            self.alert_service.send_slack_message(message, 0)
+            # self.alert_service = MockAlert()
+            return False
 
     @staticmethod
     def create_result_s3_key(path_to_s3: str, inference_type: str, inference_id: str, filename: str) -> str:

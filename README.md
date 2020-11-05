@@ -1,1 +1,1 @@
-# pip-module
+# sqs_workflow module

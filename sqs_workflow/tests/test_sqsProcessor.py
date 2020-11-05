@@ -1,6 +1,8 @@
 from unittest import TestCase
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.QueueMock import QueueMock
+import json
+from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 
 
 class TestSqsProcessor(TestCase):
@@ -34,3 +36,15 @@ class TestSqsProcessor(TestCase):
     def test_process_message_in_subprocess(self):
         self.assertIsNone(self.processor.process_message_in_subprocess('similarity', 'test-message-body'))
         self.assertIsNone(self.processor.process_message_in_subprocess('roombox', 'test-message-body'))
+
+    def test_fail_in_subprocess(self):
+        message = {"messageType": "R_MATRIX",
+                   "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                   "tourId": "5fa1df49014bf357cf250d52",
+                   "panoId": "5fa1df55014bf357cf250d64"}
+        message_str = str(json.dumps(message))
+        print('msg_str=', message_str)
+        message_type = json.loads(message_str)["messageType"]
+        print(message_type)
+        self.processor.alert_service = AlertServiceMock()
+        self.assertFalse(self.processor.process_message_in_subprocess(message_type, message_str))
