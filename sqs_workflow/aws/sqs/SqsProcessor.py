@@ -89,10 +89,13 @@ class SqsProcessor:
         if 'pry' not in message_object or message_type == ProcessingTypesEnum.RMatrix:
             # todo check if message has PRY
             # todo check on s3 first
-            # todo if not existing on s3 and returned sub-process. save on s3.
-            processing_result = self.run_process(self.rmatrix_executable,
-                                                 self.rmatrix_script,
-                                                 message_body)
+            # todo if not existing on s3 and returned sub-process.
+            processing_result = self.check_pry_on_s3(message_object)
+            if not processing_result:
+                processing_result = self.run_process(self.rmatrix_executable,
+                                                     self.rmatrix_script,
+                                                     message_body)
+                #todo save on s3.
             message_object['pry'] = json.loads(processing_result)
 
         if message_type == ProcessingTypesEnum.RoomBox:
@@ -118,3 +121,9 @@ class SqsProcessor:
         s3_path = os.path.join(path_to_s3, inference_type, inference_id, filename)
         logging.info(f'Created s3 path')
         return s3_path
+
+    # todo test
+    def check_pry_on_s3(self, message) -> str:
+        #todo find file on s3
+        #todo if found return
+        return None

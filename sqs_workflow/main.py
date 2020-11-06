@@ -29,7 +29,7 @@ if __name__ == '__main__':
         s3_path = processor.create_result_s3_key('api/inference/',
                                                  message_type,
                                                  inference_id,
-                                                 f'result-{dt_string}.json')
+                                                 'result.json')
         s3_helper = S3Helper()
         s3_helper.save_object_on_s3(s3_path, processing_result)
 
