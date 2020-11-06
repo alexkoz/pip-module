@@ -21,6 +21,11 @@ class S3Helper:
 
     def is_object_exist(self, s3_key: str) -> bool:
         logging.info(f'Start checking object: {s3_key}')
+        response = self.s3_client.list_objects_v2(Bucket=self.s3_bucket, Prefix=s3_key)
+        if response:
+            for obj in response['Contents']:
+                if s3_key == obj['Key']:
+                    return True
         return False
 
     def save_object_on_s3(self, s3_key: str, object_body: str):

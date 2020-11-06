@@ -76,13 +76,22 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(len(req_receive) == 0)
 
         for i in range(10):
-            processor.send_message(
-                '{\"inferenceId\":\"'f'similarity_{i}\", \"messageType\":\"similarity\", \"orderId\":' + str(i) + '}')
-            logging.info('sent message')
+            similarity_message = '{\"messageType\": \"SIMILARITY\",\
+                                   \"panoUrl\": \"'f'https://img.docusketch.com/items/s967284636/5fa1d{i}f49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG\",\
+                                   \"tourId\": \"5fa1df49014bf357cf250d52\",\
+                                   \"panoId\": \"5fa1df55014bf357cf250d64\"' + '}'
+            processor.send_message(similarity_message)
+            logging.info('sent similarity message')
 
         for i in range(10):
-            processor.send_message(
-                '{\"inferenceId\":\"'f'roombox_{i}\", \"messageType\":\"roombox\", \"orderId\":' + str(i) + '}')
+            rmatrix_message = '{\"messageType\": \"R_MATRIX\",\
+                                               \"panoUrl\": \"'f'https://img.docusketch.com/items/s96{i}7284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG\",\
+                                               \"tourId\": \"5fa1df49014bf357cf250d52\",\
+                                               \"panoId\": \"5fa1df55014bf357cf250d64\"' + '}'
+            processor.send_message(rmatrix_message)
+            logging.info('sent rmatrix message')
+            # processor.send_message(
+            #     '{\"inferenceId\":\"'f'roombox_{i}\", \"messageType\":\"roombox\", \"orderId\":' + str(i) + '}')
 
         main_script_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow') + '/main.py'
         for i in range(20):
@@ -94,5 +103,5 @@ class TestSqsProcessor(TestCase):
         print('Object list =', object_list)
         print('Len of obj list =', len(object_list))
 
-        self.assertTrue(s3_helper.is_processing_complete('api/inference/similarity/', 10))
-        self.assertTrue(s3_helper.is_processing_complete('api/inference/roombox/', 10))
+        self.assertTrue(s3_helper.is_processing_complete('api/inference/SIMILARITY/', 10))
+        self.assertTrue(s3_helper.is_processing_complete('api/inference/R_MATRIX/', 10))

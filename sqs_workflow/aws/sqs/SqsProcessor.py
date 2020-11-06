@@ -7,6 +7,8 @@ from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from datetime import datetime
 from sqs_workflow.AlertService import AlertService
 import logging
+import hashlib
+from sqs_workflow.aws.s3.S3Helper import S3Helper
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -16,7 +18,9 @@ boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'],
 
 class SqsProcessor:
     alert_service = AlertService()
+    s3_helper = S3Helper()
 
+    s3_bucket = os.environ['S3_BUCKET']
     sqs_client = boto3.resource('sqs')
 
     queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
@@ -79,6 +83,9 @@ class SqsProcessor:
     def process_message_in_subprocess(self, message_type, message_body) -> str:
         processing_result = None
         # todo add explicit logging
+        logging.info('Message type of message: ', message_type)
+        if message_type == 'SIMILARITY':
+            print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
         if message_type == ProcessingTypesEnum.Similarity:
             processing_result = self.run_process(self.similarity_executable,
                                                  self.similarity_script,
@@ -87,15 +94,26 @@ class SqsProcessor:
 
         message_object = json.loads(message_body)
         if 'pry' not in message_object or message_type == ProcessingTypesEnum.RMatrix:
+
             # todo check if message has PRY
             # todo check on s3 first
             # todo if not existing on s3 and returned sub-process.
+            url_hash = hashlib.md5(message_object['panoUrl'].encode('utf-8')).hexdigest()
+            message_object['url_hash'] = url_hash
+
             processing_result = self.check_pry_on_s3(message_object)
             if not processing_result:
                 processing_result = self.run_process(self.rmatrix_executable,
                                                      self.rmatrix_script,
                                                      message_body)
-                #todo save on s3.
+                # todo save on s3.
+
+                # inference_id = self.get_attr_value(message_body, 'inferenceId')
+                # logging.info(f'Message type: {message_type} Inference ID: {inference_id}')
+
+                s3_path = self.create_result_s3_key('api/inference/', message_type, url_hash, 'result.json')
+                self.s3_helper.save_object_on_s3(s3_path, processing_result)
+
             message_object['pry'] = json.loads(processing_result)
 
         if message_type == ProcessingTypesEnum.RoomBox:
@@ -105,8 +123,6 @@ class SqsProcessor:
         return processing_result
 
     def run_process(self, executable, script, message_body) -> str:
-
-        # todo add explicit logging
         subprocess_result = subprocess.run([executable,
                                             script,
                                             message_body],
@@ -127,7 +143,16 @@ class SqsProcessor:
         return s3_path
 
     # todo test
-    def check_pry_on_s3(self, message) -> str:
-        #todo find file on s3
-        #todo if found return
-        return None
+    def check_pry_on_s3(self, message_object) -> str:
+        path_to_file = '/api/inference/R_MATRIX/' + message_object['url_hash']
+        res = self.s3_helper.is_object_exist(path_to_file)
+        if res is True:
+            s3 = boto3.resource('s3')
+            obj = s3.Object(self.s3_bucket, path_to_file)
+            body = obj.get()['Body'].read()
+            return body
+        else:
+            return None  # return None when -> str
+
+        # todo find file on s3
+        # todo if found return

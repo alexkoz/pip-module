@@ -7,6 +7,7 @@ import os
 from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 from pathlib import Path
 import logging
+from sqs_workflow.aws.s3.S3Helper import S3Helper
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -43,8 +44,16 @@ class TestSqsProcessor(TestCase):
             'path_to_s3/test_inference_type/test_inference_id/filename')
 
     def test_process_message_in_subprocess(self):
-        self.assertIsNone(self.processor.process_message_in_subprocess('similarity', 'test-message-body'))
-        self.assertIsNone(self.processor.process_message_in_subprocess('roombox', 'test-message-body'))
+        message1 = '{"messageType": "SIMILARITY",\
+                   "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
+                   "tourId": "5fa1df49014bf357cf250d52",\
+                   "panoId": "5fa1df55014bf357cf250d64"}'
+        message2 = '{"messageType": "ROOMBOX",\
+                    "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
+                    "tourId": "5fa1df49014bf357cf250d52",\
+                    "panoId": "5fa1df55014bf357cf250d64"}'
+        self.assertIsNone(self.processor.process_message_in_subprocess('SIMILARITY', message1))
+        self.assertIsNone(self.processor.process_message_in_subprocess('ROOMBOX', message2))
 
     def test_fail_in_subprocess(self):
         common_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow', 'aids')
@@ -88,3 +97,22 @@ class TestSqsProcessor(TestCase):
                 self.assertTrue(sys.executable in self.processor.alert_service.message)
             else:
                 self.assertTrue(self.processor.alert_service.message is None)
+
+    def clear_directory(self, path_to_folder_in_bucket: str):
+        sync_command = f"aws s3 --profile {os.environ['AWS_PROFILE']} rm s3://{os.environ['S3_BUCKET']}/{path_to_folder_in_bucket} --recursive"
+        logging.info(f'sync command: {sync_command}')
+        stream = os.popen(sync_command)
+        output = stream.read()
+        logging.info(f'output: {output}')
+
+    def test_check_pry_on_s3(self):
+        s3_helper = S3Helper()
+        processor = SqsProcessor()
+        self.clear_directory('api/inference/')
+        processor.purge_queue()
+
+        processor.check_pry_on_s3('test-hash-001')
+        # todo finish test
+
+
+
