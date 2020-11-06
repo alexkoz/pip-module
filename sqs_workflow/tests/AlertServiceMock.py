@@ -1,6 +1,3 @@
-import os
-import requests
-
 class AlertServiceMock:
     def __init__(self):
         self.message = None

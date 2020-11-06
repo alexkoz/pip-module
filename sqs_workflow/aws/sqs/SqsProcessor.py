@@ -109,12 +109,16 @@ class SqsProcessor:
         # todo add explicit logging
         subprocess_result = subprocess.run([executable,
                                             script,
-                                            message_body], universal_newlines=True)
+                                            message_body],
+                                           universal_newlines=True,
+                                           capture_output=True)
         if not subprocess_result.returncode == 0:
             at_moment_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             message = f'{at_moment_time}\n SQS processing has failed for process:{executable} script:{script} message:{message_body}.'
             self.alert_service.send_slack_message(message, 0)
-        return subprocess_result
+        logging.info('subprocess_result.returncode =', subprocess_result.returncode)
+        logging.info('subprocess_result.stdout =', subprocess_result.stdout)
+        return subprocess_result.stdout
 
     @staticmethod
     def create_result_s3_key(path_to_s3: str, inference_type: str, inference_id: str, filename: str) -> str:

@@ -3,8 +3,12 @@ from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.QueueMock import QueueMock
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 import sys
-import json
+import os
 from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
+from pathlib import Path
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 
 class TestSqsProcessor(TestCase):
@@ -43,17 +47,19 @@ class TestSqsProcessor(TestCase):
         self.assertIsNone(self.processor.process_message_in_subprocess('roombox', 'test-message-body'))
 
     def test_fail_in_subprocess(self):
-        room_box_python = ""
-        room_box_python_fail = ""
-        similarity_python = ""
-        similarity_python_fail = ""
-        rmatrix_python = ""
-        rmatrix_python_fail = ""
-        door_detecting_python = ""
-        door_detecting_python_fail = ""
+        common_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow', 'aids')
+
+        room_box_python = common_path + '/dummy_roombox.py'
+        room_box_python_fail = common_path + '/dummy_roombox_fail.py'
+        similarity_python = common_path + '/dummy_similarity.py'
+        similarity_python_fail = common_path + '/dummy_similarity_fail.py'
+        rmatrix_python = common_path + '/dummy_rmatrix.py'
+        rmatrix_python_fail = common_path + '/dummy_rmatrix_fail.py'
+        door_detecting_python = common_path + '/dummy_dd.py'
+        door_detecting_python_fail = common_path + '/dummy_dd_fail.py'
 
         test_executables = {
-            room_box_python: ProcessingTypesEnum.RoomBox,
+            room_box_python: ProcessingTypesEnum.RoomBox,  #
             room_box_python_fail: ProcessingTypesEnum.RoomBox,
             similarity_python: ProcessingTypesEnum.Similarity,
             similarity_python_fail: ProcessingTypesEnum.Similarity,
@@ -63,18 +69,20 @@ class TestSqsProcessor(TestCase):
             door_detecting_python_fail: ProcessingTypesEnum.DoorDetecting,
         }
 
-        for script, processing_type in test_executables:
+        for script, processing_type in test_executables.items():
             message = {"messageType": processing_type,
                        "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
                        "tourId": "5fa1df49014bf357cf250d52",
                        "panoId": "5fa1df55014bf357cf250d64"}
-            message_str = str(json.dumps(message))
-            print(f'message:{message_str}')
+            message_str = str(message)  # str(json.dumps(message))
+            logging.info(f'message: {message_str}')
             self.processor.alert_service = AlertServiceMock()
             process_result = self.processor.run_process(sys.executable, script, message_str)
+            logging.info(f'process_result: {process_result}')
 
-            self.assertTrue(process_result if 'fail' not in script else not process_result)
-            if 'fail' in script:
+            self.assertTrue(process_result == 'ok' if 'fail' not in script else process_result != 'ok')
+            # if 'fail' in script:
+            if process_result == 'fail':
                 self.assertTrue(script in self.processor.alert_service.message)
                 self.assertTrue(message_str in self.processor.alert_service.message)
                 self.assertTrue(sys.executable in self.processor.alert_service.message)
