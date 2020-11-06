@@ -12,7 +12,6 @@ logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 
 class TestSqsProcessor(TestCase):
-
     def pull_messages(self, processor: SqsProcessor, number_of_messages: int) -> list:
         attemps = 0
         list_of_messages = processor.receive_messages(number_of_messages)
