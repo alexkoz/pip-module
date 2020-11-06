@@ -83,16 +83,22 @@ class SqsProcessor:
             processing_result = self.run_process(self.similarity_executable,
                                                  self.similarity_script,
                                                  message_body)
+            return processing_result
 
-        elif message_type == ProcessingTypesEnum.RoomBox:
-            processing_result = self.run_process(self.roombox_executable,
-                                                 self.roombox_script,
-                                                 message_body)
-
-        elif message_type == ProcessingTypesEnum.RMatrix:
+        message_object = json.loads(message_body)
+        if 'pry' not in message_object or message_type == ProcessingTypesEnum.RMatrix:
+            # todo check if message has PRY
+            # todo check on s3 first
+            # todo if not existing on s3 and returned sub-process. save on s3.
             processing_result = self.run_process(self.rmatrix_executable,
                                                  self.rmatrix_script,
                                                  message_body)
+            message_object['pry'] = json.loads(processing_result)
+
+        if message_type == ProcessingTypesEnum.RoomBox:
+            processing_result = self.run_process(self.roombox_executable,
+                                                 self.roombox_script,
+                                                 json.dumps(message_object))
         return processing_result
 
     def run_process(self, executable, script, message_body) -> str:

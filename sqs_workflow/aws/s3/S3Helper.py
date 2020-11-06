@@ -33,7 +33,7 @@ class S3Helper:
         s3 = session.resource('s3')
         obj = s3.Object(self.s3_bucket, s3_key)
         obj.put(Body=object_body)
-        logging.info(f'Uploaded new file to s3')
+        logging.info(f'Uploaded new file:{s3_key} to s3')
 
     def read_object_and_save_as_file(self, s3_key, file_absolute_path) -> str:
         obj = self.s3_client.Object(self.s3_bucket, s3_key)
@@ -42,6 +42,7 @@ class S3Helper:
         return object_from_s3
 
     def list_s3_objects(self, prefix: str):
+        #todo add explicit loggin
         paginator = self.s3_client.get_paginator('list_objects_v2')
         pages = paginator.paginate(Bucket=self.s3_bucket, Prefix=prefix)
         list_of_objects = []
