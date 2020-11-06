@@ -22,10 +22,10 @@ if __name__ == '__main__':
         inference_id = processor.get_attr_value(message, 'inferenceId')
         logging.info(f'Inference ID: {inference_id}')
 
-
-        now = datetime.now()
-        dt_string = now.strftime("%H-%M-%S")
-        s3_path = processor.create_result_s3_key('api/inference/', message_type, inference_id,
+        dt_string = datetime.now().strftime("%H-%M-%S")
+        s3_path = processor.create_result_s3_key('api/inference/',
+                                                 message_type,
+                                                 inference_id,
                                                  f'result-{dt_string}.json')
         s3_helper = S3Helper()
         s3_helper.save_object_on_s3(s3_path, 'some-content-inside')

@@ -3,7 +3,7 @@ import os
 import time
 import json
 import subprocess
-import sys
+from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from datetime import datetime
 from sqs_workflow.AlertService import AlertService
 import logging
@@ -23,7 +23,12 @@ class SqsProcessor:
     queue_str = os.environ['QUEUE_LINK']
 
     def __init__(self):
-        pass
+        self.similarity_executable = os.environ['SIMILARITY_EXECUTABLE']
+        self.similarity_script = os.environ['SIMILARITY_SCRIPT']
+        self.roombox_executable = os.environ['ROOMBOX_EXECUTABLE']
+        self.roombox_script = os.environ['ROOMBOX_SCRIPT']
+        self.rmatrix_executable = os.environ['RMATRIX_EXECUTABLE']
+        self.rmatrix_script = os.environ['RMATRIX_SCRIPT']
 
     def get_attr_value(self, message, attribute_name):
         attr_value = json.loads(message.body)[attribute_name]
@@ -71,31 +76,36 @@ class SqsProcessor:
 
         return req_purge
 
-    def process_message_in_subprocess(self, message_type, message_body):
-        python_execut = sys.executable
-        similarity_script = os.environ['PATH_TO_DOOMY_SIMILAR']
-        roombox_script = os.environ['PATH_TO_DOOMY_ROOMBOX']
-        rmatrix_script = os.environ['PATH_TO_DOOMY_FAILED']
+    def process_message_in_subprocess(self, message_type, message_body) -> str:
+        processing_result = None
+        # todo add explicit logging
+        if message_type == ProcessingTypesEnum.Similarity:
+            processing_result = self.run_process(self.similarity_executable,
+                                                 self.similarity_script,
+                                                 message_body)
 
-        if message_type == 'similarity':
-            self.run_process(python_execut, similarity_script, message_body)
+        elif message_type == ProcessingTypesEnum.RoomBox:
+            processing_result = self.run_process(self.roombox_executable,
+                                                 self.roombox_script,
+                                                 message_body)
 
-        elif message_type == 'roombox':
-            self.run_process(python_execut, roombox_script, message_body)
+        elif message_type == ProcessingTypesEnum.RMatrix:
+            processing_result = self.run_process(self.rmatrix_executable,
+                                                 self.rmatrix_script,
+                                                 message_body)
+        return processing_result
 
-        elif message_type == 'R_MATRIX':
-            self.run_process(python_execut, rmatrix_script, message_body)
+    def run_process(self, executable, script, message_body) -> str:
 
-    def run_process(self, python_execut, script, message_body):
-        result = subprocess.run([python_execut,  # path to python
-                                 script,  # path to script
-                                 message_body], universal_newlines=True)
-        if not result.returncode == 0:
+        # todo add explicit logging
+        subprocess_result = subprocess.run([executable,
+                                            script,
+                                            message_body], universal_newlines=True)
+        if not subprocess_result.returncode == 0:
             at_moment_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            message = f'{at_moment_time}\nWarning message in subprocess.'
+            message = f'{at_moment_time}\n SQS processing has failed for process:{executable} script:{script} message:{message_body}.'
             self.alert_service.send_slack_message(message, 0)
-            # self.alert_service = MockAlert()
-            return False
+        return subprocess_result
 
     @staticmethod
     def create_result_s3_key(path_to_s3: str, inference_type: str, inference_id: str, filename: str) -> str:

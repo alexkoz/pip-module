@@ -1,6 +1,8 @@
 from unittest import TestCase
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.QueueMock import QueueMock
+from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
+import sys
 import json
 from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 
@@ -30,7 +32,10 @@ class TestSqsProcessor(TestCase):
 
     def test_create_result_s3_key(self):
         self.assertEqual(
-            self.processor.create_result_s3_key('path_to_s3', 'test_inference_type', 'test_inference_id', 'filename'),
+            self.processor.create_result_s3_key('path_to_s3',
+                                                'test_inference_type',
+                                                'test_inference_id',
+                                                'filename'),
             'path_to_s3/test_inference_type/test_inference_id/filename')
 
     def test_process_message_in_subprocess(self):
@@ -38,13 +43,40 @@ class TestSqsProcessor(TestCase):
         self.assertIsNone(self.processor.process_message_in_subprocess('roombox', 'test-message-body'))
 
     def test_fail_in_subprocess(self):
-        message = {"messageType": "R_MATRIX",
-                   "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
-                   "tourId": "5fa1df49014bf357cf250d52",
-                   "panoId": "5fa1df55014bf357cf250d64"}
-        message_str = str(json.dumps(message))
-        print('msg_str=', message_str)
-        message_type = json.loads(message_str)["messageType"]
-        print(message_type)
-        self.processor.alert_service = AlertServiceMock()
-        self.assertFalse(self.processor.process_message_in_subprocess(message_type, message_str))
+        room_box_python = ""
+        room_box_python_fail = ""
+        similarity_python = ""
+        similarity_python_fail = ""
+        rmatrix_python = ""
+        rmatrix_python_fail = ""
+        door_detecting_python = ""
+        door_detecting_python_fail = ""
+
+        test_executables = {
+            room_box_python: ProcessingTypesEnum.RoomBox,
+            room_box_python_fail: ProcessingTypesEnum.RoomBox,
+            similarity_python: ProcessingTypesEnum.Similarity,
+            similarity_python_fail: ProcessingTypesEnum.Similarity,
+            rmatrix_python: ProcessingTypesEnum.RMatrix,
+            rmatrix_python_fail: ProcessingTypesEnum.RMatrix,
+            door_detecting_python: ProcessingTypesEnum.DoorDetecting,
+            door_detecting_python_fail: ProcessingTypesEnum.DoorDetecting,
+        }
+
+        for script, processing_type in test_executables:
+            message = {"messageType": processing_type,
+                       "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                       "tourId": "5fa1df49014bf357cf250d52",
+                       "panoId": "5fa1df55014bf357cf250d64"}
+            message_str = str(json.dumps(message))
+            print(f'message:{message_str}')
+            self.processor.alert_service = AlertServiceMock()
+            process_result = self.processor.run_process(sys.executable, script, message_str)
+
+            self.assertTrue(process_result if 'fail' not in script else not process_result)
+            if 'fail' in script:
+                self.assertTrue(script in self.processor.alert_service.message)
+                self.assertTrue(message_str in self.processor.alert_service.message)
+                self.assertTrue(sys.executable in self.processor.alert_service.message)
+            else:
+                self.assertTrue(self.processor.alert_service.message is None)
