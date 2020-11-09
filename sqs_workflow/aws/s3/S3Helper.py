@@ -24,7 +24,7 @@ class S3Helper:
         response = self.s3_client.list_objects_v2(Bucket=self.s3_bucket, Prefix=s3_key, Delimiter='/')
         if 'Contents' in response:
             for obj in response['Contents']:
-                if s3_key == obj['Key']:
+                if s3_key + 'result.json' == obj['Key']:
                     return True
         return False
 
@@ -38,7 +38,7 @@ class S3Helper:
         s3 = session.resource('s3')
         obj = s3.Object(self.s3_bucket, s3_key)
         obj.put(Body=object_body)
-        logging.info(f'Uploaded new file:{s3_key} to s3')
+        logging.info(f'Uploaded new file: {s3_key} to s3')
 
     def read_object_and_save_as_file(self, s3_key, file_absolute_path) -> str:
         obj = self.s3_client.Object(self.s3_bucket, s3_key)

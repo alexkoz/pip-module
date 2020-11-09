@@ -60,7 +60,6 @@ class SqsProcessor:
             if len(messages_received) > 0:
                 list_of_messages += messages_received
                 logging.info(f'Len list of messages =: {len(list_of_messages)}')
-
             else:
                 attemps += 1
                 time.sleep(2)
@@ -84,16 +83,19 @@ class SqsProcessor:
         processing_result = None
         # todo add explicit logging
         logging.info('Message type of message: ', message_type)
-        if message_type == 'SIMILARITY':
-            print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-        if message_type == ProcessingTypesEnum.Similarity:
+
+        if message_type == ProcessingTypesEnum.Similarity.value:
             processing_result = self.run_process(self.similarity_executable,
                                                  self.similarity_script,
                                                  message_body)
+            # todo ???? panoUrl / inferenceId
+            inference_id = json.loads(message_body)['panoUrl']  # ????
+            s3_path = self.create_result_s3_key('api/inference/', message_type, inference_id, 'result.json')
+            self.s3_helper.save_object_on_s3(s3_path, processing_result)
             return processing_result
 
         message_object = json.loads(message_body)
-        if 'pry' not in message_object or message_type == ProcessingTypesEnum.RMatrix:
+        if 'pry' not in message_object or message_type == ProcessingTypesEnum.RMatrix.value:
 
             # todo check if message has PRY
             # todo check on s3 first
@@ -111,15 +113,18 @@ class SqsProcessor:
                 # inference_id = self.get_attr_value(message_body, 'inferenceId')
                 # logging.info(f'Message type: {message_type} Inference ID: {inference_id}')
 
+                message_object['pry'] = processing_result
                 s3_path = self.create_result_s3_key('api/inference/', message_type, url_hash, 'result.json')
                 self.s3_helper.save_object_on_s3(s3_path, processing_result)
 
-            message_object['pry'] = json.loads(processing_result)
-
-        if message_type == ProcessingTypesEnum.RoomBox:
+        if message_type == ProcessingTypesEnum.RoomBox.value:
             processing_result = self.run_process(self.roombox_executable,
                                                  self.roombox_script,
                                                  json.dumps(message_object))
+            inference_id = self.get_attr_value(message_body, 'inferenceId')
+            s3_path = self.create_result_s3_key('api/inference/', message_type, inference_id, 'result.json')
+            self.s3_helper.save_object_on_s3(s3_path, processing_result)
+
         return processing_result
 
     def run_process(self, executable, script, message_body) -> str:
@@ -142,18 +147,16 @@ class SqsProcessor:
         logging.info(f'Created s3 path')
         return s3_path
 
-    # todo test
     def check_pry_on_s3(self, message_object) -> str:
-        path_to_file = '/api/inference/R_MATRIX/' + message_object['url_hash']
-        res = self.s3_helper.is_object_exist(path_to_file)
+        path_to_folder = 'api/inference/R_MATRIX/' + message_object['url_hash'] + '/'
+        res = self.s3_helper.is_object_exist(path_to_folder)
         if res is True:
             s3 = boto3.resource('s3')
+            path_to_file = os.path.join(path_to_folder, 'result.json')
             obj = s3.Object(self.s3_bucket, path_to_file)
-            body = obj.get()['Body'].read()
+            body = obj.get()['Body'].read().decode('utf-8')
+            logging.info(f'result.json in {path_to_folder} exists')
             return body
         else:
-            logging.info(f'Object {path_to_file} does not exist')
-            return None  # return None when -> str ??
-
-        # todo find file on s3
-        # todo if found return
+            logging.info(f'result.json in {path_to_folder} does not exist')
+            return None  # return None when -> str ?

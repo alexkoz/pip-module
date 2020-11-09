@@ -75,7 +75,7 @@ class TestSqsProcessor(TestCase):
         req_receive = processor.receive_messages(5)
         self.assertTrue(len(req_receive) == 0)
 
-        for i in range(10):
+        for i in range(4):
             similarity_message = '{\"messageType\": \"SIMILARITY\",\
                                    \"panoUrl\": \"'f'https://img.docusketch.com/items/s967284636/5fa1d{i}f49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG\",\
                                    \"tourId\": \"5fa1df49014bf357cf250d52\",\
@@ -83,18 +83,16 @@ class TestSqsProcessor(TestCase):
             processor.send_message(similarity_message)
             logging.info('sent similarity message')
 
-        for i in range(10):
+        for i in range(0):
             rmatrix_message = '{\"messageType\": \"R_MATRIX\",\
                                                \"panoUrl\": \"'f'https://img.docusketch.com/items/s96{i}7284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG\",\
                                                \"tourId\": \"5fa1df49014bf357cf250d52\",\
                                                \"panoId\": \"5fa1df55014bf357cf250d64\"' + '}'
             processor.send_message(rmatrix_message)
             logging.info('sent rmatrix message')
-            # processor.send_message(
-            #     '{\"inferenceId\":\"'f'roombox_{i}\", \"messageType\":\"roombox\", \"orderId\":' + str(i) + '}')
 
         main_script_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow') + '/main.py'
-        for i in range(20):
+        for i in range(4):
             subprocess.run([sys.executable,  # path to python
                             main_script_path],  # path to main.py
                            universal_newlines=True)
