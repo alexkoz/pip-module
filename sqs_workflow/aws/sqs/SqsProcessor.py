@@ -69,7 +69,10 @@ class SqsProcessor:
             logging.info(f'Out of attemps')
         return list_of_messages
 
-    def delete_message(self, message):
+    #todo create test
+    def complete_processing_message(self, message):
+        #todo send message to return queue
+        #todo add postfix to main queue "-return-queue"
         message.delete()
         logging.info(f'Message: {message} is deleted')
 

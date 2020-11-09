@@ -21,5 +21,5 @@ if __name__ == '__main__':
 
         # todo if message relies on previous messages check
 
-        processor.delete_message(message)
+        processor.complete_processing_message(message)
 sys.exit()

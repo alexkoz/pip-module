@@ -34,7 +34,7 @@ class TestSqsProcessor(TestCase):
         self.processor.send_message('text-2')
         self.processor.send_message('text-3')
 
-        self.processor.delete_message('text-2')
+        self.processor.complete_processing_message('text-2')
         self.assertTrue(len(self.processor.queue.queue_messages) == 2)
 
     def test_create_result_s3_key(self):
