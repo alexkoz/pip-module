@@ -61,3 +61,4 @@ class S3Helper:
         list_of_objects = self.list_s3_objects(prefix)
         logging.info(f'Len of s3_objects_list w/ prefix: {prefix} =', len(list_of_objects))
         return len(list_of_objects) == num_of_expected_results
+

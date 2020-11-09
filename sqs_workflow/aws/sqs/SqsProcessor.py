@@ -26,6 +26,7 @@ class SqsProcessor:
 
     queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
     queue_str = os.environ['QUEUE_LINK']
+    return_queue_str = os.environ['RETURN_QUEUE_LINK']
 
     def __init__(self):
         self.similarity_executable = os.environ['SIMILARITY_EXECUTABLE']
@@ -39,8 +40,9 @@ class SqsProcessor:
         attr_value = json.loads(message.body)[attribute_name]
         return attr_value
 
-    def send_message(self, message_body):
-        req_send = self.queue.send_message(QueueUrl=self.queue_str, MessageBody=message_body)
+    def send_message(self, message_body, queue_url):
+        req_send = self.queue.send_message(QueueUrl=queue_url, MessageBody=message_body)
+
         logging.info(req_send)
         logging.info(f'Message body: {message_body}')
         return req_send
@@ -71,22 +73,21 @@ class SqsProcessor:
 
     #todo create test
     def complete_processing_message(self, message):
-        #todo send message to return queue
-        #todo add postfix to main queue "-return-queue"
+        self.send_message(message.body, self.return_queue_str)
+        # todo send message to return queue
         message.delete()
         logging.info(f'Message: {message} is deleted')
 
-    #todo move to e2e mock or helper class
-    def purge_queue(self):
-        sqs_client = boto3.client('sqs')
-        req_purge = sqs_client.purge_queue(QueueUrl=self.queue_str)
-        logging.info(f'Queue is purged')
-
-        return req_purge
+    def create_path_and_save_on_s3(self, message_type, inference_id, processing_result):
+        s3_path = self.create_result_s3_key(StringConstants.COMMON_PREFIX,
+                                            message_type,
+                                            inference_id,
+                                            StringConstants.RESULT_FILE_NAME)
+        logging.info(f'Created S3 path: {s3_path}')
+        self.s3_helper.save_object_on_s3(s3_path, processing_result)
 
     def process_message_in_subprocess(self, message_type, message_body) -> str:
         processing_result = None
-        # todo add explicit logging
         logging.info('Message type of message: ', message_type)
         inference_id = json.loads(message_body)['inferenceId']
         assert inference_id
@@ -94,11 +95,7 @@ class SqsProcessor:
             processing_result = self.run_process(self.similarity_executable,
                                                  self.similarity_script,
                                                  message_body)
-            s3_path = self.create_result_s3_key(StringConstants.COMMON_PREFIX,
-                                                message_type,
-                                                inference_id,
-                                                StringConstants.RESULT_FILE_NAME)
-            self.s3_helper.save_object_on_s3(s3_path, processing_result)
+            self.create_path_and_save_on_s3(message_type, inference_id, processing_result)
             return processing_result
 
         message_object = json.loads(message_body)
@@ -110,26 +107,14 @@ class SqsProcessor:
                 processing_result = self.run_process(self.rmatrix_executable,
                                                      self.rmatrix_script,
                                                      message_body)
-                s3_path = self.create_result_s3_key(StringConstants.COMMON_PREFIX,
-                                                    message_type,
-                                                    url_hash,
-                                                    StringConstants.RESULT_FILE_NAME)
-                self.s3_helper.save_object_on_s3(s3_path, processing_result)
-
+                self.create_path_and_save_on_s3(message_type, inference_id, processing_result)
         message_object[StringConstants.PRY_KEY] = processing_result
 
-
-        # todo string constants
         if message_type == ProcessingTypesEnum.RoomBox.value:
             processing_result = self.run_process(self.roombox_executable,
                                                  self.roombox_script,
                                                  json.dumps(message_object))
-            s3_path = self.create_result_s3_key(StringConstants.COMMON_PREFIX,
-                                                message_type,
-                                                inference_id,
-                                                StringConstants.RESULT_FILE_NAME)
-            self.s3_helper.save_object_on_s3(s3_path, processing_result)
-
+            self.create_path_and_save_on_s3(message_type, inference_id, processing_result)
         return processing_result
 
     def run_process(self, executable, script, message_body) -> str:
@@ -142,7 +127,7 @@ class SqsProcessor:
             at_moment_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             message = f'{at_moment_time}\n SQS processing has failed for process:{executable} script:{script} message:{message_body}.'
             self.alert_service.send_slack_message(message, 0)
-        logging.info('subprocess_result.returncode =', subprocess_result.returncode)
+        logging.info('subprocess_result.return_code =', subprocess_result.returncode)
         logging.info('subprocess_result.stdout =', subprocess_result.stdout)
         return subprocess_result.stdout
 

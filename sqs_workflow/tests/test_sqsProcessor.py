@@ -18,6 +18,7 @@ class TestSqsProcessor(TestCase):
     test_list = []
     processor = SqsProcessor()
     processor.queue = QueueMock()
+    processor.return_queue = QueueMock()
 
     def test_send_message(self):
         message_body = "message_body_"
@@ -106,6 +107,26 @@ class TestSqsProcessor(TestCase):
         stream = os.popen(sync_command)
         output = stream.read()
         logging.info(f'output: {output}')
+
+    # todo fix it
+    def test_complete_processing_message_queuemock(self):
+        QueueMock.send_message('text-1', self.processor.queue)
+        QueueMock.send_message('text-2', self.processor.queue)
+        QueueMock.send_message('text-3', self.processor.queue)
+
+        self.processor.complete_processing_message('text-2')
+        self.assertTrue(len(self.processor.return_queue_str) == 1)
+
+    # todo fix TypeError: send_message() got an unexpected keyword argument 'QueueUrl'
+    def test_complete_processing_message(self):
+        print(str(self.processor.queue_str))
+        self.processor.send_message('text-1', self.processor.queue_str)
+        self.processor.send_message('text-2', self.processor.queue_str)
+        self.processor.send_message('text-3', self.processor.queue_str)
+
+        self.processor.complete_processing_message('text-2')
+        self.assertTrue(len(self.processor.return_queue_str) == 1)
+
 
     #todo change to work without real aws s3
 

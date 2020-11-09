@@ -26,7 +26,7 @@ class QueueMock:
             messages.append(message)
         return self.queue_messages.copy()
 
-    def send_message(self, message_body):
+    def send_message(self, message_body, queue_url):
         print('Start send message')
         message = {'Body': message_body,
                    'MessageId': random.randint(1, 30)}
