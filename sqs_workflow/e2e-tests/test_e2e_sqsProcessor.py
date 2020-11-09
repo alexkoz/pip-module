@@ -43,7 +43,7 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(len(req_receive) == 3)
 
         for message in req_receive:
-            processor.delete_message(message)
+            processor.complete_processing_message(message)
         logging.info(f'len req_receive after delete = ', len(req_receive))
 
         req_receive = self.pull_messages(processor, 10)
