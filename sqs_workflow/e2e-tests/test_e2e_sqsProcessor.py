@@ -7,6 +7,7 @@ import subprocess
 import sys
 from pathlib import Path
 import logging
+from sqs_workflow.utils.StringConstants import StringConstants
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -67,8 +68,7 @@ class TestSqsProcessor(TestCase):
         s3_helper = S3Helper()
         processor = SqsProcessor()
 
-        self.clear_directory('api/inference/')
-
+        self.clear_directory(StringConstants.COMMON_PREFIX)
         processor.purge_queue()
 
         # checks that queue is empty
@@ -85,11 +85,12 @@ class TestSqsProcessor(TestCase):
 
         for i in range(0):
             rmatrix_message = '{\"messageType\": \"R_MATRIX\",\
+                                               \"inferenceId\": \"123 \", \
                                                \"panoUrl\": \"'f'https://img.docusketch.com/items/s96{i}7284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG\",\
                                                \"tourId\": \"5fa1df49014bf357cf250d52\",\
                                                \"panoId\": \"5fa1df55014bf357cf250d64\"' + '}'
             processor.send_message(rmatrix_message)
-            logging.info('sent rmatrix message')
+            logging.info('sent r_matrix message')
 
         main_script_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow') + '/main.py'
         for i in range(4):
@@ -97,9 +98,9 @@ class TestSqsProcessor(TestCase):
                             main_script_path],  # path to main.py
                            universal_newlines=True)
 
-        object_list = s3_helper.list_s3_objects('api/inference')
+        object_list = s3_helper.list_s3_objects(StringConstants.COMMON_PREFIX)
         print('Object list =', object_list)
         print('Len of obj list =', len(object_list))
 
-        self.assertTrue(s3_helper.is_processing_complete('api/inference/SIMILARITY/', 10))
-        self.assertTrue(s3_helper.is_processing_complete('api/inference/R_MATRIX/', 10))
+        self.assertTrue(s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/SIMILARITY/', 10))
+        self.assertTrue(s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/R_MATRIX/', 10))

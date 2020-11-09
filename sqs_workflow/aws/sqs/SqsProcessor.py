@@ -90,40 +90,43 @@ class SqsProcessor:
             processing_result = self.run_process(self.similarity_executable,
                                                  self.similarity_script,
                                                  message_body)
-
-            s3_path = self.create_result_s3_key('api/inference/', message_type, inference_id, 'result.json')
+            s3_path = self.create_result_s3_key(StringConstants.COMMON_PREFIX,
+                                                message_type,
+                                                inference_id,
+                                                StringConstants.RESULT_FILE_NAME)
             self.s3_helper.save_object_on_s3(s3_path, processing_result)
             return processing_result
 
         message_object = json.loads(message_body)
-        if 'pry' not in message_object or message_type == ProcessingTypesEnum.RMatrix.value:
-
-            url_hash = hashlib.md5(message_object['panoUrl'].encode('utf-8')).hexdigest()
-
-            if processing_result := self.check_pry_on_s3(url_hash):
+        if StringConstants.PRY_KEY not in message_object or message_type == ProcessingTypesEnum.RMatrix.value:
+            url_hash = hashlib.md5(message_object[StringConstants.PANO_URL_KEY].encode('utf-8')).hexdigest()
+            processing_result = self.check_pry_on_s3(url_hash)
+            if processing_result is None:
+                logging.info('Processing result is None')
                 processing_result = self.run_process(self.rmatrix_executable,
                                                      self.rmatrix_script,
                                                      message_body)
-
-                s3_path = self.create_result_s3_key('api/inference/',
+                s3_path = self.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                                     message_type,
                                                     url_hash,
                                                     StringConstants.RESULT_FILE_NAME)
                 self.s3_helper.save_object_on_s3(s3_path, processing_result)
 
-            message_object['pry'] = processing_result
+        message_object[StringConstants.PRY_KEY] = processing_result
+
+
         # todo string constants
         if message_type == ProcessingTypesEnum.RoomBox.value:
             processing_result = self.run_process(self.roombox_executable,
                                                  self.roombox_script,
                                                  json.dumps(message_object))
-            s3_path = self.create_result_s3_key('api/inference/',
+            s3_path = self.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                                 message_type,
-                                                inference_id, 'result.json')
+                                                inference_id,
+                                                StringConstants.RESULT_FILE_NAME)
             self.s3_helper.save_object_on_s3(s3_path, processing_result)
 
         return processing_result
-
 
     def run_process(self, executable, script, message_body) -> str:
         subprocess_result = subprocess.run([executable,
@@ -146,11 +149,11 @@ class SqsProcessor:
         return s3_path
 
     def check_pry_on_s3(self, url_hash: str) -> str:
-        path_to_folder = 'api/inference/R_MATRIX/' + url_hash + '/'
+        path_to_folder = StringConstants.COMMON_PREFIX + '/' + StringConstants.R_MATRIX_KEY + '/' + url_hash + '/'
         result = self.s3_helper.is_object_exist(path_to_folder)
         if result is True:
             s3 = boto3.resource('s3')
-            path_to_file = os.path.join(path_to_folder, 'result.json')
+            path_to_file = os.path.join(path_to_folder, StringConstants.RESULT_FILE_NAME)
             result_object = s3.Object(self.s3_bucket, path_to_file)
             body = result_object.get()['Body'].read().decode('utf-8')
             logging.info(f'result.json in {path_to_folder} exists')

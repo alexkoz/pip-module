@@ -47,13 +47,14 @@ class S3Helper:
         return object_from_s3
 
     def list_s3_objects(self, prefix: str):
-        #todo add explicit loggin
         paginator = self.s3_client.get_paginator('list_objects_v2')
         pages = paginator.paginate(Bucket=self.s3_bucket, Prefix=prefix)
         list_of_objects = []
+        logging.info('list of objects: ', list_of_objects)
         for page in pages:
             for obj in page['Contents']:
                 list_of_objects.append(obj['Key'])
+                logging.info(f'Added object {obj["Key"]} to list of objects')
         return list_of_objects
 
     def is_processing_complete(self, prefix: str, num_of_expected_results: int) -> bool:

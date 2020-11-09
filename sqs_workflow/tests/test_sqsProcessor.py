@@ -7,6 +7,8 @@ import os
 from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 from pathlib import Path
 import logging
+from sqs_workflow.utils.StringConstants import StringConstants
+
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -52,7 +54,7 @@ class TestSqsProcessor(TestCase):
                     "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
                     "tourId": "5fa1df49014bf357cf250d52",\
                     "panoId": "5fa1df55014bf357cf250d64"}'
-        self.assertIsNone(self.processor.process_message_in_subprocess('SIMILARITY', message1))
+        self.assertIsNone(self.processor.process_message_in_subprocess(StringConstants.SIMILARITY_KEY, message1))
         self.assertIsNone(self.processor.process_message_in_subprocess('ROOMBOX', message2))
 
     def test_fail_in_subprocess(self):
@@ -105,29 +107,8 @@ class TestSqsProcessor(TestCase):
         output = stream.read()
         logging.info(f'output: {output}')
 
-
-    #todo create s3helper mock
     #todo change to work without real aws s3
-    #todo transfer to e2e
-    def test_check_pry_on_s3(self):
-        s3_helper = S3Helper()
-        processor = SqsProcessor()
-        self.clear_directory('api/inference/')
-        processor.purge_queue()
 
-        # Checks that no result.json in S3 in subfolder test-hash-001
-        test_message = {'panoUrl': 1234,
-                        'url_hash': 'test-hash-001'}
-        self.assertIsNone(processor.check_pry_on_s3(test_message))
-
-        # Adds a result.json file in S3 in subfolder test-hash-002
-        s3_path = processor.create_result_s3_key('api/inference/', 'R_MATRIX', 'test-hash-002', 'result.json')
-        s3_helper.save_object_on_s3(s3_path, 'test-body-content')
-
-        # Checks that result.json exists in S3 in subfolder test-hash-002
-        test_message = {'panoUrl': 1235,
-                        'url_hash': 'test-hash-002'}
-        self.assertEqual(processor.check_pry_on_s3(test_message), 'test-body-content')
 
 
 
