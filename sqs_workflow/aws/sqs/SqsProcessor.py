@@ -152,7 +152,8 @@ class SqsProcessor:
             body = obj.get()['Body'].read()
             return body
         else:
-            return None  # return None when -> str
+            logging.info(f'Object {path_to_file} does not exist')
+            return None  # return None when -> str ??
 
         # todo find file on s3
         # todo if found return

@@ -111,7 +111,18 @@ class TestSqsProcessor(TestCase):
         self.clear_directory('api/inference/')
         processor.purge_queue()
 
-        processor.check_pry_on_s3('test-hash-001')
+        test_message = {'panoUrl': 1234,
+                        'url_hash': 'test-hash-001'}
+        self.assertIsNone(processor.check_pry_on_s3(test_message))
+
+        s3_path = processor.create_result_s3_key('api/inference/', 'R_MATRIX', 'test-hash-002', 'result.json')
+        s3_helper.save_object_on_s3(s3_path, 'test-body-content')
+
+        test_message = {'panoUrl': 1235,
+                        'url_hash': 'test-hash-002'}
+        processor.check_pry_on_s3(test_message)
+
+
         # todo finish test
 
 
