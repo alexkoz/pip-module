@@ -76,6 +76,7 @@ class SqsProcessor:
         message.delete()
         logging.info(f'Message: {message} is deleted')
 
+    #todo move to e2e mock or helper class
     def purge_queue(self):
         sqs_client = boto3.client('sqs')
         req_purge = sqs_client.purge_queue(QueueUrl=self.queue_str)

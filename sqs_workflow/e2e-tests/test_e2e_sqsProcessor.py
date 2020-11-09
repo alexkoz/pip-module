@@ -68,7 +68,12 @@ class TestSqsProcessor(TestCase):
         s3_helper = S3Helper()
         processor = SqsProcessor()
 
+<<<<<<< HEAD
         self.clear_directory(StringConstants.COMMON_PREFIX)
+=======
+        self.clear_directory('api/inference/')
+        #todo purge return queue
+>>>>>>> 5666be4e33f6c1260f63524269a5c387ad1fbf9f
         processor.purge_queue()
 
         # checks that queue is empty
@@ -102,5 +107,13 @@ class TestSqsProcessor(TestCase):
         print('Object list =', object_list)
         print('Len of obj list =', len(object_list))
 
+<<<<<<< HEAD
         self.assertTrue(s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/SIMILARITY/', 10))
         self.assertTrue(s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/R_MATRIX/', 10))
+=======
+        self.assertTrue(s3_helper.is_processing_complete('api/inference/SIMILARITY/', 10))
+        self.assertTrue(s3_helper.is_processing_complete('api/inference/R_MATRIX/', 10))
+
+        #todo pull all messages from return queue
+        #todo check number of return messages
+>>>>>>> 5666be4e33f6c1260f63524269a5c387ad1fbf9f
