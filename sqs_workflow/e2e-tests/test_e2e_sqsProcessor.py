@@ -68,7 +68,7 @@ class TestSqsProcessor(TestCase):
         processor = SqsProcessor()
 
         self.clear_directory('api/inference/')
-
+        #todo purge return queue
         processor.purge_queue()
 
         # checks that queue is empty
@@ -103,3 +103,6 @@ class TestSqsProcessor(TestCase):
 
         self.assertTrue(s3_helper.is_processing_complete('api/inference/SIMILARITY/', 10))
         self.assertTrue(s3_helper.is_processing_complete('api/inference/R_MATRIX/', 10))
+
+        #todo pull all messages from return queue
+        #todo check number of return messages
