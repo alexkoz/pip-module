@@ -105,6 +105,10 @@ class TestSqsProcessor(TestCase):
         output = stream.read()
         logging.info(f'output: {output}')
 
+
+    #todo create s3helper mock
+    #todo change to work without real aws s3
+    #todo transfer to e2e
     def test_check_pry_on_s3(self):
         s3_helper = S3Helper()
         processor = SqsProcessor()
