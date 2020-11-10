@@ -1,13 +1,7 @@
-import boto3
-import os
 import random
-# from sqs_workflow.SqsProcessor import SqsProcessor
 
 
 class QueueMock:
-    # sqs_client = boto3.resource('sqs')
-    # queue = sqs_client.Queue(
-    #     os.environ['QUEUE_LINK'])  #
 
     def __init__(self):
         self.queue_messages = []
@@ -39,6 +33,3 @@ class QueueMock:
                 self.queue_messages.remove(message)
         print(f'Received and deleted message: {message_body_to_delete}')
         return self
-
-
-

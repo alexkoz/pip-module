@@ -73,14 +73,14 @@ class SqsProcessor:
             logging.info(f'Out of attempts')
         return list_of_messages
 
-    #todo create test
+    # todo create test
     def complete_processing_message(self, message):
         self.send_message(message.body, self.return_queue_str)
         # todo send message to return queue
         message.delete()
         logging.info(f'Message: {message} is deleted')
 
-    #todo create unit test
+    # todo create unit test
     def create_path_and_save_on_s3(self, message_type, inference_id, processing_result):
         s3_path = self.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                             message_type,
@@ -93,16 +93,16 @@ class SqsProcessor:
     def process_message_in_subprocess(self, message_type, message_body) -> str:
         processing_result = None
         logging.info('Message type of message: ', message_type)
-        inference_id = json.loads(message_body)['inferenceId']
+        message_object = json.loads(message_body)
+        inference_id = message_object['inferenceId']
         assert inference_id
-        if message_type == ProcessingTypesEnum.Similarity.value:
+        if message_type == ProcessingTypesEnum.Similarity.value and self.is_similarity_ready(message_object):
             processing_result = self.run_process(self.similarity_executable,
                                                  self.similarity_script,
                                                  message_body)
             self.create_path_and_save_on_s3(message_type, inference_id, processing_result)
             return processing_result
 
-        message_object = json.loads(message_body)
         if StringConstants.PRY_KEY not in message_object or message_type == ProcessingTypesEnum.RMatrix.value:
             url_hash = hashlib.md5(message_object[StringConstants.PANO_URL_KEY].encode('utf-8')).hexdigest()
             processing_result = self.check_pry_on_s3(url_hash)
@@ -154,3 +154,12 @@ class SqsProcessor:
         else:
             logging.info(f'result.json in {path_to_folder} does not exist')
             return None  # return None when -> str ?
+
+    def is_similarity_ready(self, message_object) -> bool:
+        # todo if similarity document is existing for further processing
+        # todo get message steps if any
+        # todo check on s3 if they are ready to process
+        # todo false if not
+        # todo true and continue if yes
+
+        return False
