@@ -1,6 +1,7 @@
-import boto3
-import os
 import logging
+import os
+
+import boto3
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 

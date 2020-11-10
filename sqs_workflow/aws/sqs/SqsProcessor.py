@@ -1,14 +1,16 @@
-import boto3
-import os
-import time
-import json
-import subprocess
-from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
-from datetime import datetime
-from sqs_workflow.AlertService import AlertService
-import logging
 import hashlib
+import json
+import logging
+import os
+import subprocess
+import time
+from datetime import datetime
+
+import boto3
+
+from sqs_workflow.AlertService import AlertService
 from sqs_workflow.aws.s3.S3Helper import S3Helper
+from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
@@ -44,31 +46,31 @@ class SqsProcessor:
         req_send = self.queue.send_message(QueueUrl=queue_url, MessageBody=message_body)
 
         logging.info(req_send)
-        logging.info(f'Message body: {message_body}')
+        logging.info(f'Message body:{message_body}')
         return req_send
 
     def receive_messages(self, max_number_of_messages: int):
         response_messages = self.queue.receive_messages(QueueUrl=self.queue_str,
                                                         MaxNumberOfMessages=max_number_of_messages)
         if len(response_messages) != 0:
-            logging.info(f'response_message: {response_messages[0].body}')
+            logging.info(f'response_message content:{response_messages[0].body}')
 
         return response_messages
 
     def pull_messages(self, number_of_messages: int) -> list:
-        attemps = 0
+        attempts = 0
         list_of_messages = self.receive_messages(number_of_messages)
-        while attemps < 7 and len(list_of_messages) < number_of_messages:
+        while attempts < 7 and len(list_of_messages) < number_of_messages:
             messages_received = self.receive_messages(1)
             if len(messages_received) > 0:
                 list_of_messages += messages_received
-                logging.info(f'Len list of messages =: {len(list_of_messages)}')
+                logging.info(f'Len list of messages:{len(list_of_messages)}')
             else:
-                attemps += 1
+                attempts += 1
                 time.sleep(2)
-            logging.info(f'attemps = {attemps}')
-        if attemps == 7:
-            logging.info(f'Out of attemps')
+            logging.info(f'attempts = {attempts}')
+        if attempts == 7:
+            logging.info(f'Out of attempts')
         return list_of_messages
 
     #todo create test
@@ -78,13 +80,15 @@ class SqsProcessor:
         message.delete()
         logging.info(f'Message: {message} is deleted')
 
+    #todo create unit test
     def create_path_and_save_on_s3(self, message_type, inference_id, processing_result):
         s3_path = self.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                             message_type,
                                             inference_id,
                                             StringConstants.RESULT_FILE_NAME)
-        logging.info(f'Created S3 path: {s3_path}')
+
         self.s3_helper.save_object_on_s3(s3_path, processing_result)
+        logging.info(f'Created S3 object key:{s3_path} content:{processing_result}')
 
     def process_message_in_subprocess(self, message_type, message_body) -> str:
         processing_result = None
