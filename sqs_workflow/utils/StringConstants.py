@@ -6,4 +6,4 @@ class StringConstants:
     R_MATRIX_KEY: str = 'R_MATRIX'
     SIMILARITY_KEY: str = 'SIMILARITY'
     DOOR_DETECTION_KEY: str = 'DOOR_DETECTION'
-    # todo rooombox
+    ROOM_BOX_KEY: str = 'ROOM_BOX'
