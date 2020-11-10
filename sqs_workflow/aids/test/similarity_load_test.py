@@ -24,8 +24,8 @@ sqs_client = boto3.resource('sqs')
 queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
 for pano in floor_object['panos']:
     print("List panos to send to separate messages")
-    for step in ['ROOMBOX', 'DOORDETECTING', ]
-    del pano['layout']
+    for step in ['ROOMBOX', 'DOORDETECTING']:
+        del pano['layout']
     message = {}
 
     req_send = queue.send_message(QueueUrl=os.environ['QUEUE_LINK'], MessageBody=json.dumps(message))
