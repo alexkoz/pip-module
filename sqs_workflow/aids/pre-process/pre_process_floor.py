@@ -41,7 +41,7 @@ for s3_object in s3_bucket.objects.filter(Prefix='storage/segmentation/pretty-fl
     cleaning_json(path_to_save_file, filename)
 
 local_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow', 'tmp', 'edited')
-s3_path = 's3:/' + os.environ['S3_BUCKET'] + '/storage/segmentation/only-panos_data_from_01.06.2020/'
+s3_path = 's3://' + os.environ['S3_BUCKET'] + '/storage/segmentation/only-panos_data_from_01.06.2020/'
 sync_local_s3(local_path, s3_path)
 
 logging.info('All is done')

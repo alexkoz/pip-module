@@ -5,3 +5,5 @@ class StringConstants:
     PANO_URL_KEY: str = 'panoUrl'
     R_MATRIX_KEY: str = 'R_MATRIX'
     SIMILARITY_KEY: str = 'SIMILARITY'
+    DOOR_DETECTION_KEY: str = 'DOOR_DETECTION'
+    # todo rooombox
