@@ -1,9 +1,10 @@
 import logging
+from sqs_workflow.aws.s3.S3Helper import S3Helper
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 
-class S3HelperMock:
+class S3HelperMock(S3Helper):
     def __init__(self):
         pass
 

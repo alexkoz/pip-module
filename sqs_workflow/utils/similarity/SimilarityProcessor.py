@@ -44,6 +44,7 @@ class SimilarityProcessor:
                 list_results_keys)
             logging.info(f'All {len(list_results_keys)} steps for similarity are done.')
 
+
     # todo test method
     @staticmethod
     def assemble_results_into_document(s3_helper: S3Helper, message_object, list_results_keys):
