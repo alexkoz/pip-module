@@ -74,14 +74,12 @@ class SqsProcessor:
             logging.info(f'Out of attempts')
         return list_of_messages
 
-    # todo create test
+    # todo finish test
     def complete_processing_message(self, message):
         self.send_message(message.body, self.return_queue_str)
-        # todo send message to return queue
         message.delete()
         logging.info(f'Message: {message} is deleted')
 
-    # todo create unit test
     def create_path_and_save_on_s3(self, message_type, inference_id, processing_result):
         s3_path = self.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                             message_type,

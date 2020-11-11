@@ -11,7 +11,6 @@ class SimilarityProcessor:
 
     @staticmethod
     def is_similarity_ready(s3_helper: S3Helper, message_object) -> bool:
-        # todo if similarity document is existing for further processing
         if 'similarity_document' in message_object:
             similarity_document = message_object['similarity_document']
             if s3_helper.is_object_exist(similarity_document):
