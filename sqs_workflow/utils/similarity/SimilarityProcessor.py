@@ -12,36 +12,37 @@ class SimilarityProcessor:
     @staticmethod
     def is_similarity_ready(s3_helper: S3Helper, message_object) -> bool:
 
-        similarity_document = message_object['similarity_document']
-        if s3_helper.is_object_exist(similarity_document):
-            logging.info(f'Found similarity document:{similarity_document} return True')
-            #todo download s3 and return as json
-            return True
-        logging.info(f'There is no similarity document:{similarity_document}')
+        if 'similarity_document' in message_object:
+            similarity_document = message_object['similarity_document']
+            if s3_helper.is_object_exist(similarity_document):
+                logging.info(f'Found similarity document:{similarity_document} return True')
+                # todo download s3 and return as json
+                return True
+            logging.info(f'There is no similarity document:{similarity_document}')
 
-        list_results_keys = []
-        for panorama in message_object['panos']:
+            list_results_keys = []
+            for panorama in message_object['panos']:
 
-            logging.info(f'Start processing step:{panorama} for document:{similarity_document}')
+                logging.info(f'Start processing step:{panorama} for document:{similarity_document}')
 
-            for step in message_object['steps']:
-                logging.info(f'Start processing panorama:{panorama} for step:{step}')
-                s3_result_key = ""
-                if not s3_helper.is_object_exist(s3_result_key):
-                    logging.info(f'Could not find result for panorama:{panorama} for step:{step}')
-                    logging.info(f'Similarity:{similarity_document} is not ready yet')
-                    return False
-                else:
-                    list_results_keys.append(s3_result_key)
-                    logging.info(f'Panorama:{panorama} for step:{step} is processed')
+                for step in message_object['steps']:
+                    logging.info(f'Start processing panorama:{panorama} for step:{step}')
+                    s3_result_key = ""
+                    if not s3_helper.is_object_exist(s3_result_key):
+                        logging.info(f'Could not find result for panorama:{panorama} for step:{step}')
+                        logging.info(f'Similarity:{similarity_document} is not ready yet')
+                        return False
+                    else:
+                        list_results_keys.append(s3_result_key)
+                        logging.info(f'Panorama:{panorama} for step:{step} is processed')
 
-                pass
+                    pass
 
-        message_object = SimilarityProcessor.assemble_results_into_document(
-            s3_helper,
-            message_object,
-            list_results_keys)
-        logging.info(f'All {len(list_results_keys)} steps for similarity are done.')
+            message_object = SimilarityProcessor.assemble_results_into_document(
+                s3_helper,
+                message_object,
+                list_results_keys)
+            logging.info(f'All {len(list_results_keys)} steps for similarity are done.')
 
     # todo test method
     @staticmethod

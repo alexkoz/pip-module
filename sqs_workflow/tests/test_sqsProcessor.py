@@ -9,6 +9,7 @@ from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 from sqs_workflow.tests.QueueMock import QueueMock
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
+from sqs_workflow.aws.s3.S3Helper import S3Helper
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -16,6 +17,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 class TestSqsProcessor(TestCase):
     test_list = []
     processor = SqsProcessor()
+    s3_helper = S3Helper()
     processor.queue = QueueMock()
     processor.return_queue = QueueMock()
 
@@ -125,3 +127,12 @@ class TestSqsProcessor(TestCase):
 
         self.processor.complete_processing_message('text-2')
         self.assertTrue(len(self.processor.return_queue_str) == 1)
+
+    def test_create_path_and_save_on_s3(self):
+        s3_helper = self.s3_helper
+        message_type = 'test-message_type'
+        inference_id = 'test_inference_id'
+        processing_result = 'test-processing-result-content'
+        self.processor.create_path_and_save_on_s3(message_type, inference_id, processing_result)
+        s3_key = 'api/inference/test-message_type/test_inference_id/'
+        self.assertTrue(s3_helper.is_object_exist(s3_key))
