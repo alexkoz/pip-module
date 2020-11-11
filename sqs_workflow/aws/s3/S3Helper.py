@@ -41,7 +41,7 @@ class S3Helper:
         obj.put(Body=object_body)
         logging.info(f'Uploaded new file: {s3_key} to s3')
 
-    def read_object_and_save_as_file(self, s3_key, file_absolute_path) -> str:
+    def read_s3_object(self, s3_key) -> str:
         obj = self.s3_client.Object(self.s3_bucket, s3_key)
         object_from_s3 = obj.get()['Body'].read().decode('utf-8')
         # todo save object locally

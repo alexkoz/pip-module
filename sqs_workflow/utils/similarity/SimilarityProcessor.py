@@ -11,19 +11,19 @@ class SimilarityProcessor:
 
     @staticmethod
     def is_similarity_ready(s3_helper: S3Helper, message_object) -> bool:
-        # todo if similarity document is existing for further processing
+
         similarity_document = message_object['similarity_document']
         if s3_helper.is_object_exist(similarity_document):
             logging.info(f'Found similarity document:{similarity_document} return True')
+            #todo download s3 and return as json
             return True
         logging.info(f'There is no similarity document:{similarity_document}')
-        # todo get message steps if any
+
         list_results_keys = []
-        final_document = {}
         for panorama in message_object['panos']:
 
             logging.info(f'Start processing step:{panorama} for document:{similarity_document}')
-            # todo list all images first
+
             for step in message_object['steps']:
                 logging.info(f'Start processing panorama:{panorama} for step:{step}')
                 s3_result_key = ""
@@ -36,7 +36,32 @@ class SimilarityProcessor:
                     logging.info(f'Panorama:{panorama} for step:{step} is processed')
 
                 pass
+
+        message_object = SimilarityProcessor.assemble_results_into_document(
+            s3_helper,
+            message_object,
+            list_results_keys)
         logging.info(f'All {len(list_results_keys)} steps for similarity are done.')
+
+    # todo test method
+    @staticmethod
+    def assemble_results_into_document(s3_helper: S3Helper, message_object, list_results_keys):
+
+        panos = {}
+        for s3_key in list_results_keys:
+            logging.info(f'Start processing key:{s3_key}')
+            step_result = json.loads(s3_helper.read_s3_object(s3_key))
+            if step_result[StringConstants.PANO_URL_KEY] in panos:
+                panos[step_result[StringConstants.PANO_URL_KEY]] = {**step_result,
+                                                                    **panos[step_result[StringConstants.PANO_URL_KEY]]}
+                logging.info(f'Key:{s3_key} is in list and merged:{panos[step_result[StringConstants.PANO_URL_KEY]]}')
+            else:
+                panos[step_result[StringConstants.PANO_URL_KEY]] = step_result
+                logging.info(f'Key:{s3_key} is not in list. Result:{step_result}')
+
+        message_object['panos'] = list(panos.values())
+        logging.info(f'Returning message with {len(message_object["panos"])} panos')
+        return message_object
 
     @staticmethod
     def create_layout_object(step, result):

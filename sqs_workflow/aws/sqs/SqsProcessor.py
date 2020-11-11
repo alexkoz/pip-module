@@ -100,9 +100,10 @@ class SqsProcessor:
         if message_type == ProcessingTypesEnum.Similarity.value and SimilarityProcessor.is_similarity_ready(
                 self.s3_helper,
                 message_object):
+
             processing_result = self.run_process(self.similarity_executable,
                                                  self.similarity_script,
-                                                 message_body)
+                                                 json.dumps(message_object))
             self.create_path_and_save_on_s3(message_type, inference_id, processing_result)
             return processing_result
 

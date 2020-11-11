@@ -16,8 +16,8 @@ def purge_queue(queue_url):
     logging.info(f'Queue is purged')
     return req_purge
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 original_json = "storage/segmentation/pretty-floors_data_from_01.06.2020/order_1017707_floor_1.json"
 s3_bucket = "immoviewer-ai-research"
@@ -46,7 +46,8 @@ similarity_test_message = {
     "messageType": "SIMILARITY",
     "orderId": "5da5d5164cedfd0050363a2e",
     "inferenceId": 1111,
-    "panos": "pano1"
+    "floor": 1,
+    "tourId": "1342386"
 }
 
 req_send = queue.send_message(QueueUrl=os.environ['QUEUE_LINK'], MessageBody=json.dumps(similarity_test_message))
@@ -73,7 +74,6 @@ for i in range(panos_counter + 1):
         else:
             message_type = 'ROOM_BOX'
         processor.process_message_in_subprocess(message_type, message.body)
-
 
 # todo read json
 # todo get all panos out of
