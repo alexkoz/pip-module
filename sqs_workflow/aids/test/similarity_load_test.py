@@ -20,7 +20,7 @@ def purge_queue(queue_url):
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 original_json = "storage/segmentation/pretty-floors_data_from_01.06.2020/order_1017707_floor_1.json"
-s3_bucket = "immoviewer-ai-research"
+s3_bucket = "immoviewer-ai-test"
 
 processor = SqsProcessor()
 session = boto3.Session(
@@ -47,7 +47,9 @@ similarity_test_message = {
     "orderId": "5da5d5164cedfd0050363a2e",
     "inferenceId": 1111,
     "floor": 1,
-    "tourId": "1342386"
+    "tourId": "1342386",
+    "documentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+    "panos": {"pano1", "pano2"}
 }
 
 req_send = queue.send_message(QueueUrl=os.environ['QUEUE_LINK'], MessageBody=json.dumps(similarity_test_message))

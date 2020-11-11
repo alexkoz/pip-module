@@ -32,11 +32,19 @@ class TestSimilarityProcessor(TestCase):
             "orderId": "5da5d5164cedfd0050363a2e",
             "inferenceId": 1111,
             "panos": "pano1",
-            "similarity_document": "test-similarity-document/"
+            "similarity_document": "right-test-similarity-document/"
         }
-        #todo create few files to check
-        #todo check if s3helper returns true and false
-        #todo check negative cases when it's not exising
-        s3_helper_mock = S3HelperMock()
+
+        test_message_3 = {
+            "messageType": "SIMILARITY",
+            "orderId": "5da5d5164cedfd0050363a2e",
+            "inferenceId": 1111,
+            "panos": "pano1",
+            "similarity_document": "wrong-test-similarity-document/"
+        }
+        #todo finish wi edge case
+        s3_helper_mock = S3HelperMock([])
         self.assertFalse(SimilarityProcessor.is_similarity_ready(s3_helper_mock, test_message_1))
         self.assertTrue(SimilarityProcessor.is_similarity_ready(s3_helper_mock, test_message_2))
+        self.assertTrue(SimilarityProcessor.is_similarity_ready(s3_helper_mock, test_message_3))
+

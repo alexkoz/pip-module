@@ -8,32 +8,22 @@ import numpy as np
 
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.utils.StringConstants import StringConstants
+from sqs_workflow.utils.Utils import Utils
 
 
 class SimilarityProcessor:
-    s3 = boto3.resource('s3')
-    s3_bucket = s3.Bucket(os.environ['S3_BUCKET'])
 
     @staticmethod
-    def is_similarity_ready(self, s3_helper: S3Helper, message_object) -> bool:
-
+    def is_similarity_ready(s3_helper: S3Helper, message_object) -> bool:
+        utils = Utils()
         if StringConstants.DOCUMENT_PATH_KEY in message_object:
             similarity_document = message_object[StringConstants.DOCUMENT_PATH_KEY]
             if s3_helper.is_object_exist(similarity_document):
                 logging.info(f'Found similarity document:{similarity_document} return True')
-                # todo download s3 and return as json
-                try:
-                    key = similarity_document + '.json'
-                    path_to_json_locally = '/Users/alexkoz/projects/sqs_workflow/sqs_workflow/tmp/tmp_json/' + key
-                    self.s3_bucket.download_file(key, path_to_json_locally)
-                    with open(path_to_json_locally) as json_file:
-                        data = json.load(json_file)
-                        return data
-                except botocore.exceptions.ClientError as e:
-                    if e.response['Error']['Code'] == "404":
-                        print("The object does not exist.")
-                    else:
-                        raise
+                # todo download s3 and return as json as separate method in utils
+                key = similarity_document + '.json'
+                utils.download_from_http(key)
+
             logging.info(f'There is no similarity document:{similarity_document}')
 
             list_results_keys = []
