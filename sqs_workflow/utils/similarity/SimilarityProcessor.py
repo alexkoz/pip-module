@@ -15,14 +15,14 @@ class SimilarityProcessor:
 
     @staticmethod
     def is_similarity_ready(s3_helper: S3Helper, message_object) -> bool:
-        utils = Utils()
+
         if StringConstants.DOCUMENT_PATH_KEY in message_object:
             similarity_document = message_object[StringConstants.DOCUMENT_PATH_KEY]
             if s3_helper.is_object_exist(similarity_document):
                 logging.info(f'Found similarity document:{similarity_document} return True')
                 # todo download s3 and return as json as separate method in utils
                 key = similarity_document + '.json'
-                utils.download_from_http(key)
+                Utils.download_from_http(key)
 
             logging.info(f'There is no similarity document:{similarity_document}')
 

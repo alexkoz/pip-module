@@ -1,9 +1,8 @@
-import json
 import botocore
-
-from sqs_workflow.aws.s3.S3Helper import S3Helper
+import urllib
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
+import logging
 
 
 class Utils:
@@ -13,15 +12,13 @@ class Utils:
     def __init__(self):
         pass
 
-    def download_from_http(self, key):
-        path_to_json_locally = '/Users/alexkoz/projects/sqs_workflow/sqs_workflow/tmp/tmp_json/' + key
-        try:
-            self.s3_helper.s3_bucket.download_file(key, path_to_json_locally)
-            with open(path_to_json_locally) as json_file:
-                data = json.load(json_file)
-                return data
-        except botocore.exceptions.ClientError as e:
-            if e.response['Error']['Code'] == "404":
-                print("The object does not exist.")
-            else:
-                raise
+    @staticmethod
+    def download_from_http(url) -> str:
+        logging.info(f'Document url:{url} will be downloaded')
+        opener = urllib.request.build_opener()
+        opener.addheaders = [('User-Agent',
+                              'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1941.0 Safari/537.36')]
+        urllib.request.install_opener(opener)
+        with urllib.request.urlopen(url) as f:
+            document = f.read().decode('utf-8')
+        return document
