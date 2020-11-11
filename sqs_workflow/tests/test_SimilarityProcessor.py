@@ -3,6 +3,7 @@ from unittest import TestCase
 
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
+from sqs_workflow.tests.S3HelperMock import S3HelperMock
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -18,8 +19,21 @@ class TestSimilarityProcessor(TestCase):
         # todo test door detecting object
 
     def test_is_similarity_ready(self):
-        # todo get s3 Helper Mock
-        s3_helper_mock = None
-        message_object = {}
-        result = SimilarityProcessor.is_similarity_ready(s3_helper_mock, message_object)
-        self.assertTrue(result)
+        # Message without 'similarity_document' -> return False
+        test_message_1 = {
+            "messageType": "SIMILARITY",
+            "orderId": "5da5d5164cedfd0050363a2e",
+            "inferenceId": 1111,
+            "panos": "pano1"}
+
+        # Message with 'similarity_document' and True in S3HelperMock.is_object_exist -> return True
+        test_message_2 = {
+            "messageType": "SIMILARITY",
+            "orderId": "5da5d5164cedfd0050363a2e",
+            "inferenceId": 1111,
+            "panos": "pano1",
+            "similarity_document": "test-similarity-document/"
+        }
+        s3_helper_mock = S3HelperMock()
+        self.assertFalse(SimilarityProcessor.is_similarity_ready(s3_helper_mock, test_message_1))
+        self.assertTrue(SimilarityProcessor.is_similarity_ready(s3_helper_mock, test_message_2))
