@@ -1,15 +1,14 @@
+import logging
+import os
+import sys
+from pathlib import Path
 from unittest import TestCase
+
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
+from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 from sqs_workflow.tests.QueueMock import QueueMock
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
-import sys
-import os
-from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
-from pathlib import Path
-import logging
 from sqs_workflow.utils.StringConstants import StringConstants
-
-from sqs_workflow.aws.s3.S3Helper import S3Helper
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -126,10 +125,3 @@ class TestSqsProcessor(TestCase):
 
         self.processor.complete_processing_message('text-2')
         self.assertTrue(len(self.processor.return_queue_str) == 1)
-
-
-    #todo change to work without real aws s3
-
-
-
-
