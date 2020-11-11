@@ -5,11 +5,13 @@ logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 
 class S3HelperMock(S3Helper):
-    def __init__(self):
-        pass
+
+    def __init__(self, existing_keys):
+        self.existing_keys = existing_keys
 
     def is_object_exist(self, s3_key: str) -> bool:
         logging.info(f'Start checking object: {s3_key}')
+        #todo check if key is in existing keys
         response = {
             "Contents": [{"Key": "test-similarity-document/result.json"}]
         }

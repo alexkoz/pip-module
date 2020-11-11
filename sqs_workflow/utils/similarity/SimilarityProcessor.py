@@ -12,8 +12,8 @@ class SimilarityProcessor:
     @staticmethod
     def is_similarity_ready(s3_helper: S3Helper, message_object) -> bool:
 
-        if 'similarity_document' in message_object:
-            similarity_document = message_object['similarity_document']
+        if StringConstants.DOCUMENT_PATH_KEY in message_object:
+            similarity_document = message_object[StringConstants.DOCUMENT_PATH_KEY]
             if s3_helper.is_object_exist(similarity_document):
                 logging.info(f'Found similarity document:{similarity_document} return True')
                 # todo download s3 and return as json
@@ -21,7 +21,7 @@ class SimilarityProcessor:
             logging.info(f'There is no similarity document:{similarity_document}')
 
             list_results_keys = []
-            for panorama in message_object['panos']:
+            for panorama in message_object[StringConstants.PANOS_KEY]:
 
                 logging.info(f'Start processing step:{panorama} for document:{similarity_document}')
 
@@ -61,8 +61,8 @@ class SimilarityProcessor:
                 panos[step_result[StringConstants.PANO_URL_KEY]] = step_result
                 logging.info(f'Key:{s3_key} is not in list. Result:{step_result}')
 
-        message_object['panos'] = list(panos.values())
-        logging.info(f'Returning message with {len(message_object["panos"])} panos')
+        message_object[StringConstants.PANOS_KEY] = list(panos.values())
+        logging.info(f'Returning message with {len(message_object[StringConstants.PANOS_KEY])} panos')
         return message_object
 
     @staticmethod

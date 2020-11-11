@@ -2,7 +2,9 @@ class StringConstants:
     RESULT_FILE_NAME: str = 'result.json'
     COMMON_PREFIX: str = 'api/inference'
     PRY_KEY: str = 'pry'
+    DOCUMENT_PATH_KEY: str = "documentPath"
     PANO_URL_KEY: str = 'panoUrl'
+    PANOS_KEY: str = 'panos'
     R_MATRIX_KEY: str = 'R_MATRIX'
     SIMILARITY_KEY: str = 'SIMILARITY'
     DOOR_DETECTION_KEY: str = 'DOOR_DETECTION'
