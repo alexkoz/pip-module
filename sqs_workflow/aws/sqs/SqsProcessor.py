@@ -4,7 +4,6 @@ import logging
 import os
 import subprocess
 import time
-import numpy as np
 from datetime import datetime
 
 import boto3

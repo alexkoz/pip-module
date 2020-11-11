@@ -3,6 +3,7 @@ class StringConstants:
     COMMON_PREFIX: str = 'api/inference'
     PRY_KEY: str = 'pry'
     DOCUMENT_PATH_KEY: str = "documentPath"
+    STEPS_DOCUMENT_PATH_KEY: str = "stepsDocumentPath"
     PANO_URL_KEY: str = 'panoUrl'
     PANOS_KEY: str = 'panos'
     R_MATRIX_KEY: str = 'R_MATRIX'

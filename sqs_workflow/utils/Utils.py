@@ -1,13 +1,8 @@
-import botocore
-import urllib
-from sqs_workflow.aws.s3.S3Helper import S3Helper
-from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 import logging
+import urllib
 
 
 class Utils:
-    processor = SqsProcessor()
-    s3_helper = S3Helper()
 
     def __init__(self):
         pass

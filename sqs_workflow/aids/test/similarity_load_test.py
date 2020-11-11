@@ -1,13 +1,14 @@
-import os
-import sys
 import json
-import boto3
-from sqs_workflow.utils.StringConstants import StringConstants
-from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 import logging
+import os
 import random
+import sys
 from pathlib import Path
-import subprocess
+
+import boto3
+
+from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
+from sqs_workflow.utils.StringConstants import StringConstants
 
 
 def purge_queue(queue_url):
@@ -48,8 +49,8 @@ similarity_test_message = {
     "inferenceId": 1111,
     "floor": 1,
     "tourId": "1342386",
-    "documentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
-    "panos": {"pano1", "pano2"}
+    "stepsDocumentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+    "steps" : ['ROOMBOX']
 }
 
 req_send = queue.send_message(QueueUrl=os.environ['QUEUE_LINK'], MessageBody=json.dumps(similarity_test_message))
