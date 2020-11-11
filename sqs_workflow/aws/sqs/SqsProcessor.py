@@ -4,6 +4,7 @@ import logging
 import os
 import subprocess
 import time
+import numpy as np
 from datetime import datetime
 
 import boto3
@@ -12,6 +13,7 @@ from sqs_workflow.AlertService import AlertService
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
+from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -23,7 +25,6 @@ class SqsProcessor:
     alert_service = AlertService()
     s3_helper = S3Helper()
 
-    s3_bucket = os.environ['S3_BUCKET']
     sqs_client = boto3.resource('sqs')
 
     queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
@@ -96,7 +97,9 @@ class SqsProcessor:
         message_object = json.loads(message_body)
         inference_id = message_object['inferenceId']
         assert inference_id
-        if message_type == ProcessingTypesEnum.Similarity.value and self.is_similarity_ready(message_object):
+        if message_type == ProcessingTypesEnum.Similarity.value and SimilarityProcessor.is_similarity_ready(
+                self.s3_helper,
+                message_object):
             processing_result = self.run_process(self.similarity_executable,
                                                  self.similarity_script,
                                                  message_body)
@@ -147,57 +150,10 @@ class SqsProcessor:
         if result is True:
             s3 = boto3.resource('s3')
             path_to_file = os.path.join(path_to_folder, StringConstants.RESULT_FILE_NAME)
-            result_object = s3.Object(self.s3_bucket, path_to_file)
+            result_object = s3.Object(self.s3_helper.s3_bucket, path_to_file)
             body = result_object.get()['Body'].read().decode('utf-8')
             logging.info(f'result.json in {path_to_folder} exists')
             return body
         else:
             logging.info(f'result.json in {path_to_folder} does not exist')
             return None  # return None when -> str ?
-
-    def is_similarity_ready(self, message_object) -> bool:
-        # todo if similarity document is existing for further processing
-        similarity_document = message_object['similarity_document']
-        if self.s3_helper.is_object_exist(similarity_document):
-            logging.info(f'Found similarity document:{similarity_document} return True')
-            return True
-        logging.info(f'There is no similarity document:{similarity_document}')
-        # todo get message steps if any
-        final_document = {}
-        for panorama in message_object['panos']:
-
-            logging.info(f'Start processing step:{panorama} for document:{similarity_document}')
-            # todo list all images first
-            for step in message_object['steps']:
-                logging.info(f'Start processing panorama:{panorama} for step:{step}')
-                s3_result_key = ""
-                if not self.s3_helper.is_object_exist(s3_result_key):
-                    logging.info(f'Could not find result for panorama:{panorama} for step:{step}')
-                    logging.info(f'Similarity:{similarity_document} is not ready yet')
-                    return False
-                else:
-                    logging.info(f'Panorama:{panorama} for step:{step} is processed')
-
-                pass
-        logging.info(f'All steps for similarity are done.')
-
-        # todo check on s3 if they are ready to process
-        # todo false if not
-        # todo true and continue if yes
-
-        return False
-
-    def create_layout_object(self, step, result):
-        # todo accept step and transform a result into document data
-        # todo accept step and transform a result into document data
-        layout_object = {}
-        if step == 'ROOMBOX':
-            for point in result:
-                point_object = {}
-                print("Processing result")
-                #todo convert ai coords into angle ones
-                #todo add to object
-            pass
-        if step == "DOORDETECTING":
-            pass
-        return layout_object
