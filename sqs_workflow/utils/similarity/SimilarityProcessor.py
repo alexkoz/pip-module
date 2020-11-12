@@ -18,7 +18,6 @@ class SimilarityProcessor:
             logging.info(f'Found similarity return True')
             message_object = Utils.download_from_http(message_object[StringConstants.DOCUMENT_PATH_KEY])
         else:
-
             steps_document = json.loads(
                 Utils.download_from_http(message_object[StringConstants.STEPS_DOCUMENT_PATH_KEY]))
             logging.info(f'There is no similarity document:{steps_document}')
@@ -27,16 +26,13 @@ class SimilarityProcessor:
 
                 logging.info(f'Start processing step:{panorama}')
 
-                for step in message_object['steps']:
+                for step in message_object[StringConstants.STEPS]:
                     logging.info(f'Start processing panorama:{panorama} for step:{step}')
-
-                    # todo fix processor / static method
-                    inference_id = 'something'
                     s3_result_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
-                                                                   step,
-                                                                   inference_id,
-                                                                   os.path.basename(message_object['documentPath']),
-                                                                   StringConstants.RESULT_FILE_NAME)
+                                                               step,
+                                                               str(message_object[StringConstants.INFERENCE_ID_KEY]),
+                                                               os.path.basename(panorama['fileUrl']),
+                                                               StringConstants.RESULT_FILE_NAME)
 
                     if not s3_helper.is_object_exist(s3_result_key):
                         logging.info(f'Could not find result for panorama:{panorama} for step:{step}')

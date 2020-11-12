@@ -49,8 +49,9 @@ similarity_test_message = {
     "inferenceId": 1111,
     "floor": 1,
     "tourId": "1342386",
-    "documentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
-    "steps" : ['ROOMBOX']
+    # "documentPath": "",
+    "stepsDocumentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+    "steps": ['ROOMBOX']
 }
 
 req_send = queue.send_message(QueueUrl=os.environ['QUEUE_LINK'], MessageBody=json.dumps(similarity_test_message))

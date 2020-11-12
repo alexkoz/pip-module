@@ -123,10 +123,11 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(self.s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/R_MATRIX/', 10))
 
         # Checks Queue for return messages
+        # todo pull all messages from return queue
+        # todo check number of return messages
         list_of_returned_messages = []
         for i in range(4):
             list_of_returned_messages.append(self.pull_all_messages(self.processor.return_queue_str))
         self.assertEqual(len(list_of_returned_messages), 4)
 
-        # todo pull all messages from return queue
-        # todo check number of return messages
+
