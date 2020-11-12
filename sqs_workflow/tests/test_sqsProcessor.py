@@ -117,17 +117,17 @@ class TestSqsProcessor(TestCase):
         QueueMock.send_message('text-3', self.processor.queue)
 
         self.processor.complete_processing_message('text-2')
-        self.assertTrue(len(self.processor.return_queue_str) == 1)
+        self.assertTrue(len(self.processor.return_queue_url) == 1)
 
     # todo fix TypeError: send_message() got an unexpected keyword argument 'QueueUrl'
     def test_complete_processing_message(self):
-        print(str(self.processor.queue_str))
-        self.processor.send_message('text-1', self.processor.queue_str)
-        self.processor.send_message('text-2', self.processor.queue_str)
-        self.processor.send_message('text-3', self.processor.queue_str)
+        print(str(self.processor.queue_url))
+        self.processor.send_message('text-1', self.processor.queue_url)
+        self.processor.send_message('text-2', self.processor.queue_url)
+        self.processor.send_message('text-3', self.processor.queue_url)
 
         self.processor.complete_processing_message('text-2')
-        self.assertTrue(len(self.processor.return_queue_str) == 1)
+        self.assertTrue(len(self.processor.return_queue_url) == 1)
 
     def test_create_path_and_save_on_s3(self):
         s3_helper = self.s3_helper

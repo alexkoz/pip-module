@@ -36,14 +36,14 @@ class TestSqsProcessor(TestCase):
     def test_read_write_messages(self):
         processor = SqsProcessor()
 
-        self.purge_queue(self.processor.queue_str)
+        self.purge_queue(self.processor.queue_url)
         req_receive = processor.receive_messages(5)
         self.assertTrue(len(req_receive) == 0)
 
         for i in range(10):
             processor.send_message(
                 '{ \"inferenceId\":\"similarity-test\",  \"messageType\":\"similarity\", \"orderId\":' + str(i) + '}',
-                self.processor.queue_str)
+                self.processor.queue_url)
 
         req_receive = self.pull_messages(processor, 3)
         self.assertTrue(len(req_receive) == 3)
@@ -84,8 +84,8 @@ class TestSqsProcessor(TestCase):
     def test_e2e(self):
         self.clear_directory(StringConstants.COMMON_PREFIX)
         self.clear_directory('api/inference/')
-        self.purge_queue(self.processor.queue_str)
-        self.purge_queue(self.processor.return_queue_str)
+        self.purge_queue(self.processor.queue_url)
+        self.purge_queue(self.processor.return_queue_url)
 
         # checks that queue is empty
         req_receive = self.processor.receive_messages(5)
@@ -127,7 +127,7 @@ class TestSqsProcessor(TestCase):
         # todo check number of return messages
         list_of_returned_messages = []
         for i in range(4):
-            list_of_returned_messages.append(self.pull_all_messages(self.processor.return_queue_str))
+            list_of_returned_messages.append(self.pull_all_messages(self.processor.return_queue_url))
         self.assertEqual(len(list_of_returned_messages), 4)
 
 

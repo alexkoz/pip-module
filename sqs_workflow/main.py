@@ -13,13 +13,15 @@ queue_url = os.environ['QUEUE_LINK']
 region_name = os.environ['REGION_NAME']
 
 if __name__ == '__main__':
+    logging.info(f"Start the application")
     list_of_messages = processor.pull_messages(1)
     logging.info('Pulled message')
-    for message in list_of_messages:
-        message_type = processor.get_attr_value(message, 'messageType')
-        processor.process_message_in_subprocess(message_type, message.body)
-
-        # todo if message relies on previous messages check
-
-        processor.complete_processing_message(message)
-sys.exit()
+    while len(list_of_messages) > 0:
+        for message in list_of_messages:
+            message_type = processor.get_attr_value(message, 'messageType')
+            processor.process_message_in_subprocess(message_type, message.body)
+            processor.complete_processing_message(message)
+        logging.info(f"Start pulling messages")
+        list_of_messages = processor.pull_messages(1)
+logging.info(f"The queue is empty. Exit waiting for next iteration.")
+sys.exit(0)

@@ -28,8 +28,8 @@ class SqsProcessor:
     sqs_client = boto3.resource('sqs')
 
     queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
-    queue_str = os.environ['QUEUE_LINK']
-    return_queue_str = os.environ['QUEUE_LINK'] + "-return-queue"
+    queue_url = os.environ['QUEUE_LINK']
+    return_queue_url = os.environ['QUEUE_LINK'] + "-return-queue"
 
     def __init__(self):
         self.similarity_executable = os.environ['SIMILARITY_EXECUTABLE']
@@ -49,7 +49,7 @@ class SqsProcessor:
         return response_send
 
     def receive_messages(self, max_number_of_messages: int):
-        response_messages = self.queue.receive_messages(QueueUrl=self.queue_str,
+        response_messages = self.queue.receive_messages(QueueUrl=self.queue_url,
                                                         MaxNumberOfMessages=max_number_of_messages)
         if len(response_messages) != 0:
             logging.info(f'response_message content:{response_messages[0].body}')
@@ -74,7 +74,7 @@ class SqsProcessor:
 
     # todo finish test
     def complete_processing_message(self, message):
-        self.send_message(message.body, self.return_queue_str)
+        self.send_message(message.body, self.return_queue_url)
         message.delete()
         logging.info(f'Message: {message} is deleted')
 
