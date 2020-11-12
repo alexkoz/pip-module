@@ -60,12 +60,16 @@ class SimilarityProcessor:
             logging.info(f'Start processing key:{s3_key}')
             step_result = json.loads(s3_helper.read_s3_object(s3_key))
             if s3_key in panos:
-                panos[s3_key] = {**step_result,
-                                 **panos[s3_key]}
-                logging.info(f'Key:{s3_key} is in list and merged:{panos[s3_key]}')
+                for pano in message_object['panos']:
+                    if os.path.basename(pano['fileUrl']) == s3_key.split('/')[-2]:
+                        panos[s3_key]['layout'] = step_result  # {**step_result, **panos[s3_key]}
+                        logging.info(f'Key:{s3_key} is in list and merged:{panos[s3_key]}')
             else:
-                panos[s3_key] = step_result
-                logging.info(f'Key:{s3_key} is not in list. Result:{step_result}')
+                for pano in message_object['panos']:
+                    if os.path.basename(pano['fileUrl']) == s3_key.split('/')[-2]:
+                        panos[s3_key] = pano
+                        panos[s3_key]['layout'] = step_result
+                        logging.info(f'Key:{s3_key} is not in list. Result:{step_result}')
 
         message_object[StringConstants.PANOS_KEY] = list(panos.values())
         logging.info(f'Returning message with {len(message_object[StringConstants.PANOS_KEY])} panos')

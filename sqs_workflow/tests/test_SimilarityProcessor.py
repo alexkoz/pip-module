@@ -61,15 +61,15 @@ class TestSimilarityProcessor(TestCase):
             "floor": 1,
             "fpUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/76fu441i6j/5f0f90925e8a061aff256c76/Tour/map-images/1-floor-5i2cvu550f.jpg",
             "panos": [
-                { "createdDate": "16.07.2020 02:26:13",
-                    "fileUrl": "http://domen.com/img1.JPG"},
+                {"createdDate": "16.07.2020 02:26:13",
+                 "fileUrl": "http://domen.com/img1.JPG"},
                 {"createdDate": "18.07.2020 02:43:13",
-                    "fileUrl": "http://domen.com/img2.JPG"}]
+                 "fileUrl": "http://domen.com/img2.JPG"}]
         }
 
         list_result = ['api/inference/ROOMBOX/1111/img1.JPG/result.json',
                        'api/inference/ROOMBOX/1111/img2.JPG/result.json']
-        new_message_object = SimilarityProcessor.assemble_results_into_document(s3_helper_mock, message_object, list_result)
-        print(2)
-
-        pass
+        new_message_object = SimilarityProcessor.assemble_results_into_document(s3_helper_mock, message_object,
+                                                                                list_result)
+        self.assertEqual(new_message_object['panos'][0]['fileUrl'], "http://domen.com/img1.JPG")
+        self.assertEqual(new_message_object['panos'][1]['fileUrl'], "http://domen.com/img2.JPG")
