@@ -53,16 +53,18 @@ class SimilarityProcessor:
     @staticmethod
     def assemble_results_into_document(s3_helper: S3Helper, message_object, list_results_keys):
 
+        # roombox result file = [{"x": 134.97460548852348, "y": -81.00949136890486, "type": "corner"}, {"x": 44.89013987568783, "y": 60.57382621349592, "type": "corner"}, {"x": 44.89014792056024, "y": -81.02934636352592, "type": "corner"}, {"x": 135.09895116736456, "y": 60.46545130151028, "type": "corner"}, {"x": -45.19433210114725, "y": -81.00949490730395, "type": "corner"}, {"x": -135.02197578544292, "y": 60.3577862900935, "type": "corner"}, {"x": -135.0219838079359, "y": -80.98968655382886, "type": "corner"}, {"x": -45.31867775760836, "y": 60.46545483988379, "type": "corner"}]
+
         panos = {}
         for s3_key in list_results_keys:
             logging.info(f'Start processing key:{s3_key}')
             step_result = json.loads(s3_helper.read_s3_object(s3_key))
-            if step_result[StringConstants.PANO_URL_KEY] in panos:
-                panos[step_result[StringConstants.PANO_URL_KEY]] = {**step_result,
-                                                                    **panos[step_result[StringConstants.PANO_URL_KEY]]}
-                logging.info(f'Key:{s3_key} is in list and merged:{panos[step_result[StringConstants.PANO_URL_KEY]]}')
+            if s3_key in panos:
+                panos[s3_key] = {**step_result,
+                                 **panos[s3_key]}
+                logging.info(f'Key:{s3_key} is in list and merged:{panos[s3_key]}')
             else:
-                panos[step_result[StringConstants.PANO_URL_KEY]] = step_result
+                panos[s3_key] = step_result
                 logging.info(f'Key:{s3_key} is not in list. Result:{step_result}')
 
         message_object[StringConstants.PANOS_KEY] = list(panos.values())
