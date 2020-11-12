@@ -79,10 +79,11 @@ class SqsProcessor:
         message.delete()
         logging.info(f'Message: {message} is deleted')
 
-    def create_path_and_save_on_s3(self, message_type, inference_id, processing_result):
+    def create_path_and_save_on_s3(self, message_type, inference_id, processing_result, image_id='asset'):
         s3_path = self.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                             message_type,
                                             inference_id,
+                                            image_id,
                                             StringConstants.RESULT_FILE_NAME)
 
         self.s3_helper.save_object_on_s3(s3_path, processing_result)
@@ -97,7 +98,6 @@ class SqsProcessor:
         if message_type == ProcessingTypesEnum.Similarity.value and SimilarityProcessor.is_similarity_ready(
                 self.s3_helper,
                 message_object):
-
             processing_result = self.run_process(self.similarity_executable,
                                                  self.similarity_script,
                                                  json.dumps(message_object))
@@ -137,8 +137,9 @@ class SqsProcessor:
         return subprocess_result.stdout
 
     @staticmethod
-    def create_result_s3_key(path_to_s3: str, inference_type: str, inference_id: str, filename: str) -> str:
-        s3_path = os.path.join(path_to_s3, inference_type, inference_id, filename)
+    def create_result_s3_key(path_to_s3: str, inference_type: str, inference_id: str, image_id: str,
+                             filename: str) -> str:
+        s3_path = os.path.join(path_to_s3, inference_type, inference_id, image_id, filename)
         logging.info(f'Created s3 path')
         return s3_path
 

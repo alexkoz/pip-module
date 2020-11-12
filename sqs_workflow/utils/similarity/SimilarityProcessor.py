@@ -1,9 +1,11 @@
 import json
 import logging
+import os
 
 import numpy as np
 
 from sqs_workflow.aws.s3.S3Helper import S3Helper
+from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.Utils import Utils
 
@@ -29,7 +31,15 @@ class SimilarityProcessor:
                 for step in message_object['steps']:
                     logging.info(f'Start processing panorama:{panorama} for step:{step}')
 
-                    s3_result_key = ""
+                    # todo fix processor / static method
+                    inference_id = 'something'
+                    processor = SqsProcessor()
+                    s3_result_key = processor.create_result_s3_key(StringConstants.COMMON_PREFIX,
+                                                                   step,
+                                                                   inference_id,
+                                                                   os.path.basename(message_object['documentPath']),
+                                                                   StringConstants.RESULT_FILE_NAME)
+
                     if not s3_helper.is_object_exist(s3_result_key):
                         logging.info(f'Could not find result for panorama:{panorama} for step:{step}')
                         logging.info(f'Similarity step document for panorma:{panorama} is not ready yet')
