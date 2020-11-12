@@ -29,7 +29,7 @@ class SqsProcessor:
 
     queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
     queue_str = os.environ['QUEUE_LINK']
-    return_queue_str = os.environ['RETURN_QUEUE_LINK']
+    return_queue_str = os.environ['QUEUE_LINK'] + "-return-queue"
 
     def __init__(self):
         self.similarity_executable = os.environ['SIMILARITY_EXECUTABLE']
@@ -44,11 +44,9 @@ class SqsProcessor:
         return attr_value
 
     def send_message(self, message_body, queue_url):
-        req_send = self.queue.send_message(QueueUrl=queue_url, MessageBody=message_body)
-
-        logging.info(req_send)
-        logging.info(f'Message body:{message_body}')
-        return req_send
+        response_send = self.queue.send_message(QueueUrl=queue_url, MessageBody=message_body)
+        logging.info(f'Sent message:{message_body} to queue:{queue_url}')
+        return response_send
 
     def receive_messages(self, max_number_of_messages: int):
         response_messages = self.queue.receive_messages(QueueUrl=self.queue_str,
@@ -82,10 +80,10 @@ class SqsProcessor:
 
     def create_path_and_save_on_s3(self, message_type, inference_id, processing_result, image_id='asset'):
         s3_path = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
-                                            message_type,
-                                            inference_id,
-                                            image_id,
-                                            StringConstants.RESULT_FILE_NAME)
+                                             message_type,
+                                             inference_id,
+                                             image_id,
+                                             StringConstants.RESULT_FILE_NAME)
 
         self.s3_helper.save_object_on_s3(s3_path, processing_result)
         logging.info(f'Created S3 object key:{s3_path} content:{processing_result}')
@@ -96,14 +94,20 @@ class SqsProcessor:
         message_object = json.loads(message_body)
         inference_id = message_object['inferenceId']
         assert inference_id
-        if message_type == ProcessingTypesEnum.Similarity.value and SimilarityProcessor.is_similarity_ready(
+        if message_type == ProcessingTypesEnum.Similarity.value:
+            logging.info(f'Start processing similarity inference:{inference_id}')
+            document_object = SimilarityProcessor.is_similarity_ready(
                 self.s3_helper,
-                message_object):
-            processing_result = self.run_process(self.similarity_executable,
-                                                 self.similarity_script,
-                                                 json.dumps(message_object))
-            self.create_path_and_save_on_s3(message_type, inference_id, processing_result)
-            return processing_result
+                message_object)
+            if document_object is not None:
+                processing_result = self.run_process(self.similarity_executable,
+                                                     self.similarity_script,
+                                                     json.dumps(document_object))
+                self.create_path_and_save_on_s3(message_type, inference_id, processing_result)
+                return processing_result
+            else:
+                logging.info(f'Document is under processing inference:{inference_id}')
+                return None
 
         if StringConstants.PRY_KEY not in message_object or message_type == ProcessingTypesEnum.RMatrix.value:
             url_hash = hashlib.md5(message_object[StringConstants.PANO_URL_KEY].encode('utf-8')).hexdigest()
@@ -136,7 +140,6 @@ class SqsProcessor:
         logging.info('subprocess_result.return_code =', subprocess_result.returncode)
         logging.info('subprocess_result.stdout =', subprocess_result.stdout)
         return subprocess_result.stdout
-
 
     def check_pry_on_s3(self, url_hash: str) -> str:
         path_to_folder = StringConstants.COMMON_PREFIX + '/' + StringConstants.R_MATRIX_KEY + '/' + url_hash + '/'
