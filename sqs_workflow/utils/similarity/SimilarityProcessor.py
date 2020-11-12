@@ -5,7 +5,6 @@ import os
 import numpy as np
 
 from sqs_workflow.aws.s3.S3Helper import S3Helper
-from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.Utils import Utils
 
@@ -33,8 +32,7 @@ class SimilarityProcessor:
 
                     # todo fix processor / static method
                     inference_id = 'something'
-                    processor = SqsProcessor()
-                    s3_result_key = processor.create_result_s3_key(StringConstants.COMMON_PREFIX,
+                    s3_result_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                                                    step,
                                                                    inference_id,
                                                                    os.path.basename(message_object['documentPath']),

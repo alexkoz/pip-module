@@ -1,6 +1,7 @@
 from unittest import TestCase
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
+from sqs_workflow.utils.Utils import Utils
 import os
 
 
@@ -19,7 +20,7 @@ class TestS3(TestCase):
 
         message_type = 'test_type'
         inference_id = 'test_inference'
-        s3_key = processor.create_result_s3_key('api/inference/', message_type, inference_id, 'result')
+        s3_key = Utils.create_result_s3_key('api/inference/', message_type, inference_id, 'result')
         for i in range(5):
             name = s3_key + '-file_' + str(i) + '.json'
             content = 'some-body-content-' + str(i)

@@ -10,6 +10,7 @@ from sqs_workflow.tests.QueueMock import QueueMock
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.aws.s3.S3Helper import S3Helper
+from sqs_workflow.utils.Utils import Utils
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -41,7 +42,7 @@ class TestSqsProcessor(TestCase):
 
     def test_create_result_s3_key(self):
         self.assertEqual(
-            self.processor.create_result_s3_key('path_to_s3',
+            Utils.create_result_s3_key('path_to_s3',
                                                 'test_inference_type',
                                                 'test_inference_id',
                                                 'filename'),

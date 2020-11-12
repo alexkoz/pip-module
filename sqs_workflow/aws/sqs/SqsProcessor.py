@@ -13,6 +13,7 @@ from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
+from sqs_workflow.utils.Utils import Utils
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -80,7 +81,7 @@ class SqsProcessor:
         logging.info(f'Message: {message} is deleted')
 
     def create_path_and_save_on_s3(self, message_type, inference_id, processing_result, image_id='asset'):
-        s3_path = self.create_result_s3_key(StringConstants.COMMON_PREFIX,
+        s3_path = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                             message_type,
                                             inference_id,
                                             image_id,
@@ -136,12 +137,6 @@ class SqsProcessor:
         logging.info('subprocess_result.stdout =', subprocess_result.stdout)
         return subprocess_result.stdout
 
-    @staticmethod
-    def create_result_s3_key(path_to_s3: str, inference_type: str, inference_id: str, image_id: str,
-                             filename: str) -> str:
-        s3_path = os.path.join(path_to_s3, inference_type, inference_id, image_id, filename)
-        logging.info(f'Created s3 path')
-        return s3_path
 
     def check_pry_on_s3(self, url_hash: str) -> str:
         path_to_folder = StringConstants.COMMON_PREFIX + '/' + StringConstants.R_MATRIX_KEY + '/' + url_hash + '/'
