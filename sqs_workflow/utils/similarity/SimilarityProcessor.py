@@ -49,11 +49,8 @@ class SimilarityProcessor:
             logging.info(f'All {len(list_results_keys)} steps for similarity are done.')
         return document_object
 
-    # todo test method
     @staticmethod
     def assemble_results_into_document(s3_helper: S3Helper, message_object, list_results_keys):
-
-        # roombox result file = [{"x": 134.97460548852348, "y": -81.00949136890486, "type": "corner"}, {"x": 44.89013987568783, "y": 60.57382621349592, "type": "corner"}, {"x": 44.89014792056024, "y": -81.02934636352592, "type": "corner"}, {"x": 135.09895116736456, "y": 60.46545130151028, "type": "corner"}, {"x": -45.19433210114725, "y": -81.00949490730395, "type": "corner"}, {"x": -135.02197578544292, "y": 60.3577862900935, "type": "corner"}, {"x": -135.0219838079359, "y": -80.98968655382886, "type": "corner"}, {"x": -45.31867775760836, "y": 60.46545483988379, "type": "corner"}]
 
         panos = {}
         for s3_key in list_results_keys:
@@ -61,13 +58,13 @@ class SimilarityProcessor:
             step_result = json.loads(s3_helper.read_s3_object(s3_key))
             s3_key_short = '/'.join(s3_key.split('/')[-3:])
             if s3_key_short in panos:
-                for pano in message_object['panos']:
-                    if os.path.basename(pano['fileUrl']) == s3_key.split('/')[-2]:  # img1.JPG/result.json
-                        panos[s3_key_short]['layout'].extend(step_result)  # {**step_result, **panos[s3_key]}
+                for pano in message_object[StringConstants.PANOS_KEY]:
+                    if os.path.basename(pano[StringConstants.PANO_URL_KEY]) == s3_key.split('/')[-2]:
+                        panos[s3_key_short]['layout'].extend(step_result)
                         logging.info(f'Key: {s3_key} is in list and merged: {panos[s3_key_short]}')
             else:
-                for pano in message_object['panos']:
-                    if os.path.basename(pano['fileUrl']) == s3_key.split('/')[-2]:
+                for pano in message_object[StringConstants.PANOS_KEY]:
+                    if os.path.basename(pano[StringConstants.PANO_URL_KEY]) == s3_key.split('/')[-2]:
                         panos[s3_key_short] = pano
                         panos[s3_key_short]['layout'] = step_result
                         logging.info(f'Key: {s3_key_short} is not in list. Result: {step_result}')

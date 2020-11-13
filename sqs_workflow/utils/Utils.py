@@ -11,7 +11,7 @@ class Utils:
     def create_result_s3_key(path_to_s3: str, inference_type: str, inference_id: str, image_id: str,
                              filename: str) -> str:
         s3_path = os.path.join(path_to_s3, inference_type, inference_id, image_id, filename)
-        logging.info(f'Created s3 path')
+        logging.info(f'Created s3 path:{s3_path}')
         return s3_path
 
     @staticmethod

@@ -1,7 +1,7 @@
 class StringConstants:
     RESULT_FILE_NAME: str = 'result.json'
     COMMON_PREFIX: str = 'api/inference'
-    PRY_KEY: str = 'pry'
+    PRY_MATRIX_KEY: str = 'pry'
     DOCUMENT_PATH_KEY: str = "documentPath"
     STEPS_DOCUMENT_PATH_KEY: str = "stepsDocumentPath"
     PANO_URL_KEY: str = 'fileUrl'

@@ -12,8 +12,8 @@ from sqs_workflow.AlertService import AlertService
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
-from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
 from sqs_workflow.utils.Utils import Utils
+from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -67,7 +67,7 @@ class SqsProcessor:
             else:
                 attempts += 1
                 time.sleep(2)
-            logging.info(f'attempts = {attempts}')
+            logging.info(f'attempts:{attempts} left')
         if attempts == 7:
             logging.info(f'Out of attempts')
         return list_of_messages
@@ -78,7 +78,7 @@ class SqsProcessor:
         message.delete()
         logging.info(f'Message: {message} is deleted')
 
-    def create_path_and_save_on_s3(self, message_type, inference_id, processing_result, image_id='asset'):
+    def create_path_and_save_on_s3(self, message_type: str, inference_id: str, processing_result, image_id='asset'):
         s3_path = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                              message_type,
                                              inference_id,
@@ -109,22 +109,35 @@ class SqsProcessor:
                 logging.info(f'Document is under processing inference:{inference_id}')
                 return None
 
-        if StringConstants.PRY_KEY not in message_object or message_type == ProcessingTypesEnum.RMatrix.value:
+        image_id = os.path.basename(message_object[StringConstants.PANO_URL_KEY])
+
+        if StringConstants.PRY_MATRIX_KEY not in message_object or message_type == ProcessingTypesEnum.RMatrix.value:
             url_hash = hashlib.md5(message_object[StringConstants.PANO_URL_KEY].encode('utf-8')).hexdigest()
-            processing_result = self.check_pry_on_s3(url_hash)
+            processing_result = self.check_pry_on_s3(message_type,
+                                                     url_hash,
+                                                     image_id)
             if processing_result is None:
                 logging.info('Processing result is None')
                 processing_result = self.run_process(self.rmatrix_executable,
                                                      self.rmatrix_script,
                                                      message_body)
-                self.create_path_and_save_on_s3(message_type, inference_id, processing_result)
-        message_object[StringConstants.PRY_KEY] = processing_result
+                self.create_path_and_save_on_s3(message_type,
+                                                url_hash,
+                                                processing_result,
+                                                image_id)
+
+        message_object[StringConstants.PRY_MATRIX_KEY] = processing_result
 
         if message_type == ProcessingTypesEnum.RoomBox.value:
             processing_result = self.run_process(self.roombox_executable,
                                                  self.roombox_script,
                                                  json.dumps(message_object))
-            self.create_path_and_save_on_s3(message_type, inference_id, processing_result)
+
+        logging.info(f"Finished processing and save result on s3.")
+        self.create_path_and_save_on_s3(message_type,
+                                        inference_id,
+                                        processing_result,
+                                        image_id)
         return processing_result
 
     def run_process(self, executable, script, message_body) -> str:
@@ -137,20 +150,25 @@ class SqsProcessor:
             at_moment_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             message = f'{at_moment_time}\n SQS processing has failed for process:{executable} script:{script} message:{message_body}.'
             self.alert_service.send_slack_message(message, 0)
-        logging.info('subprocess_result.return_code =', subprocess_result.returncode)
-        logging.info('subprocess_result.stdout =', subprocess_result.stdout)
+        logging.info(f'subprocess code:{subprocess_result.returncode} output:{subprocess_result.stdout}')
         return subprocess_result.stdout
 
-    def check_pry_on_s3(self, url_hash: str) -> str:
-        path_to_folder = StringConstants.COMMON_PREFIX + '/' + StringConstants.R_MATRIX_KEY + '/' + url_hash + '/'
-        result = self.s3_helper.is_object_exist(path_to_folder)
+    def check_pry_on_s3(self, message_type: str, url_hash: str, image_id: str) -> str:
+
+        result_s3_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
+                                                   message_type,
+                                                   url_hash,
+                                                   image_id,
+                                                   StringConstants.RESULT_FILE_NAME)
+
+        result = self.s3_helper.is_object_exist(result_s3_key)
         if result is True:
             s3 = boto3.resource('s3')
-            path_to_file = os.path.join(path_to_folder, StringConstants.RESULT_FILE_NAME)
+            path_to_file = os.path.join(result_s3_key, StringConstants.RESULT_FILE_NAME)
             result_object = s3.Object(self.s3_helper.s3_bucket, path_to_file)
             body = result_object.get()['Body'].read().decode('utf-8')
-            logging.info(f'result.json in {path_to_folder} exists')
+            logging.info(f'result.json in {result_s3_key} exists')
             return body
         else:
-            logging.info(f'result.json in {path_to_folder} does not exist')
+            logging.info(f'result.json in {result_s3_key} does not exist')
             return None  # return None when -> str ?
