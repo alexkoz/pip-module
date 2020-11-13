@@ -65,18 +65,18 @@ class TestSimilarityProcessor(TestCase):
                  "fileUrl": "http://domen.com/img1.JPG"},
                 {"createdDate": "18.07.2020 02:43:15",
                  "fileUrl": "http://domen.com/img2.JPG"},
-                {"createdDate": "20.07.2020 04:51:23",
-                 "fileUrl": "http://domen.com/img3.JPG"},
-                {"createdDate": "21.07.2020 11:07:63",
-                 "fileUrl": "http://domen.com/img4.JPG"}
+                # {"createdDate": "20.07.2020 04:51:23",
+                #  "fileUrl": "http://domen.com/img3.JPG"},
+                # {"createdDate": "21.07.2020 11:07:63",
+                #  "fileUrl": "http://domen.com/img4.JPG"}
             ]
         }
         list_result = ['api/inference/ROOM_BOX/1111/img1.JPG/result.json',
                        'api/inference/ROOM_BOX/1111/img2.JPG/result.json',
-                       'api/inference/DOOR_DETECTION/2222/img3.JPG/result.json',
-                       'api/inference/DOOR_DETECTION/2222/img4.JPG/result.json']
+                       'api/inference/DOOR_DETECTION/1111/img1.JPG/result.json',
+                       'api/inference/DOOR_DETECTION/1111/img2.JPG/result.json']
         new_message_object = SimilarityProcessor.assemble_results_into_document(s3_helper_mock, message_object,
                                                                                 list_result)
         self.assertEqual(new_message_object['panos'][0]['fileUrl'], "http://domen.com/img1.JPG")
-        self.assertEqual(new_message_object['panos'][1]['fileUrl'], "http://domen.com/img2.JPG")
-        self.assertEqual(new_message_object['panos'][2]['layout'][0]['id'], 'door_108')
+        self.assertEqual(new_message_object['panos'][1]['layout'][0]['type'], 'corner')
+        self.assertEqual(new_message_object['panos'][1]['layout'][8]['id'], 'door_108')
