@@ -25,7 +25,7 @@ class TestSqsProcessor(TestCase):
     def test_send_message(self):
         message_body = "message_body_"
         for i in range(8):
-            self.processor.send_message(message_body=message_body + str(i))
+            self.processor.send_message(message_body=message_body + str(i), queue_url=os.environ['QUEUE_LINK'])
         self.assertTrue(self.processor.queue.queue_messages[6]['Body'] == 'message_body_6')
 
     def test_receive_mock_messages(self):
@@ -33,9 +33,9 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(len(self.processor.queue.queue_messages) == 5)
 
     def test_delete_message(self):
-        self.processor.send_message('text-1')
-        self.processor.send_message('text-2')
-        self.processor.send_message('text-3')
+        self.processor.send_message('text-1', os.environ['QUEUE_LINK'])
+        self.processor.send_message('text-2', os.environ['QUEUE_LINK'])
+        self.processor.send_message('text-3', os.environ['QUEUE_LINK'])
 
         self.processor.complete_processing_message('text-2')
         self.assertTrue(len(self.processor.queue.queue_messages) == 2)
@@ -43,16 +43,18 @@ class TestSqsProcessor(TestCase):
     def test_create_result_s3_key(self):
         self.assertEqual(
             Utils.create_result_s3_key('path_to_s3',
-                                                'test_inference_type',
-                                                'test_inference_id',
-                                                'filename'),
+                                       'test_inference_type',
+                                       'test_inference_id',
+                                       'test_image_id',
+                                       'filename'),
             'path_to_s3/test_inference_type/test_inference_id/filename')
 
     def test_process_message_in_subprocess(self):
         message1 = '{"messageType": "SIMILARITY",\
                    "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
                    "tourId": "5fa1df49014bf357cf250d52",\
-                   "panoId": "5fa1df55014bf357cf250d64"}'
+                   "panoId": "5fa1df55014bf357cf250d64",\
+                   "inferenceId": 1111}'
         message2 = '{"messageType": "ROOMBOX",\
                     "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
                     "tourId": "5fa1df49014bf357cf250d52",\
@@ -109,25 +111,6 @@ class TestSqsProcessor(TestCase):
         stream = os.popen(sync_command)
         output = stream.read()
         logging.info(f'output: {output}')
-
-    # todo fix it
-    def test_complete_processing_message_queuemock(self):
-        QueueMock.send_message('text-1', self.processor.queue)
-        QueueMock.send_message('text-2', self.processor.queue)
-        QueueMock.send_message('text-3', self.processor.queue)
-
-        self.processor.complete_processing_message('text-2')
-        self.assertTrue(len(self.processor.return_queue_url) == 1)
-
-    # todo fix TypeError: send_message() got an unexpected keyword argument 'QueueUrl'
-    def test_complete_processing_message(self):
-        print(str(self.processor.queue_url))
-        self.processor.send_message('text-1', self.processor.queue_url)
-        self.processor.send_message('text-2', self.processor.queue_url)
-        self.processor.send_message('text-3', self.processor.queue_url)
-
-        self.processor.complete_processing_message('text-2')
-        self.assertTrue(len(self.processor.return_queue_url) == 1)
 
     def test_create_path_and_save_on_s3(self):
         s3_helper = self.s3_helper

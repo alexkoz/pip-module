@@ -1,5 +1,10 @@
 # sqs_workflow module
 
+Before run an application do:
+```bash
+bash aids/environment.sh
+```
+
 Environment variables:
 
 ```S3_BUCKET```  – Name of your S3 bucket. S3://your-bucket-name/
@@ -14,7 +19,7 @@ Environment variables:
 
 ```QUEUE_LINK``` – SQS Queue URL
 
-```SIMILARITY_SCRIPT``` – Path to 1st dummy script. aids/dummy_similatiry.py
+```SIMILARITY_SCRIPT``` – Path to 1st dummy script. aids/dummy_similarity.py
 
 ```SIMILARITY_EXECUTABLE``` – Path to executing module for 1st dummy script
 

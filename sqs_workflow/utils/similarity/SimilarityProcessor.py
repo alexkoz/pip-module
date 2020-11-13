@@ -3,7 +3,6 @@ import logging
 import os
 
 import numpy as np
-
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.Utils import Utils
@@ -20,14 +19,14 @@ class SimilarityProcessor:
         else:
             steps_document = json.loads(
                 Utils.download_from_http(message_object[StringConstants.STEPS_DOCUMENT_PATH_KEY]))
-            logging.info(f'There is no similarity document:{steps_document}')
+            logging.info(f'There is no similarity document: {steps_document}')
             list_results_keys = []
             for panorama in steps_document[StringConstants.PANOS_KEY]:
 
-                logging.info(f'Start processing step:{panorama}')
+                logging.info(f'Start processing panorama: {panorama}')
 
-                for step in steps_document[StringConstants.STEPS]:
-                    logging.info(f'Start processing panorama:{panorama} for step:{step}')
+                for step in message_object[StringConstants.STEPS]:
+                    logging.info(f'Start processing panorama: {panorama} for step: {step}')
                     s3_result_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                                                step,
                                                                str(message_object[StringConstants.INFERENCE_ID_KEY]),
@@ -35,12 +34,12 @@ class SimilarityProcessor:
                                                                StringConstants.RESULT_FILE_NAME)
 
                     if not s3_helper.is_object_exist(s3_result_key):
-                        logging.info(f'Could not find result for panorama:{panorama} for step:{step}')
-                        logging.info(f'Similarity step document for panorma:{panorama} is not ready yet')
+                        logging.info(f'Could not find result for panorama: {panorama} for step: {step}')
+                        logging.info(f'Similarity step document for panorma: {panorama} is not ready yet')
                         return None
                     else:
                         list_results_keys.append(s3_result_key)
-                        logging.info(f'Panorama:{panorama} for step:{step}, key:{s3_result_key} is processed')
+                        logging.info(f'Panorama: {panorama} for step: {step}, key: {s3_result_key} is processed')
 
             document_object = SimilarityProcessor.assemble_results_into_document(
                 s3_helper,
@@ -49,11 +48,8 @@ class SimilarityProcessor:
             logging.info(f'All {len(list_results_keys)} steps for similarity are done.')
         return document_object
 
-    # todo test method
     @staticmethod
     def assemble_results_into_document(s3_helper: S3Helper, message_object, list_results_keys):
-
-        # roombox result file = [{"x": 134.97460548852348, "y": -81.00949136890486, "type": "corner"}, {"x": 44.89013987568783, "y": 60.57382621349592, "type": "corner"}, {"x": 44.89014792056024, "y": -81.02934636352592, "type": "corner"}, {"x": 135.09895116736456, "y": 60.46545130151028, "type": "corner"}, {"x": -45.19433210114725, "y": -81.00949490730395, "type": "corner"}, {"x": -135.02197578544292, "y": 60.3577862900935, "type": "corner"}, {"x": -135.0219838079359, "y": -80.98968655382886, "type": "corner"}, {"x": -45.31867775760836, "y": 60.46545483988379, "type": "corner"}]
 
         panos = {}
         for s3_key in list_results_keys:
@@ -62,8 +58,8 @@ class SimilarityProcessor:
             s3_key_short = '/'.join(s3_key.split('/')[-3:])
             if s3_key_short in panos:
                 for pano in message_object['panos']:
-                    if os.path.basename(pano['fileUrl']) == s3_key.split('/')[-2]:  # img1.JPG/result.json
-                        panos[s3_key_short]['layout'].extend(step_result)  # {**step_result, **panos[s3_key]}
+                    if os.path.basename(pano['fileUrl']) == s3_key.split('/')[-2]:  # img1.JPG from ../img1.JPG/result.json
+                        panos[s3_key_short]['layout'].extend(step_result)
                         logging.info(f'Key: {s3_key} is in list and merged: {panos[s3_key_short]}')
             else:
                 for pano in message_object['panos']:

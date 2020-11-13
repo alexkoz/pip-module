@@ -8,4 +8,4 @@ setup(name='sqs_workflow',
       author_email='alex.d.kozlov@gmail.com',
       # license='MIT',
       packages=['sqs_workflow'],
-      zip_safe=False)
+      zip_safe=False, install_requires=['numpy'])
