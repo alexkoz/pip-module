@@ -3,6 +3,7 @@ import logging
 import os
 
 import numpy as np
+
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.Utils import Utils
@@ -57,13 +58,13 @@ class SimilarityProcessor:
             step_result = json.loads(s3_helper.read_s3_object(s3_key))
             s3_key_short = '/'.join(s3_key.split('/')[-3:])
             if s3_key_short in panos:
-                for pano in message_object['panos']:
-                    if os.path.basename(pano['fileUrl']) == s3_key.split('/')[-2]:  # img1.JPG from ../img1.JPG/result.json
+                for pano in message_object[StringConstants.PANOS_KEY]:
+                    if os.path.basename(pano[StringConstants.PANO_URL_KEY]) == s3_key.split('/')[-2]:
                         panos[s3_key_short]['layout'].extend(step_result)
                         logging.info(f'Key: {s3_key} is in list and merged: {panos[s3_key_short]}')
             else:
-                for pano in message_object['panos']:
-                    if os.path.basename(pano['fileUrl']) == s3_key.split('/')[-2]:
+                for pano in message_object[StringConstants.PANOS_KEY]:
+                    if os.path.basename(pano[StringConstants.PANO_URL_KEY]) == s3_key.split('/')[-2]:
                         panos[s3_key_short] = pano
                         panos[s3_key_short]['layout'] = step_result
                         logging.info(f'Key: {s3_key_short} is not in list. Result: {step_result}')
