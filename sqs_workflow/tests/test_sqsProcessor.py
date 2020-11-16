@@ -57,8 +57,8 @@ class TestSqsProcessor(TestCase):
                     "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
                     "tourId": "5fa1df49014bf357cf250d52",\
                     "panoId": "5fa1df55014bf357cf250d64"}'
-        self.assertIsNone(self.processor.process_message_in_subprocess(StringConstants.SIMILARITY_KEY, message1))
-        self.assertIsNone(self.processor.process_message_in_subprocess('ROOMBOX', message2))
+        self.assertIsNone(self.processor.process_message_in_subprocess(message1))
+        self.assertIsNone(self.processor.process_message_in_subprocess(message2))
 
     def test_fail_in_subprocess(self):
         common_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow', 'aids')

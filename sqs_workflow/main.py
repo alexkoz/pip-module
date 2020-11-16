@@ -18,8 +18,8 @@ if __name__ == '__main__':
     logging.info('Pulled message')
     while len(list_of_messages) > 0:
         for message in list_of_messages:
-            message_type = processor.get_attr_value(message, 'messageType')
-            processor.process_message_in_subprocess(message_type, message.body)
+            message_body = processor.prepare_for_processing(message.body)
+            processor.process_message_in_subprocess(message_body)
             processor.complete_processing_message(message)
         logging.info(f"Start pulling messages")
         list_of_messages = processor.pull_messages(1)

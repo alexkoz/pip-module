@@ -77,7 +77,7 @@ for i in range(panos_counter + 1):
             #     message_type = 'SIMILARITY'
         else:
             message_type = 'ROOM_BOX'
-        processor.process_message_in_subprocess(message_type, message.body)
+        processor.process_message_in_subprocess(message.body)
 
 # todo read json
 # todo get all panos out of

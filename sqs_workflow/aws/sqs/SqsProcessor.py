@@ -27,6 +27,8 @@ class SqsProcessor:
 
     sqs_client = boto3.resource('sqs')
 
+    input_processing_directory = os.environ['INPUT_DIRECTORY']
+    output_processing_directory = os.environ['OUTPUT_DIRECTORY']
     queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
     queue_url = os.environ['QUEUE_LINK']
     return_queue_url = os.environ['QUEUE_LINK'] + "-return-queue"
@@ -88,11 +90,12 @@ class SqsProcessor:
         self.s3_helper.save_object_on_s3(s3_path, processing_result)
         logging.info(f'Created S3 object key:{s3_path} content:{processing_result}')
 
-    def process_message_in_subprocess(self, message_type, message_body) -> str:
+    def process_message_in_subprocess(self, message_body: str) -> str:
         processing_result = None
-        logging.info('Message type of message: ', message_type)
         message_object = json.loads(message_body)
-        inference_id = message_object['inferenceId']
+        inference_id = message_object[StringConstants.INFERENCE_ID_KEY]
+        message_type = message_object[StringConstants.MESSAGE_TYPE_KEY]
+        logging.info('Message type of message: ', message_type)
         assert inference_id
         if message_type == ProcessingTypesEnum.Similarity.value:
             logging.info(f'Start processing similarity inference:{inference_id}')
@@ -140,7 +143,7 @@ class SqsProcessor:
                                         image_id)
         return processing_result
 
-    def run_process(self, executable, script, message_body) -> str:
+    def run_process(self, executable: str, script: str, message_body: str) -> str:
         subprocess_result = subprocess.run([executable,
                                             script,
                                             message_body],
@@ -172,3 +175,41 @@ class SqsProcessor:
         else:
             logging.info(f'result.json in {result_s3_key} does not exist')
             return None  # return None when -> str ?
+
+    def prepare_for_processing(self, message_body) -> str:
+
+        message_object = json.loads(message_body)
+        message_type = message_object[StringConstants.MESSAGE_TYPE_KEY]
+
+        if message_type == ProcessingTypesEnum.Similarity.value:
+            file_name = os.path.basename(message_object[StringConstants.DOCUMENT_PATH_KEY])
+        else:
+            file_name = os.path.basename(message_object[StringConstants.PANO_URL_KEY])
+
+        url_hash = hashlib.md5(file_name.encode('utf-8')).hexdigest()
+
+        input_path = os.path.join(self.input_processing_directory, url_hash)
+        output_path = os.path.join(self.output_processing_directory, url_hash)
+
+        try:
+            os.mkdir(input_path)
+            os.mkdir(output_path)
+        except OSError:
+            logging.error(f"Creation of the directory input:{input_path} or output:{output_path}  failed")
+            raise
+        logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
+        Utils.download_from_http(os.path.join(input_path, file_name))
+
+        if message_type == ProcessingTypesEnum.RMatrix.value:
+            pass
+        if message_type == ProcessingTypesEnum.RoomBox.value:
+            pass
+        if message_type == ProcessingTypesEnum.DoorDetecting.value:
+            pass
+        if message_type == ProcessingTypesEnum.Similarity.value:
+            pass
+
+        # todo dowload images if neccessary
+        # todo create needed argumetns for a processing
+        # todo return message with improved parameters.
+        return json.dumps(message_object)
