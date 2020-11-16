@@ -23,13 +23,21 @@ Environment variables:
 
 ```SIMILARITY_EXECUTABLE``` – Path to executing module for 1st dummy script
 
-```ROOMBOX_SCRIPT``` – Path to 2nd dummy script. aids/dummy_roombox.py
+```ROOM_BOX_SCRIPT``` – Path to 2nd dummy script. aids/dummy_roombox.py
 
-```ROOMBOX_EXECUTABLE```  – Path to executing module for 2nd dummy script
+```ROOM_BOX_EXECUTABLE```  – Path to executing module for 2nd dummy script
 
-```RMATRIX_SCRIPT``` – Path to 3rd dummy script. aids/dummy_rmatrix.py
+```R_MATRIX_SCRIPT``` – Path to 3rd dummy script. aids/dummy_rmatrix.py
 
-```RMATRIX_EXECUTABLE``` – Path to executing module for 3rd dummy script
+```R_MATRIX_EXECUTABLE``` – Path to executing module for 3rd dummy script
+
+```DOOR_DETECTION_SCRIPT``` – Path to 4th dummy script. aids/dummy_dd.py
+
+```DOOR_DETECTION_EXECUTABLE``` – Path to executing module for 4th dummy script
+
+```INPUT_DIRECTORY``` – Path to input directory for the prepare-for-processing method
+
+```OUTPUT_DIRECTORY``` – Path to output directory for the prepare-for-processing method
 
 ```SLACK_URL``` – Your Slack App Incoming Webhook URL
 
