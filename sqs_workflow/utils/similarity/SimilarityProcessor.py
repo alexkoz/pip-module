@@ -20,14 +20,14 @@ class SimilarityProcessor:
         else:
             steps_document = json.loads(
                 Utils.download_from_http(message_object[StringConstants.STEPS_DOCUMENT_PATH_KEY]))
-            logging.info(f'There is no similarity document:{steps_document}')
+            logging.info(f'There is no similarity document: {steps_document}')
             list_results_keys = []
             for panorama in steps_document[StringConstants.PANOS_KEY]:
 
-                logging.info(f'Start processing step:{panorama}')
+                logging.info(f'Start processing panorama: {panorama}')
 
-                for step in steps_document[StringConstants.STEPS]:
-                    logging.info(f'Start processing panorama:{panorama} for step:{step}')
+                for step in message_object[StringConstants.STEPS]:
+                    logging.info(f'Start processing panorama: {panorama} for step: {step}')
                     s3_result_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                                                step,
                                                                str(message_object[StringConstants.INFERENCE_ID_KEY]),
@@ -35,12 +35,12 @@ class SimilarityProcessor:
                                                                StringConstants.RESULT_FILE_NAME)
 
                     if not s3_helper.is_object_exist(s3_result_key):
-                        logging.info(f'Could not find result for panorama:{panorama} for step:{step}')
-                        logging.info(f'Similarity step document for panorma:{panorama} is not ready yet')
+                        logging.info(f'Could not find result for panorama: {panorama} for step: {step}')
+                        logging.info(f'Similarity step document for panorma: {panorama} is not ready yet')
                         return None
                     else:
                         list_results_keys.append(s3_result_key)
-                        logging.info(f'Panorama:{panorama} for step:{step}, key:{s3_result_key} is processed')
+                        logging.info(f'Panorama: {panorama} for step: {step}, key: {s3_result_key} is processed')
 
             document_object = SimilarityProcessor.assemble_results_into_document(
                 s3_helper,

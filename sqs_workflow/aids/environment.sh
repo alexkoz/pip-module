@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+export S3_BUCKET='aws-s3-bucket-name';
+export ACCESS='aws-access-key';
+export SECRET='aws-secret-key';
+export REGION_NAME='aws-region-name';
+export AWS_PROFILE='clipnow';
+export QUEUE_LINK='sqs-queue-link';
+export SLACK_URL='slack-webhook-url';
+export SLACK_ID='slack-id';
+export SIMILARITY_SCRIPT='$(pwd)/aids/dummy_similarity.py';
+export ROOMBOX_SCRIPT='$(pwd)/aids/dummy_roombox.py';
+export RMATRIX_SCRIPT='$(pwd)/aids/dummy_rmatrix.py';
+export SIMILARITY_EXECUTABLE='/path-to-similarity-script-python-executable';
+export ROOMBOX_EXECUTABLE='/path-to-roombox-script-python-executable';
+export RMATRIX_EXECUTABLE='/path-to-rmatrix-script-python-executable';

@@ -83,7 +83,6 @@ class TestSqsProcessor(TestCase):
 
     def test_e2e(self):
         self.clear_directory(StringConstants.COMMON_PREFIX)
-        self.clear_directory('api/inference/')
         self.purge_queue(self.processor.queue_url)
         self.purge_queue(self.processor.return_queue_url)
 
@@ -96,8 +95,10 @@ class TestSqsProcessor(TestCase):
                                    \"inferenceId\": \"'f'345{i}\", \
                                    \"panoUrl\": \"'f'https://img.docusketch.com/items/s967284636/5fa1d{i}f49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG\",\
                                    \"tourId\": \"5fa1df49014bf357cf250d52\",\
+                                   \"stepsDocumentPath\": \"https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json\", \
+                                   \"steps\": ["SIMILARITY"], \
                                    \"panoId\": \"5fa1df55014bf357cf250d64\"' + '}'
-            self.processor.send_message(similarity_message)
+            self.processor.send_message(similarity_message, os.environ['QUEUE_LINK'])
             logging.info('sent similarity message')
 
         for i in range(0):
@@ -106,7 +107,7 @@ class TestSqsProcessor(TestCase):
                                                \"panoUrl\": \"'f'https://img.docusketch.com/items/s96{i}7284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG\",\
                                                \"tourId\": \"5fa1df49014bf357cf250d52\",\
                                                \"panoId\": \"5fa1df55014bf357cf250d64\"' + '}'
-            self.processor.send_message(rmatrix_message)
+            self.processor.send_message(rmatrix_message, os.environ['QUEUE_LINK'])
             logging.info('sent r_matrix message')
 
         main_script_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow') + '/main.py'
