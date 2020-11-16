@@ -107,7 +107,7 @@ class SqsProcessor:
             if document_object is not None:
                 processing_result = self.run_process(self.similarity_executable,
                                                      self.similarity_script,
-                                                     json.dumps(document_object))
+                                                     message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
                 self.create_path_and_save_on_s3(message_type, inference_id, processing_result)
                 return processing_result
             else:
@@ -125,7 +125,7 @@ class SqsProcessor:
                 logging.info('Processing result is None')
                 processing_result = self.run_process(self.rmatrix_executable,
                                                      self.rmatrix_script,
-                                                     message_body)
+                                                     message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
                 self.create_path_and_save_on_s3(message_type,
                                                 url_hash,
                                                 processing_result,
@@ -136,7 +136,7 @@ class SqsProcessor:
         if message_type == ProcessingTypesEnum.RoomBox.value:
             processing_result = self.run_process(self.roombox_executable,
                                                  self.roombox_script,
-                                                 json.dumps(message_object))
+                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
 
         logging.info(f"Finished processing and save result on s3.")
         self.create_path_and_save_on_s3(message_type,
@@ -202,14 +202,8 @@ class SqsProcessor:
         logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
         Utils.download_from_http(os.path.join(input_path, file_name))
 
-        if message_type == ProcessingTypesEnum.RMatrix.value:
-            pass
-        if message_type == ProcessingTypesEnum.RoomBox.value:
-            pass
-        if message_type == ProcessingTypesEnum.DoorDetecting.value:
-            pass
-        if message_type == ProcessingTypesEnum.Similarity.value:
-            pass
+        message_object[
+            StringConstants.EXECUTABLE_PARAMS_KEY] = f' --input_path {input_path} --output_path {output_path}'
 
         # todo dowload images if neccessary
         # todo create needed argumetns for a processing

@@ -12,4 +12,6 @@ class StringConstants:
     SIMILARITY_KEY: str = 'SIMILARITY'
     DOOR_DETECTION_KEY: str = 'DOOR_DETECTION'
     ROOM_BOX_KEY: str = 'ROOM_BOX'
-    INFERENCE_ID_KEY = 'inferenceId'
+    INFERENCE_ID_KEY: str = 'inferenceId'
+    EXECUTABLE_PARAMS_KEY: str = 'executable_params'
+
