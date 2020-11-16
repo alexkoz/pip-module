@@ -206,8 +206,4 @@ class SqsProcessor:
 
         message_object[
             StringConstants.EXECUTABLE_PARAMS_KEY] = f' --input_path {os.path.join(input_path, file_name)} --output_path {output_path}'
-
-        # todo dowload images if neccessary
-        # todo create needed argumetns for a processing
-        # todo return message with improved parameters.
         return json.dumps(message_object)

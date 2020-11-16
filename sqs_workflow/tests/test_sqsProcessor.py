@@ -139,30 +139,64 @@ class TestSqsProcessor(TestCase):
         s3_key = 'api/inference/test-message-type/test-inference-id/asset/'
         self.assertTrue(s3_helper.is_object_exist(s3_key))
 
-    def test_prepare_for_processing(self):
-        shutil.rmtree('/Users/alexkoz/projects/sqs_workflow/sqs_workflow/tmp/input')
-        shutil.rmtree('/Users/alexkoz/projects/sqs_workflow/sqs_workflow/tmp/output')
-        logging.info('Deleted all files from i/o directories')
+    def clear_local_directory(self, path_in_project):
+        print(os.path.join(os.getcwd(), path_in_project, 'input'))
+        if os.path.isdir(os.path.join(os.getcwd(), path_in_project, 'input')):
+            shutil.rmtree(os.path.join(os.getcwd(), path_in_project, 'input'))
+            shutil.rmtree(os.path.join(os.getcwd(), path_in_project, 'output'))
+            logging.info('Deleted all files from i/o directories')
 
-        test_message_1 = '{"messageType": "SIMILARITY",\
+    def test_prepare_for_processing_similarity(self):
+        self.clear_local_directory('tmp/')
+
+        test_message_similarity = '{"messageType": "SIMILARITY",\
                            "tourId": "5fa1df49014bf357cf250d52",\
                            "panoId": "5fa1df55014bf357cf250d64", \
-                           "documentPath": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG", \
+                           "documentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json", \
                            "steps": ["SIMILARITY"], \
                            "inferenceId": "1111"}'
-        test_message_2 = '{"messageType": "ROOM_BOX",\
-                           "fileUrl": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",\
+
+        res_similarity = self.processor.prepare_for_processing(test_message_similarity)
+        input_path = os.path.join(os.getcwd(), 'tmp', 'input',
+                                  'ad7ede0d6d45f7dc4656763b87b81db2') + '/order_1012550_floor_1.json.json'
+        output_path = os.path.join(os.getcwd(), 'tmp', 'output', 'ad7ede0d6d45f7dc4656763b87b81db2')
+
+        self.assertTrue(json.loads(res_similarity)[
+                            'executable_params'] == f' --input_path {input_path} --output_path {output_path}')
+        self.assertTrue(os.path.isfile(input_path))
+
+    def test_prepare_for_processing_roombox(self):
+        self.clear_local_directory('tmp/')
+
+        test_message_room_box = '{"messageType": "ROOM_BOX",\
+                           "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG",\
                            "tourId": "5fa1df49014bf357cf250d52",\
                            "panoId": "5fa1df55014bf357cf250d64", \
                            "steps": ["ROOM_BOX"], \
                            "inferenceId": "222"}'
-        self.processor.prepare_for_processing(test_message_1)
-        self.assertTrue(os.path.isfile(
-            '/Users/alexkoz/projects/sqs_workflow/sqs_workflow/tmp/input/e52d12ec195bea3977909c8ae585e5b6/n0l066b0r4.JPG'))
 
-        res = self.processor.prepare_for_processing(test_message_2)
-        input_path = '/Users/alexkoz/projects/sqs_workflow/sqs_workflow/tmp/input/' +
-        output_path = '--'
-        self.assertTrue(json.loads(res)['executable_params'] == f' --input_path {input_path} --output_path {output_path}')
+        res_room_box = self.processor.prepare_for_processing(test_message_room_box)
+        input_path = os.path.join(os.getcwd(), 'tmp', 'input', 'e52d12ec195bea3977909c8ae585e5b6') + '/n0l066b0r4.JPG'
+        output_path = os.path.join(os.getcwd(), 'tmp', 'output', 'e52d12ec195bea3977909c8ae585e5b6')
 
+        self.assertTrue(
+            json.loads(res_room_box)['executable_params'] == f' --input_path {input_path} --output_path {output_path}')
+        self.assertTrue(os.path.isfile(input_path))
 
+    def test_prepare_for_processing_door_detection(self):
+        self.clear_local_directory('tmp/')
+
+        test_message_room_box = '{"messageType": "DOOR_DETECTION",\
+                               "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG",\
+                               "tourId": "5fa1df49014bf357cf250d52",\
+                               "panoId": "5fa1df55014bf357cf250d64", \
+                               "steps": ["DOOR_DETECTION"], \
+                               "inferenceId": "222"}'
+
+        res_door_detection = self.processor.prepare_for_processing(test_message_room_box)
+        input_path = os.path.join(os.getcwd(), 'tmp', 'input', 'e52d12ec195bea3977909c8ae585e5b6') + '/n0l066b0r4.JPG'
+        output_path = os.path.join(os.getcwd(), 'tmp', 'output', 'e52d12ec195bea3977909c8ae585e5b6')
+
+        self.assertTrue(json.loads(res_door_detection)[
+                            'executable_params'] == f' --input_path {input_path} --output_path {output_path}')
+        self.assertTrue(os.path.isfile(input_path))
