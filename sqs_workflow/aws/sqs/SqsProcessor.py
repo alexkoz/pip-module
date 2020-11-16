@@ -203,7 +203,7 @@ class SqsProcessor:
         Utils.download_from_http(os.path.join(input_path, file_name))
 
         message_object[
-            StringConstants.EXECUTABLE_PARAMS_KEY] = f' --input_path {input_path} --output_path {output_path}'
+            StringConstants.EXECUTABLE_PARAMS_KEY] = f' --input_path {os.path.join(input_path, file_name)} --output_path {output_path}'
 
         # todo dowload images if neccessary
         # todo create needed argumetns for a processing
