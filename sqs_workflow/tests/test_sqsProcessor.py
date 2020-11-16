@@ -3,6 +3,8 @@ import os
 import sys
 from pathlib import Path
 from unittest import TestCase
+import shutil
+import json
 
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
@@ -36,6 +38,7 @@ class TestSqsProcessor(TestCase):
         class TestMessage:
             def __init__(self):
                 body = None
+
         test_message_1 = TestMessage()
         test_message_1.body = 'text-1'
         test_message_2 = TestMessage()
@@ -135,3 +138,31 @@ class TestSqsProcessor(TestCase):
         self.processor.create_path_and_save_on_s3(message_type, inference_id, processing_result)
         s3_key = 'api/inference/test-message-type/test-inference-id/asset/'
         self.assertTrue(s3_helper.is_object_exist(s3_key))
+
+    def test_prepare_for_processing(self):
+        shutil.rmtree('/Users/alexkoz/projects/sqs_workflow/sqs_workflow/tmp/input')
+        shutil.rmtree('/Users/alexkoz/projects/sqs_workflow/sqs_workflow/tmp/output')
+        logging.info('Deleted all files from i/o directories')
+
+        test_message_1 = '{"messageType": "SIMILARITY",\
+                           "tourId": "5fa1df49014bf357cf250d52",\
+                           "panoId": "5fa1df55014bf357cf250d64", \
+                           "documentPath": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG", \
+                           "steps": ["SIMILARITY"], \
+                           "inferenceId": "1111"}'
+        test_message_2 = '{"messageType": "ROOM_BOX",\
+                           "fileUrl": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",\
+                           "tourId": "5fa1df49014bf357cf250d52",\
+                           "panoId": "5fa1df55014bf357cf250d64", \
+                           "steps": ["ROOM_BOX"], \
+                           "inferenceId": "222"}'
+        self.processor.prepare_for_processing(test_message_1)
+        self.assertTrue(os.path.isfile(
+            '/Users/alexkoz/projects/sqs_workflow/sqs_workflow/tmp/input/e52d12ec195bea3977909c8ae585e5b6/n0l066b0r4.JPG'))
+
+        res = self.processor.prepare_for_processing(test_message_2)
+        input_path = '/Users/alexkoz/projects/sqs_workflow/sqs_workflow/tmp/input/' +
+        output_path = '--'
+        self.assertTrue(json.loads(res)['executable_params'] == f' --input_path {input_path} --output_path {output_path}')
+
+

@@ -31,7 +31,7 @@ class SqsProcessor:
     queue = sqs_resource.Queue(os.environ['QUEUE_LINK'])
     input_processing_directory = os.environ['INPUT_DIRECTORY']
     output_processing_directory = os.environ['OUTPUT_DIRECTORY']
-    queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
+    # queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
     queue_url = os.environ['QUEUE_LINK']
     return_queue_url = os.environ['QUEUE_LINK'] + "-return-queue"
 
@@ -184,8 +184,10 @@ class SqsProcessor:
         message_type = message_object[StringConstants.MESSAGE_TYPE_KEY]
 
         if message_type == ProcessingTypesEnum.Similarity.value:
+            full_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
             file_name = os.path.basename(message_object[StringConstants.DOCUMENT_PATH_KEY])
         else:
+            full_file_name = message_object[StringConstants.PANO_URL_KEY]
             file_name = os.path.basename(message_object[StringConstants.PANO_URL_KEY])
 
         url_hash = hashlib.md5(file_name.encode('utf-8')).hexdigest()
@@ -194,13 +196,13 @@ class SqsProcessor:
         output_path = os.path.join(self.output_processing_directory, url_hash)
 
         try:
-            os.mkdir(input_path)
-            os.mkdir(output_path)
+            os.makedirs(input_path)
+            os.makedirs(output_path)
         except OSError:
             logging.error(f"Creation of the directory input:{input_path} or output:{output_path}  failed")
             raise
         logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
-        Utils.download_from_http(os.path.join(input_path, file_name))
+        Utils.download_from_http(full_file_name, os.path.join(input_path, file_name))
 
         message_object[
             StringConstants.EXECUTABLE_PARAMS_KEY] = f' --input_path {input_path} --output_path {output_path}'
