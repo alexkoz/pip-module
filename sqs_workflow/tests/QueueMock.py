@@ -1,4 +1,7 @@
 import random
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 
 class QueueMock:
@@ -13,7 +16,7 @@ class QueueMock:
         return message
 
     def receive_messages(self, max_number_of_messages):
-        print('Start receiving messages')
+        logging.info('Start receiving messages')
         messages = []
         for i in range(max_number_of_messages):
             message = self.generate_mock_messages()
@@ -21,7 +24,7 @@ class QueueMock:
         return self.queue_messages.copy()
 
     def send_message(self, message_body, queue_url):
-        print('Start send message')
+        logging.info('Start send message')
         message = {'Body': message_body,
                    'MessageId': random.randint(1, 30)}
         self.queue_messages.append(message)
@@ -31,5 +34,5 @@ class QueueMock:
         for message in self.queue_messages:
             if message['Body'] == message_body_to_delete:
                 self.queue_messages.remove(message)
-        print(f'Received and deleted message: {message_body_to_delete}')
+        logging.info(f'Received and deleted message: {message_body_to_delete}')
         return self

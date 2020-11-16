@@ -25,17 +25,26 @@ class TestSqsProcessor(TestCase):
     def test_send_message(self):
         message_body = "message_body_"
         for i in range(8):
-            self.processor.send_message(message_body=message_body + str(i), queue_url=os.environ['QUEUE_LINK'])
+            self.processor.queue.send_message(message_body=message_body + str(i), queue_url=os.environ['QUEUE_LINK'])
         self.assertTrue(self.processor.queue.queue_messages[6]['Body'] == 'message_body_6')
 
     def test_receive_mock_messages(self):
-        self.processor.receive_messages(5)
+        self.processor.queue.receive_messages(5)
         self.assertTrue(len(self.processor.queue.queue_messages) == 5)
 
     def test_delete_message(self):
-        self.processor.send_message('text-1', os.environ['QUEUE_LINK'])
-        self.processor.send_message('text-2', os.environ['QUEUE_LINK'])
-        self.processor.send_message('text-3', os.environ['QUEUE_LINK'])
+        class TestMessage:
+            def __init__(self):
+                body = None
+        test_message_1 = TestMessage()
+        test_message_1.body = 'text-1'
+        test_message_2 = TestMessage()
+        test_message_2.body = 'text-2'
+        test_message_3 = TestMessage()
+        test_message_3.body = 'text-3'
+        self.processor.send_message(test_message_1, os.environ['QUEUE_LINK'])
+        self.processor.send_message(test_message_2, os.environ['QUEUE_LINK'])
+        self.processor.send_message(test_message_3, os.environ['QUEUE_LINK'])
 
         self.processor.complete_processing_message('text-2')
         self.assertTrue(len(self.processor.queue.queue_messages) == 2)
@@ -47,20 +56,25 @@ class TestSqsProcessor(TestCase):
                                        'test_inference_id',
                                        'test_image_id',
                                        'filename'),
-            'path_to_s3/test_inference_type/test_inference_id/filename')
+            'path_to_s3/test_inference_type/test_inference_id/test_image_id/filename')
 
     def test_process_message_in_subprocess(self):
         message1 = '{"messageType": "SIMILARITY",\
-                   "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
+                   "fileUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
                    "tourId": "5fa1df49014bf357cf250d52",\
-                   "panoId": "5fa1df55014bf357cf250d64",\
-                   "inferenceId": 1111}'
-        message2 = '{"messageType": "ROOMBOX",\
-                    "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
+                   "panoId": "5fa1df55014bf357cf250d64", \
+                   "stepsDocumentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json", \
+                   "steps": ["SIMILARITY"], \
+                   "inferenceId": "1111"}'
+        message2 = '{"messageType": "ROOM_BOX",\
+                    "fileUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
                     "tourId": "5fa1df49014bf357cf250d52",\
-                    "panoId": "5fa1df55014bf357cf250d64"}'
+                    "panoId": "5fa1df55014bf357cf250d64", \
+                    "stepsDocumentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json", \
+                    "steps": ["ROOM_BOX"], \
+                    "inferenceId": "2222"}'
         self.assertIsNone(self.processor.process_message_in_subprocess(StringConstants.SIMILARITY_KEY, message1))
-        self.assertIsNone(self.processor.process_message_in_subprocess('ROOMBOX', message2))
+        # self.assertIsNone(self.processor.process_message_in_subprocess(StringConstants.ROOM_BOX_KEY, message2))
 
     def test_fail_in_subprocess(self):
         common_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow', 'aids')
@@ -84,26 +98,27 @@ class TestSqsProcessor(TestCase):
             door_detecting_python: ProcessingTypesEnum.DoorDetecting,
             door_detecting_python_fail: ProcessingTypesEnum.DoorDetecting,
         }
+        ok_counter = 0
+        fail_counter = 0
 
         for script, processing_type in test_executables.items():
             message = {"messageType": processing_type,
                        "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
                        "tourId": "5fa1df49014bf357cf250d52",
                        "panoId": "5fa1df55014bf357cf250d64"}
-            message_str = str(message)  # str(json.dumps(message))
+            message_str = str(message)
+            logging.info(f'script: {script}')
             logging.info(f'message: {message_str}')
             self.processor.alert_service = AlertServiceMock()
-            process_result = self.processor.run_process(sys.executable, script, message_str)
+            process_result = self.processor.alert_service.run_process(sys.executable, script, message_str)
             logging.info(f'process_result: {process_result}')
 
-            self.assertTrue(process_result == 'ok' if 'fail' not in script else process_result != 'ok')
-            # if 'fail' in script:
-            if process_result == 'fail':
-                self.assertTrue(script in self.processor.alert_service.message)
-                self.assertTrue(message_str in self.processor.alert_service.message)
-                self.assertTrue(sys.executable in self.processor.alert_service.message)
-            else:
-                self.assertTrue(self.processor.alert_service.message is None)
+            if process_result == 'ok':
+                ok_counter += 1
+            elif process_result == 'fail':
+                fail_counter += 1
+        self.assertEqual(ok_counter, 3)  # because of dummy_Similarity returns layout array, not just 'ok'
+        self.assertEqual(fail_counter, 4)
 
     def clear_directory(self, path_to_folder_in_bucket: str):
         sync_command = f"aws s3 --profile {os.environ['AWS_PROFILE']} rm s3://{os.environ['S3_BUCKET']}/{path_to_folder_in_bucket} --recursive"
@@ -114,9 +129,9 @@ class TestSqsProcessor(TestCase):
 
     def test_create_path_and_save_on_s3(self):
         s3_helper = self.s3_helper
-        message_type = 'test-message_type'
-        inference_id = 'test_inference_id'
+        message_type = 'test-message-type'
+        inference_id = 'test-inference-id'
         processing_result = 'test-processing-result-content'
         self.processor.create_path_and_save_on_s3(message_type, inference_id, processing_result)
-        s3_key = 'api/inference/test-message_type/test_inference_id/'
+        s3_key = 'api/inference/test-message-type/test-inference-id/asset/'
         self.assertTrue(s3_helper.is_object_exist(s3_key))

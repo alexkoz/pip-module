@@ -25,26 +25,27 @@ class SqsProcessor:
     alert_service = AlertService()
     s3_helper = S3Helper()
 
-    sqs_client = boto3.resource('sqs')
+    sqs_client = boto3.client('sqs')
+    sqs_resource = boto3.resource('sqs')
 
-    queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
+    queue = sqs_resource.Queue(os.environ['QUEUE_LINK'])
     queue_url = os.environ['QUEUE_LINK']
     return_queue_url = os.environ['QUEUE_LINK'] + "-return-queue"
 
     def __init__(self):
         self.similarity_executable = os.environ['SIMILARITY_EXECUTABLE']
         self.similarity_script = os.environ['SIMILARITY_SCRIPT']
-        self.roombox_executable = os.environ['ROOMBOX_EXECUTABLE']
-        self.roombox_script = os.environ['ROOMBOX_SCRIPT']
-        self.rmatrix_executable = os.environ['RMATRIX_EXECUTABLE']
-        self.rmatrix_script = os.environ['RMATRIX_SCRIPT']
+        self.roombox_executable = os.environ['ROOM_BOX_EXECUTABLE']
+        self.roombox_script = os.environ['ROOM_BOX_SCRIPT']
+        self.rmatrix_executable = os.environ['R_MATRIX_EXECUTABLE']
+        self.rmatrix_script = os.environ['R_MATRIX_SCRIPT']
 
     def get_attr_value(self, message, attribute_name):
         attr_value = json.loads(message.body)[attribute_name]
         return attr_value
 
     def send_message(self, message_body, queue_url):
-        response_send = self.queue.send_message(QueueUrl=queue_url, MessageBody=message_body)
+        response_send = self.sqs_client.send_message(QueueUrl=queue_url, MessageBody=message_body)
         logging.info(f'Sent message:{message_body} to queue:{queue_url}')
         return response_send
 
@@ -74,7 +75,7 @@ class SqsProcessor:
 
     # todo finish test
     def complete_processing_message(self, message):
-        self.send_message(message.body, self.return_queue_url)
+        self.send_message(message, self.return_queue_url)  # message.body
         message.delete()
         logging.info(f'Message: {message} is deleted')
 
