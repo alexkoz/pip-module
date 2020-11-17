@@ -11,6 +11,28 @@ class Utils:
         pass
 
     @staticmethod
+    def check_environment():
+        assert os.environ['AWS_PROFILE']
+        assert os.environ['QUEUE_LINK']
+        assert os.environ['REGION_NAME']
+        assert os.environ['ACCESS']
+        assert os.environ['SLACK_URL']
+        assert os.environ['SLACK_ID']
+        assert os.environ['S3_BUCKET']
+        assert os.environ['GMAIL_USER']
+        assert os.environ['GMAIL_PASSW']
+        assert os.environ['GMAIL_TO']
+        assert os.environ['SIMILARITY_EXECUTABLE']
+        assert os.environ['SIMILARITY_SCRIPT']
+        assert os.environ['ROOM_BOX_EXECUTABLE']
+        assert os.environ['ROOM_BOX_SCRIPT']
+        assert os.environ['R_MATRIX_EXECUTABLE']
+        assert os.environ['R_MATRIX_SCRIPT']
+        assert os.environ['AWS_PROFILE']
+        assert os.environ['DOOR_DETECTION_SCRIPT']
+        assert os.environ['DOOR_DETECTION_EXECUTABLE']
+
+    @staticmethod
     def create_result_s3_key(path_to_s3: str, inference_type: str, inference_id: str, image_id: str,
                              filename: str) -> str:
         s3_path = os.path.join(path_to_s3, inference_type, inference_id, image_id, filename)
