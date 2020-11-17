@@ -58,6 +58,17 @@ class S3Helper:
                 logging.info(f'Added object {obj["Key"]} to list of objects')
         return list_of_objects
 
+    def count_files_s3(self, s3_key: str) -> list:
+        logging.info(f'Start count objects in: {s3_key}')
+        response = self.s3_client.list_objects_v2(Bucket=self.s3_bucket, Prefix=s3_key, Delimiter='/')
+        if 'Contents' in response:
+            array_of_result_json = []
+            for obj in response['Contents']:
+                key = obj['Key']
+                if key.endswith('result.json'):
+                    array_of_result_json.append(key)
+            return array_of_result_json
+
     def is_processing_complete(self, prefix: str, num_of_expected_results: int) -> bool:
         list_of_objects = self.list_s3_objects(prefix)
         logging.info(f'Len of s3_objects_list w/ prefix: {prefix} =', len(list_of_objects))
