@@ -140,7 +140,6 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(s3_helper.is_object_exist(s3_key))
 
     def clear_local_directory(self, path_in_project):
-        print(os.path.join(os.getcwd(), path_in_project, 'input'))
         if os.path.isdir(os.path.join(os.getcwd(), path_in_project, 'input')):
             shutil.rmtree(os.path.join(os.getcwd(), path_in_project, 'input'))
             shutil.rmtree(os.path.join(os.getcwd(), path_in_project, 'output'))

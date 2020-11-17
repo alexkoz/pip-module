@@ -1,14 +1,15 @@
-from unittest import TestCase
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.aws.s3.S3Helper import S3Helper
+from sqs_workflow.utils.StringConstants import StringConstants
+
 import time
 import os
 import subprocess
 import sys
-from pathlib import Path
 import logging
-from sqs_workflow.utils.StringConstants import StringConstants
 import boto3
+from pathlib import Path
+from unittest import TestCase
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -120,8 +121,8 @@ class TestSqsProcessor(TestCase):
         print('Object list =', object_list)
         print('Len of obj list =', len(object_list))
 
-        self.assertTrue(self.s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/SIMILARITY/', 10))
-        self.assertTrue(self.s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/R_MATRIX/', 10))
+        self.assertTrue(self.s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/SIMILARITY/', 4))
+        self.assertTrue(self.s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/R_MATRIX/', 0))
 
         # Checks Queue for return messages
         # todo pull all messages from return queue
@@ -131,4 +132,21 @@ class TestSqsProcessor(TestCase):
             list_of_returned_messages.append(self.pull_all_messages(self.processor.return_queue_url))
         self.assertEqual(len(list_of_returned_messages), 4)
 
+        # Sleep for 10 sec
+        for remaining in range(10, 0, -1):
+            sys.stdout.write("\r")
+            sys.stdout.write("{:2d} seconds remaining.".format(remaining))
+            sys.stdout.flush()
+            time.sleep(1)
 
+        # Checks files on S3
+        result_files_on_s3 = self.s3_helper.count_files_s3('api/inference/SIMILARITY/')
+        self.assertEqual(len(result_files_on_s3), 4)
+
+        #  Need to run test and see count_files_s3 output to check and maybe fix this assertEqual below
+        #
+        # list_of_result_json = ['api/inference/SIMILARITY/3450/asset/result.json',
+        #                        'api/inference/SIMILARITY/3451/asset/result.json',
+        #                        'api/inference/SIMILARITY/3452/asset/result.json',
+        #                        'api/inference/SIMILARITY/3453/asset/result.json']
+        # self.assertEqual(result_files_on_s3, list_of_result_json)
