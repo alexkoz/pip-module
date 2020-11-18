@@ -137,14 +137,18 @@ class SqsProcessor:
             message_object[StringConstants.PRY_MATRIX_KEY] = processing_result
 
         elif message_type == ProcessingTypesEnum.RoomBox.value:
+            logging.info('Start processing room box')
             processing_result = self.run_process(self.roombox_executable,
                                                  self.roombox_script,
                                                  message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+            logging.info(f'Executed roombox:{processing_result}')
             self.create_path_and_save_on_s3(message_type,
                                             inference_id,
                                             processing_result,
                                             image_id)
+            logging.info(f'Saved roombox:{processing_result} on s3')
         elif message_type == ProcessingTypesEnum.DoorDetecting.value:
+            logging.info('Start processing door detecting')
             processing_result = self.run_process(self.doordetecting_executable,
                                                  self.doordetecting_script,
                                                  message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
@@ -152,7 +156,8 @@ class SqsProcessor:
                                             inference_id,
                                             processing_result,
                                             image_id)
-        logging.info(f"Finished processing and save result on s3.")
+            logging.info(f'Saved door detecting:{processing_result} on s3')
+        logging.info(f"Finished processing and result:{processing_result} save result on s3.")
         return processing_result
 
     def run_process(self, executable: str, script: str, executable_params: str) -> str:
