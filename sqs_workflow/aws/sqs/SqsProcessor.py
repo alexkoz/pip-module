@@ -158,8 +158,7 @@ class SqsProcessor:
     def run_process(self, executable: str, script: str, executable_params: str) -> str:
         logging.info(f'Start processing executable:{executable} script:{script} params:{executable_params}')
         subprocess_result = subprocess.run([executable,
-                                            script,
-                                            executable_params],
+                                            script + " " + executable_params],
                                            universal_newlines=True,
                                            capture_output=True)
         if not subprocess_result.returncode == 0:
