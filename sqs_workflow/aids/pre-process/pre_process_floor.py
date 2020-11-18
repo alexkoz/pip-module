@@ -4,8 +4,6 @@ import logging
 import json
 from pathlib import Path
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
-
 
 def cleaning_json(path_to_json, filename):
     with open(path_to_json) as json_file:

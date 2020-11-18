@@ -13,8 +13,6 @@ import boto3
 from pathlib import Path
 from unittest import TestCase
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
-
 
 class TestSqsProcessor(TestCase):
     processor = SqsProcessor()
@@ -136,7 +134,7 @@ class TestSqsProcessor(TestCase):
             self.processor.send_message_to_queue(similarity_message, os.environ['QUEUE_LINK'])
             logging.info('sent similarity message')
 
-        main_script_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow') + '/main.py'
+        main_script_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow') + '/main.py'
 
         subprocess.run([sys.executable,  # path to python
                         main_script_path],  # path to main.py
@@ -153,12 +151,6 @@ class TestSqsProcessor(TestCase):
                                                                      AttributeNames=['All'])
         num_of_messages = int(resp_return['Attributes']['ApproximateNumberOfMessages'])
         self.assertEqual(num_of_messages, 2)
-
-        # list_of_returned_messages = []
-        # resp_messages = self.pull_messages_return_queue(2)
-        # for message in resp_messages['Messages']:
-        #     list_of_returned_messages.append(message['Body'])
-        # self.assertEqual(len(list_of_returned_messages), 2)
 
         # Sleep for 10 sec
         for remaining in range(10, 0, -1):

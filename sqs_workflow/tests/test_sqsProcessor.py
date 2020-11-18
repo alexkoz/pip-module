@@ -14,8 +14,6 @@ from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.utils.Utils import Utils
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
-
 
 class TestSqsProcessor(TestCase):
     test_list = []

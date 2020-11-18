@@ -6,8 +6,6 @@ from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
 from sqs_workflow.tests.S3HelperMock import S3HelperMock
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
-
 
 class TestSimilarityProcessor(TestCase):
     similarity_processor = SimilarityProcessor()

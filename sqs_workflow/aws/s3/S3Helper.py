@@ -3,8 +3,6 @@ import os
 
 import boto3
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
-
 
 class S3Helper:
     s3_bucket = os.environ['S3_BUCKET']
