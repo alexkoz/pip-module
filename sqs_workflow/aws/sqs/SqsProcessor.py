@@ -202,14 +202,15 @@ class SqsProcessor:
         input_path = os.path.join(self.input_processing_directory, url_hash)
         output_path = os.path.join(self.output_processing_directory, url_hash)
 
-        try:
-            os.makedirs(input_path)
-            os.makedirs(output_path)
-        except OSError:
-            logging.error(f"Creation of the directory input:{input_path} or output:{output_path}  failed")
-            raise
-        logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
-        Utils.download_from_http(full_file_name, os.path.join(input_path, file_name))
+        if os.path.exists(input_path) is False:
+            try:
+                os.makedirs(input_path)
+                os.makedirs(output_path)
+            except OSError:
+                logging.error(f"Creation of the directory input:{input_path} or output:{output_path}  failed")
+                raise
+            logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
+            Utils.download_from_http(full_file_name, os.path.join(input_path, file_name))
 
         message_object[
             StringConstants.EXECUTABLE_PARAMS_KEY] = f' --input_path {os.path.join(input_path, file_name)} --output_path {output_path}'
