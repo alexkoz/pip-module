@@ -103,7 +103,7 @@ class SqsProcessor:
         message_object = json.loads(message_body)
         inference_id = message_object[StringConstants.INFERENCE_ID_KEY]
         message_type = message_object[StringConstants.MESSAGE_TYPE_KEY]
-        logging.info('Message type of message: ', message_type)
+        logging.info(f'Message type of message: {message_type}')
         assert inference_id
 
         if message_type == ProcessingTypesEnum.Similarity.value:
@@ -142,14 +142,18 @@ class SqsProcessor:
             processing_result = self.run_process(self.roombox_executable,
                                                  self.roombox_script,
                                                  message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+            self.create_path_and_save_on_s3(message_type,
+                                            inference_id,
+                                            processing_result,
+                                            image_id)
         elif message_type == ProcessingTypesEnum.DoorDetecting.value:
             processing_result = self.run_process(self.doordetecting_executable,
                                                  self.doordetecting_script,
                                                  message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-        self.create_path_and_save_on_s3(message_type,
-                                        inference_id,
-                                        processing_result,
-                                        image_id)
+            self.create_path_and_save_on_s3(message_type,
+                                            inference_id,
+                                            processing_result,
+                                            image_id)
         logging.info(f"Finished processing and save result on s3.")
         return processing_result
 
