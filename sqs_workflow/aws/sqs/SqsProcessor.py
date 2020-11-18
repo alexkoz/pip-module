@@ -101,7 +101,7 @@ class SqsProcessor:
         message_object = json.loads(message_body)
         inference_id = message_object[StringConstants.INFERENCE_ID_KEY]
         message_type = message_object[StringConstants.MESSAGE_TYPE_KEY]
-        logging.info(f'Message type of message: {message_type}')
+        logging.info(f'Message type of message:{message_type} inference:{inference_id}')
         assert inference_id
 
         if message_type == ProcessingTypesEnum.Similarity.value:
@@ -122,7 +122,7 @@ class SqsProcessor:
 
         if StringConstants.PRY_MATRIX_KEY not in message_object or message_type == ProcessingTypesEnum.RMatrix.value:
             url_hash = hashlib.md5(message_object[StringConstants.PANO_URL_KEY].encode('utf-8')).hexdigest()
-            processing_result = self.check_pry_on_s3(message_type,
+            processing_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value,
                                                      url_hash,
                                                      image_id)
             if processing_result is None:
@@ -130,13 +130,13 @@ class SqsProcessor:
                 processing_result = self.run_process(self.rmatrix_executable,
                                                      self.rmatrix_script,
                                                      message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-                self.create_path_and_save_on_s3(message_type,
+                self.create_path_and_save_on_s3(ProcessingTypesEnum.RMatrix.value,
                                                 url_hash,
                                                 processing_result,
                                                 image_id)
             message_object[StringConstants.PRY_MATRIX_KEY] = processing_result
 
-        elif message_type == ProcessingTypesEnum.RoomBox.value:
+        if message_type == ProcessingTypesEnum.RoomBox.value:
             logging.info('Start processing room box')
             processing_result = self.run_process(self.roombox_executable,
                                                  self.roombox_script,
