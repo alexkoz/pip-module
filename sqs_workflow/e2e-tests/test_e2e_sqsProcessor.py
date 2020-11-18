@@ -145,15 +145,20 @@ class TestSqsProcessor(TestCase):
         object_list = self.s3_helper.list_s3_objects(StringConstants.COMMON_PREFIX)
         print('Object list =', object_list)
         print('Len of obj list =', len(object_list))
-
         self.assertTrue(self.s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/ROOM_BOX/', 1))
 
         # Checks returnQueue for return messages
-        list_of_returned_messages = []
-        resp_messages = self.pull_messages_return_queue(2)
-        for message in resp_messages['Messages']:
-            list_of_returned_messages.append(message['Body'])
-        self.assertEqual(len(list_of_returned_messages), 2)
+
+        resp_return = self.processor.sqs_client.get_queue_attributes(QueueUrl=self.processor.return_queue_url,
+                                                                     AttributeNames=['All'])
+        num_of_messages = int(resp_return['Attributes']['ApproximateNumberOfMessages'])
+        self.assertEqual(num_of_messages, 2)
+
+        # list_of_returned_messages = []
+        # resp_messages = self.pull_messages_return_queue(2)
+        # for message in resp_messages['Messages']:
+        #     list_of_returned_messages.append(message['Body'])
+        # self.assertEqual(len(list_of_returned_messages), 2)
 
         # Sleep for 10 sec
         for remaining in range(10, 0, -1):
