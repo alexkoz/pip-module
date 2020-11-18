@@ -44,6 +44,8 @@ class SqsProcessor:
         self.roombox_script = os.environ['ROOM_BOX_SCRIPT']
         self.rmatrix_executable = os.environ['R_MATRIX_EXECUTABLE']
         self.rmatrix_script = os.environ['R_MATRIX_SCRIPT']
+        self.doordetecting_executable = os.environ['DOOR_DETECTION_EXECUTABLE']
+        self.doordetecting_script = os.environ['DOOR_DETECTION_SCRIPT']
 
     def get_attr_value(self, message, attribute_name):
         attr_value = json.loads(message.body)[attribute_name]
@@ -140,10 +142,14 @@ class SqsProcessor:
             processing_result = self.run_process(self.roombox_executable,
                                                  self.roombox_script,
                                                  message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-            self.create_path_and_save_on_s3(message_type,
-                                            inference_id,
-                                            processing_result,
-                                            image_id)
+        elif message_type == ProcessingTypesEnum.DoorDetecting.value:
+            processing_result = self.run_process(self.doordetecting_executable,
+                                                 self.doordetecting_script,
+                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+        self.create_path_and_save_on_s3(message_type,
+                                        inference_id,
+                                        processing_result,
+                                        image_id)
         logging.info(f"Finished processing and save result on s3.")
         return processing_result
 
