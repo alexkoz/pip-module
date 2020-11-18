@@ -53,14 +53,15 @@ class S3Helper:
         list_of_objects = []
         logging.info('list of objects: ', list_of_objects)
         for page in pages:
-            for obj in page['Contents']:
-                list_of_objects.append(obj['Key'])
-                logging.info(f'Added object {obj["Key"]} to list of objects')
+            if 'Contents' in page:
+                for obj in page['Contents']:
+                    list_of_objects.append(obj['Key'])
+                    logging.info(f'Added object {obj["Key"]} to list of objects')
         return list_of_objects
 
     def count_files_s3(self, s3_key: str) -> list:
         logging.info(f'Start count objects in: {s3_key}')
-        response = self.s3_client.list_objects_v2(Bucket=self.s3_bucket, Prefix=s3_key, Delimiter='/')
+        response = self.s3_client.list_objects_v2(Bucket=self.s3_bucket, Prefix=s3_key)
         if 'Contents' in response:
             array_of_result_json = []
             for obj in response['Contents']:

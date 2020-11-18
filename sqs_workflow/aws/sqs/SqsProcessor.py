@@ -28,12 +28,14 @@ class SqsProcessor:
     sqs_client = boto3.client('sqs')
     sqs_resource = boto3.resource('sqs')
 
-    queue = sqs_resource.Queue(os.environ['QUEUE_LINK'])
-    input_processing_directory = os.environ['INPUT_DIRECTORY']
-    output_processing_directory = os.environ['OUTPUT_DIRECTORY']
-    # queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
     queue_url = os.environ['QUEUE_LINK']
     return_queue_url = os.environ['QUEUE_LINK'] + "-return-queue"
+
+    queue = sqs_resource.Queue(os.environ['QUEUE_LINK'])
+    return_queue = sqs_resource.Queue(return_queue_url)
+
+    input_processing_directory = os.environ['INPUT_DIRECTORY']
+    output_processing_directory = os.environ['OUTPUT_DIRECTORY']
 
     def __init__(self):
         self.similarity_executable = os.environ['SIMILARITY_EXECUTABLE']
@@ -47,30 +49,29 @@ class SqsProcessor:
         attr_value = json.loads(message.body)[attribute_name]
         return attr_value
 
-    def send_message(self, message_body, queue_url):
+    def send_message_to_queue(self, message_body, queue_url):
         response_send = self.sqs_client.send_message(QueueUrl=queue_url, MessageBody=message_body)
-        logging.info(f'Sent message:{message_body} to queue:{queue_url}')
+        logging.info(f'Sent message: {message_body} to queue: {queue_url}')
         return response_send
 
-    def receive_messages(self, max_number_of_messages: int):
+    def receive_messages_from_queue(self, max_number_of_messages: int):
         response_messages = self.queue.receive_messages(QueueUrl=self.queue_url,
                                                         MaxNumberOfMessages=max_number_of_messages)
         if len(response_messages) != 0:
             logging.info(f'response_message content:{response_messages[0].body}')
-
         return response_messages
 
     def pull_messages(self, number_of_messages: int) -> list:
         attempts = 0
-        list_of_messages = self.receive_messages(number_of_messages)
+        list_of_messages = self.receive_messages_from_queue(number_of_messages)
         while attempts < 7 and len(list_of_messages) < number_of_messages:
-            messages_received = self.receive_messages(1)
+            messages_received = self.receive_messages_from_queue(1)
             if len(messages_received) > 0:
                 list_of_messages += messages_received
                 logging.info(f'Len list of messages:{len(list_of_messages)}')
             else:
                 attempts += 1
-                time.sleep(2)
+                time.sleep(1)
             logging.info(f'attempts:{attempts} left')
         if attempts == 7:
             logging.info(f'Out of attempts')
@@ -78,7 +79,10 @@ class SqsProcessor:
 
     # todo finish test
     def complete_processing_message(self, message):
-        self.send_message(message, self.return_queue_url)  # message.body
+        if message.body:
+            self.send_message_to_queue(message.body, self.return_queue_url)
+        else:
+            self.send_message_to_queue(message, self.return_queue_url)
         message.delete()
         logging.info(f'Message: {message} is deleted')
 
@@ -99,6 +103,7 @@ class SqsProcessor:
         message_type = message_object[StringConstants.MESSAGE_TYPE_KEY]
         logging.info('Message type of message: ', message_type)
         assert inference_id
+
         if message_type == ProcessingTypesEnum.Similarity.value:
             logging.info(f'Start processing similarity inference:{inference_id}')
             document_object = SimilarityProcessor.is_similarity_ready(
@@ -113,7 +118,6 @@ class SqsProcessor:
             else:
                 logging.info(f'Document is under processing inference:{inference_id}')
                 return None
-
         image_id = os.path.basename(message_object[StringConstants.PANO_URL_KEY])
 
         if StringConstants.PRY_MATRIX_KEY not in message_object or message_type == ProcessingTypesEnum.RMatrix.value:
@@ -130,19 +134,17 @@ class SqsProcessor:
                                                 url_hash,
                                                 processing_result,
                                                 image_id)
+            message_object[StringConstants.PRY_MATRIX_KEY] = processing_result
 
-        message_object[StringConstants.PRY_MATRIX_KEY] = processing_result
-
-        if message_type == ProcessingTypesEnum.RoomBox.value:
+        elif message_type == ProcessingTypesEnum.RoomBox.value:
             processing_result = self.run_process(self.roombox_executable,
                                                  self.roombox_script,
                                                  message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-
+            self.create_path_and_save_on_s3(message_type,
+                                            inference_id,
+                                            processing_result,
+                                            image_id)
         logging.info(f"Finished processing and save result on s3.")
-        self.create_path_and_save_on_s3(message_type,
-                                        inference_id,
-                                        processing_result,
-                                        image_id)
         return processing_result
 
     def run_process(self, executable: str, script: str, message_body: str) -> str:
@@ -155,17 +157,15 @@ class SqsProcessor:
             at_moment_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             message = f'{at_moment_time}\n SQS processing has failed for process:{executable} script:{script} message:{message_body}.'
             self.alert_service.send_slack_message(message, 0)
-        logging.info(f'subprocess code:{subprocess_result.returncode} output:{subprocess_result.stdout}')
+        logging.info(f'subprocess code: {subprocess_result.returncode} output: {subprocess_result.stdout}')
         return subprocess_result.stdout
 
     def check_pry_on_s3(self, message_type: str, url_hash: str, image_id: str) -> str:
-
         result_s3_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                                    message_type,
                                                    url_hash,
                                                    image_id,
                                                    StringConstants.RESULT_FILE_NAME)
-
         result = self.s3_helper.is_object_exist(result_s3_key)
         if result is True:
             s3 = boto3.resource('s3')
@@ -179,7 +179,6 @@ class SqsProcessor:
             return None  # return None when -> str ?
 
     def prepare_for_processing(self, message_body) -> str:
-
         message_object = json.loads(message_body)
         message_type = message_object[StringConstants.MESSAGE_TYPE_KEY]
 

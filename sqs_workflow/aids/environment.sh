@@ -17,3 +17,6 @@ export INPUT_DIRECTORY='/path-to-prepare-for-processing-input-directory';
 export OUTPUT_DIRECTORY='/path-to-prepare-for-processing-output-directory';
 export SLACK_URL='slack-webhook-url';
 export SLACK_ID='slack-id';
+export GMAIL_USER='gmail-login'
+export GMAIL_PASSW='gmail-password'
+export GMAIL_TO='receiver-email-address'

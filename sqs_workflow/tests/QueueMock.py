@@ -15,7 +15,7 @@ class QueueMock:
         self.queue_messages.append(message)
         return message
 
-    def receive_messages(self, max_number_of_messages):
+    def receive_messages_from_queue(self, max_number_of_messages):
         logging.info('Start receiving messages')
         messages = []
         for i in range(max_number_of_messages):
@@ -23,7 +23,7 @@ class QueueMock:
             messages.append(message)
         return self.queue_messages.copy()
 
-    def send_message(self, message_body, queue_url):
+    def send_message_to_queue(self, message_body, queue_url):
         logging.info('Start send message')
         message = {'Body': message_body,
                    'MessageId': random.randint(1, 30)}

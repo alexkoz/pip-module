@@ -2,7 +2,9 @@ from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.utils.StringConstants import StringConstants
 
+import sqs_workflow.utils.Utils
 import time
+import shutil
 import os
 import subprocess
 import sys
@@ -20,9 +22,9 @@ class TestSqsProcessor(TestCase):
 
     def pull_messages(self, processor: SqsProcessor, number_of_messages: int) -> list:
         attemps = 0
-        list_of_messages = processor.receive_messages(number_of_messages)
+        list_of_messages = processor.receive_messages_from_queue(number_of_messages)
         while attemps < 7 and len(list_of_messages) < number_of_messages:
-            messages_received = processor.receive_messages(1)
+            messages_received = processor.receive_messages_from_queue(1)
             if len(messages_received) > 0:
                 list_of_messages += messages_received
                 print('len list of messages = ', len(list_of_messages))
@@ -38,11 +40,11 @@ class TestSqsProcessor(TestCase):
         processor = SqsProcessor()
 
         self.purge_queue(self.processor.queue_url)
-        req_receive = processor.receive_messages(5)
+        req_receive = processor.receive_messages_from_queue(5)
         self.assertTrue(len(req_receive) == 0)
 
         for i in range(10):
-            processor.send_message(
+            processor.send_message_to_queue(
                 '{ \"inferenceId\":\"similarity-test\",  \"messageType\":\"similarity\", \"orderId\":' + str(i) + '}',
                 self.processor.queue_url)
 
@@ -76,61 +78,82 @@ class TestSqsProcessor(TestCase):
         logging.info(f'Queue is purged')
         return req_purge
 
-    def pull_all_messages(self, queue_url):
-        pulled_message = self.processor.pull_messages(1)
+    def pull_messages_return_queue(self, max_num_of_messages):
+        # pulled_message = self.processor.pull_messages(1)
         logging.info('Pulled message')
-        return str(pulled_message)
-        # message_type = self.processor.get_attr_value(message, 'messageType')
+        attempts = 0
+        list_of_messages = self.processor.sqs_client.receive_message(QueueUrl=self.processor.return_queue_url,
+                                                                     MaxNumberOfMessages=max_num_of_messages,
+                                                                     MessageAttributeNames=['All'])
+        while attempts < 7 and len(list_of_messages) < max_num_of_messages:
+            messages_received = self.processor.sqs_client.receive_message(QueueUrl=self.processor.return_queue_url,
+                                                                          MaxNumberOfMessages=1,
+                                                                          MessageAttributeNames=['All'])
+            if len(messages_received) > 0:
+                list_of_messages += messages_received
+                logging.info(f'Len list of messages:{len(list_of_messages)}')
+            else:
+                attempts += 1
+                time.sleep(2)
+            logging.info(f'attempts:{attempts} left')
+        if attempts == 7:
+            logging.info(f'Out of attempts')
+        return list_of_messages
+
+    def clear_local_directory(self, path_in_project):
+        if os.path.isdir(os.path.join(str(Path.home()), 'projects', 'sqs_workflow', path_in_project, 'input')):
+            shutil.rmtree(os.path.join(str(Path.home()), 'projects', 'sqs_workflow', path_in_project, 'input'))
+            shutil.rmtree(os.path.join(str(Path.home()), 'projects', 'sqs_workflow', path_in_project, 'output'))
+            logging.info('Deleted all files from i/o directories')
 
     def test_e2e(self):
+        self.clear_local_directory('sqs_workflow/tmp/')
         self.clear_directory(StringConstants.COMMON_PREFIX)
         self.purge_queue(self.processor.queue_url)
         self.purge_queue(self.processor.return_queue_url)
 
-        # checks that queue is empty
-        req_receive = self.processor.receive_messages(5)
+        # Checks that queue is empty
+        req_receive = self.processor.receive_messages_from_queue(5)
         self.assertTrue(len(req_receive) == 0)
 
-        for i in range(4):
+        for i in range(1):
+            roombox_message = '{\"messageType\": \"ROOM_BOX\",\
+                                       \"inferenceId\": \"'f'123{i}\", \
+                                       \"fileUrl\": \"https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG\", \
+                                       \"tourId\": \"5fa1df49014bf357cf250d52\",\
+                                       \"panoId\": \"5fa1df55014bf357cf250d64\"' + '}'
+            self.processor.send_message_to_queue(roombox_message, os.environ['QUEUE_LINK'])
+            logging.info('sent roombox message')
+
+        for i in range(1):
             similarity_message = '{\"messageType\": \"SIMILARITY\",\
                                    \"inferenceId\": \"'f'345{i}\", \
                                    \"panoUrl\": \"'f'https://img.docusketch.com/items/s967284636/5fa1d{i}f49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG\",\
                                    \"tourId\": \"5fa1df49014bf357cf250d52\",\
-                                   \"stepsDocumentPath\": \"https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json\", \
+                                   \"documentPath\": \"https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json\", \
                                    \"steps\": ["SIMILARITY"], \
                                    \"panoId\": \"5fa1df55014bf357cf250d64\"' + '}'
-            self.processor.send_message(similarity_message, os.environ['QUEUE_LINK'])
+            self.processor.send_message_to_queue(similarity_message, os.environ['QUEUE_LINK'])
             logging.info('sent similarity message')
 
-        for i in range(0):
-            rmatrix_message = '{\"messageType\": \"R_MATRIX\",\
-                                               \"inferenceId\": \"'f'123{i}\", \
-                                               \"panoUrl\": \"'f'https://img.docusketch.com/items/s96{i}7284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG\",\
-                                               \"tourId\": \"5fa1df49014bf357cf250d52\",\
-                                               \"panoId\": \"5fa1df55014bf357cf250d64\"' + '}'
-            self.processor.send_message(rmatrix_message, os.environ['QUEUE_LINK'])
-            logging.info('sent r_matrix message')
-
         main_script_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow') + '/main.py'
-        for i in range(4):
-            subprocess.run([sys.executable,  # path to python
-                            main_script_path],  # path to main.py
-                           universal_newlines=True)
+
+        subprocess.run([sys.executable,  # path to python
+                        main_script_path],  # path to main.py
+                       universal_newlines=True)
 
         object_list = self.s3_helper.list_s3_objects(StringConstants.COMMON_PREFIX)
         print('Object list =', object_list)
         print('Len of obj list =', len(object_list))
 
-        self.assertTrue(self.s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/SIMILARITY/', 4))
-        self.assertTrue(self.s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/R_MATRIX/', 0))
+        self.assertTrue(self.s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/ROOM_BOX/', 1))
 
-        # Checks Queue for return messages
-        # todo pull all messages from return queue
-        # todo check number of return messages
+        # Checks returnQueue for return messages
         list_of_returned_messages = []
-        for i in range(4):
-            list_of_returned_messages.append(self.pull_all_messages(self.processor.return_queue_url))
-        self.assertEqual(len(list_of_returned_messages), 4)
+        resp_messages = self.pull_messages_return_queue(2)
+        for message in resp_messages['Messages']:
+            list_of_returned_messages.append(message['Body'])
+        self.assertEqual(len(list_of_returned_messages), 2)
 
         # Sleep for 10 sec
         for remaining in range(10, 0, -1):
@@ -140,13 +163,5 @@ class TestSqsProcessor(TestCase):
             time.sleep(1)
 
         # Checks files on S3
-        result_files_on_s3 = self.s3_helper.count_files_s3('api/inference/SIMILARITY/')
-        self.assertEqual(len(result_files_on_s3), 4)
-
-        #  Need to run test and see count_files_s3 output to check and maybe fix this assertEqual below
-        #
-        # list_of_result_json = ['api/inference/SIMILARITY/3450/asset/result.json',
-        #                        'api/inference/SIMILARITY/3451/asset/result.json',
-        #                        'api/inference/SIMILARITY/3452/asset/result.json',
-        #                        'api/inference/SIMILARITY/3453/asset/result.json']
-        # self.assertEqual(result_files_on_s3, list_of_result_json)
+        result_files_on_s3 = self.s3_helper.count_files_s3('api/inference/')
+        self.assertEqual(len(result_files_on_s3), 2)

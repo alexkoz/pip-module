@@ -19,10 +19,10 @@ class SqsProcessor:
         print(req)
         print(message_body)
 
-    def receive_messages(self, max_number_of_messages: int):
-        req = self.queue.receive_messages(QueueUrl=self.queue_str, MaxNumberOfMessages=max_number_of_messages)
-        print(req)
-        return self
+    # def receive_messages(self, max_number_of_messages: int):
+    #     req = self.queue.receive_messages(QueueUrl=self.queue_str, MaxNumberOfMessages=max_number_of_messages)
+    #     print(req)
+    #     return self
 
     def delete_message(self, receipt_handle: str):
         self.queue.delete_message(QueueUrl=self.queue_str, ReceiptHandle=receipt_handle)
