@@ -3,6 +3,9 @@ import os
 import sys
 from sqs_workflow.utils.Utils import Utils
 import logging
+from logging.config import fileConfig
+
+fileConfig(os.path.dirname(os.path.realpath(__file__)) + '/logging_config.ini')
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
