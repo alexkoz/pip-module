@@ -5,8 +5,6 @@ import smtplib
 from email.mime.text import MIMEText
 import logging
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
-
 
 class AlertService:
     def __init__(self):

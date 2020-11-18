@@ -15,8 +15,6 @@ from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.Utils import Utils
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
-
 boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'],
                             region_name=os.environ['REGION_NAME'])
 
