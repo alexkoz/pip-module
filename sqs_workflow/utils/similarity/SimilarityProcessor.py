@@ -99,5 +99,7 @@ class SimilarityProcessor:
 
         message_objects = []
         # todo create big similarity message
+        # todo dowload json document from message
+        # todo iterate panos
         # todo create step messages per image roombox + doordetection
-        return message_objects
+        return message_objects #todo return message jsons

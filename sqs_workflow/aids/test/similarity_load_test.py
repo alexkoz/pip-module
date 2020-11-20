@@ -42,14 +42,14 @@ queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
 purge_queue(os.environ['QUEUE_LINK'])
 
 similarity_test_message = {
-    "messageType": "SIMILARITY",
+    "messageType": "PREPROCESSING",
     "orderId": "5da5d5164cedfd0050363a2e",
     "inferenceId": 1111,
     "floor": 1,
     "tourId": "1342386",
     "documentPath": "urljson",
     "stepsDocumentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
-    "steps": ['ROOMBOX']
+    "steps": ['ROOMBOX', 'DOORDETECTION']
 }
 
 req_send = queue.send_message(QueueUrl=os.environ['QUEUE_LINK'], MessageBody=json.dumps(similarity_test_message))
