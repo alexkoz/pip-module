@@ -25,29 +25,24 @@ class TestSqsProcessor(TestCase):
     def test_send_message(self):
         message_body = "message_body_"
         for i in range(8):
-            self.processor.queue.send_message(message_body=message_body + str(i), queue_url=os.environ['QUEUE_LINK'])
+            self.processor.queue.send_message_to_queue(message_body=message_body + str(i),
+                                                       queue_url=os.environ['QUEUE_LINK'])
         self.assertTrue(self.processor.queue.queue_messages[6]['Body'] == 'message_body_6')
 
     def test_receive_mock_messages(self):
-        self.processor.queue.receive_messages(5)
+        self.processor.queue.receive_messages_from_queue(5)
         self.assertTrue(len(self.processor.queue.queue_messages) == 5)
 
     def test_delete_message(self):
-        class TestMessage:
-            def __init__(self):
-                body = None
+        test_message_1 = '{"message": "test-1"}'
+        test_message_2 = '{"message": "test-2"}'
+        test_message_3 = '{"message": "test-3"}'
 
-        test_message_1 = TestMessage()
-        test_message_1.body = 'text-1'
-        test_message_2 = TestMessage()
-        test_message_2.body = 'text-2'
-        test_message_3 = TestMessage()
-        test_message_3.body = 'text-3'
-        self.processor.send_message(test_message_1, os.environ['QUEUE_LINK'])
-        self.processor.send_message(test_message_2, os.environ['QUEUE_LINK'])
-        self.processor.send_message(test_message_3, os.environ['QUEUE_LINK'])
+        self.processor.queue.send_message_to_queue(test_message_1, 'test-queue-url')
+        self.processor.queue.send_message_to_queue(test_message_2, 'test-queue-url')
+        self.processor.queue.send_message_to_queue(test_message_3, 'test-queue-url')
 
-        self.processor.complete_processing_message('text-2')
+        self.processor.queue.complete_processing_message('{"message": "test-2"}')
         self.assertTrue(len(self.processor.queue.queue_messages) == 2)
 
     def test_create_result_s3_key(self):
@@ -74,8 +69,7 @@ class TestSqsProcessor(TestCase):
                     "stepsDocumentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json", \
                     "steps": ["ROOM_BOX"], \
                     "inferenceId": "2222"}'
-        self.assertIsNone(self.processor.process_message_in_subprocess(StringConstants.SIMILARITY_KEY, message1))
-        # self.assertIsNone(self.processor.process_message_in_subprocess(StringConstants.ROOM_BOX_KEY, message2))
+        self.assertIsNone(self.processor.process_message_in_subprocess(message1))
 
     def test_fail_in_subprocess(self):
         common_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow', 'aids')
@@ -114,11 +108,11 @@ class TestSqsProcessor(TestCase):
             process_result = self.processor.alert_service.run_process(sys.executable, script, message_str)
             logging.info(f'process_result: {process_result}')
 
-            if process_result == 'ok':
-                ok_counter += 1
-            elif process_result == 'fail':
+            if process_result == 'fail':
                 fail_counter += 1
-        self.assertEqual(ok_counter, 3)  # because of dummy_Similarity returns layout array, not just 'ok'
+            else:
+                ok_counter += 1
+        self.assertEqual(ok_counter, 4)  # because of dummy_Similarity returns layout array, not just 'ok'
         self.assertEqual(fail_counter, 4)
 
     def clear_directory(self, path_to_folder_in_bucket: str):

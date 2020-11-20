@@ -105,6 +105,7 @@ class TestSqsProcessor(TestCase):
             logging.info('Deleted all files from i/o directories')
 
     def test_e2e(self):
+        # Clears local dirs and queues
         self.clear_local_directory('sqs_workflow/tmp/')
         self.clear_directory(StringConstants.COMMON_PREFIX)
         self.purge_queue(self.processor.queue_url)
@@ -114,6 +115,7 @@ class TestSqsProcessor(TestCase):
         req_receive = self.processor.receive_messages_from_queue(5)
         self.assertTrue(len(req_receive) == 0)
 
+        # Sends messages
         for i in range(1):
             roombox_message = '{\"messageType\": \"ROOM_BOX\",\
                                        \"inferenceId\": \"'f'123{i}\", \
@@ -134,6 +136,7 @@ class TestSqsProcessor(TestCase):
             self.processor.send_message_to_queue(similarity_message, os.environ['QUEUE_LINK'])
             logging.info('sent similarity message')
 
+        # Runs main.py script w/ messages pre-processing and processing
         main_script_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow') + '/main.py'
 
         subprocess.run([sys.executable,  # path to python
@@ -144,9 +147,9 @@ class TestSqsProcessor(TestCase):
         print('Object list =', object_list)
         print('Len of obj list =', len(object_list))
         self.assertTrue(self.s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/ROOM_BOX/', 1))
+        self.assertTrue(self.s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/SIMILARITY/', 1))
 
-        # Checks returnQueue for return messages
-
+        # Checks num of messages in returnQueue w/ returned messages
         resp_return = self.processor.sqs_client.get_queue_attributes(QueueUrl=self.processor.return_queue_url,
                                                                      AttributeNames=['All'])
         num_of_messages = int(resp_return['Attributes']['ApproximateNumberOfMessages'])
