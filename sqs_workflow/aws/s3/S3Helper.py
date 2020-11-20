@@ -28,7 +28,9 @@ class S3Helper:
                     return True
         return False
 
-    def save_object_on_s3(self, s3_key: str, object_body: str, full_url_tag="document"):
+    def save_string_object_on_s3(self, s3_key: str,
+                                 object_body: str,
+                                 full_url_tag="document"):
         logging.info(f'Start saving object: {s3_key}')
 
         session = boto3.Session(
@@ -39,6 +41,28 @@ class S3Helper:
         obj = s3.Object(self.s3_bucket, s3_key)
         obj.put(Body=object_body,
                 Tagging=f'{StringConstants.PANO_URL_KEY}={full_url_tag}')
+        logging.info(f'Uploaded new file: {s3_key} to s3')
+
+    # todo test
+    def save_file_object_on_s3(self,
+                               s3_key: str,
+                               file_absolute_path: str):
+        logging.info(f'Start saving s3 object:{s3_key} file:{file_absolute_path}')
+
+        self.s3_client.upload_file(file_absolute_path,
+                                   self.s3_bucket,
+                                   s3_key)
+        logging.info(f'Uploaded new file: {s3_key} to s3')
+
+    # todo test
+    def download_file_object_on_s3(self,
+                                   s3_key: str,
+                                   file_absolute_path: str):
+        logging.info(f'Start saving s3 object:{s3_key} file:{file_absolute_path}')
+
+        with open(file_absolute_path, 'wb') as local_file:
+            self.s3_client.download_fileobj(self.s3_bucket, s3_key, local_file)
+            local_file.close()
         logging.info(f'Uploaded new file: {s3_key} to s3')
 
     def read_s3_object(self, s3_key) -> str:

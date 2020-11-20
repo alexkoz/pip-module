@@ -30,7 +30,7 @@ class TestS3(TestCase):
         for i in range(5):
             name = s3_key + '-file_' + str(i) + '.json'
             content = 'some-body-content-' + str(i)
-            s3_helper.save_object_on_s3(name, content, file_url)
+            s3_helper.save_string_object_on_s3(name, content, file_url)
 
         self.assertTrue(s3_helper.is_processing_complete('api/inference/test_type/test_inference', 5))
         self.assertTrue(not s3_helper.is_processing_complete('api/inference/test_type/test_inference', 10))
