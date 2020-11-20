@@ -6,4 +6,5 @@ class ProcessingTypesEnum(Enum):
     Preprocessing = "PREPROCESSING"
     Similarity = "SIMILARITY"
     RMatrix = "R_MATRIX"
+    Rotate = "ROTATE"
     DoorDetecting = "DOOR_DETECTING"

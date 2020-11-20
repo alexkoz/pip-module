@@ -1,6 +1,7 @@
 from unittest import TestCase
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
+from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.Utils import Utils
 import os
 
@@ -20,11 +21,16 @@ class TestS3(TestCase):
 
         message_type = 'test_type'
         inference_id = 'test_inference'
-        s3_key = Utils.create_result_s3_key('api/inference/', message_type, inference_id, 'result')
+        file_url = "http://s3.com/dir/image.jpg"
+        s3_key = Utils.create_result_s3_key('api/inference/',
+                                            message_type,
+                                            inference_id,
+                                            'image_id',
+                                            StringConstants.RESULT_FILE_NAME)
         for i in range(5):
             name = s3_key + '-file_' + str(i) + '.json'
             content = 'some-body-content-' + str(i)
-            s3_helper.save_object_on_s3(name, content)
+            s3_helper.save_object_on_s3(name, content, file_url)
 
         self.assertTrue(s3_helper.is_processing_complete('api/inference/test_type/test_inference', 5))
         self.assertTrue(not s3_helper.is_processing_complete('api/inference/test_type/test_inference', 10))

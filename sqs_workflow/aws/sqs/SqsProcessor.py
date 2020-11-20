@@ -85,14 +85,19 @@ class SqsProcessor:
         message.delete()
         logging.info(f'Message: {message} is deleted')
 
-    def create_path_and_save_on_s3(self, message_type: str, inference_id: str, processing_result, image_id='asset'):
+    def create_path_and_save_on_s3(self, message_type: str,
+                                   inference_id: str,
+                                   processing_result: str,
+                                   image_id: str,
+                                   image_full_url='document'):
+
         s3_path = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                              message_type,
                                              inference_id,
                                              image_id,
                                              StringConstants.RESULT_FILE_NAME)
 
-        self.s3_helper.save_object_on_s3(s3_path, processing_result)
+        self.s3_helper.save_object_on_s3(s3_path, processing_result, image_full_url)
         logging.info(f'Created S3 object key:{s3_path} content:{processing_result}')
 
     def process_message_in_subprocess(self, message_body: str) -> str:
@@ -119,12 +124,17 @@ class SqsProcessor:
                 processing_result = self.run_process(self.similarity_executable,
                                                      self.similarity_script,
                                                      message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-                self.create_path_and_save_on_s3(message_type, inference_id, processing_result)
+                self.create_path_and_save_on_s3(message_type,
+                                                inference_id,
+                                                processing_result,
+                                                "similarity")
                 return processing_result
             else:
                 logging.info(f'Document is under processing inference:{inference_id}')
                 return None
+
         image_id = os.path.basename(message_object[StringConstants.PANO_URL_KEY])
+        image_full_url = message_object[StringConstants.PANO_URL_KEY]
 
         if StringConstants.PRY_MATRIX_KEY not in message_object or message_type == ProcessingTypesEnum.RMatrix.value:
             url_hash = hashlib.md5(message_object[StringConstants.PANO_URL_KEY].encode('utf-8')).hexdigest()
@@ -139,7 +149,8 @@ class SqsProcessor:
                 self.create_path_and_save_on_s3(ProcessingTypesEnum.RMatrix.value,
                                                 url_hash,
                                                 processing_result,
-                                                image_id)
+                                                image_id,
+                                                image_full_url)
             message_object[StringConstants.PRY_MATRIX_KEY] = processing_result
 
         if message_type == ProcessingTypesEnum.RoomBox.value:
@@ -151,7 +162,8 @@ class SqsProcessor:
             self.create_path_and_save_on_s3(message_type,
                                             inference_id,
                                             processing_result,
-                                            image_id)
+                                            image_id,
+                                            image_full_url)
             logging.info(f'Saved roombox:{processing_result} on s3')
         elif message_type == ProcessingTypesEnum.DoorDetecting.value:
             logging.info('Start processing door detecting')
@@ -161,7 +173,8 @@ class SqsProcessor:
             self.create_path_and_save_on_s3(message_type,
                                             inference_id,
                                             processing_result,
-                                            image_id)
+                                            image_id,
+                                            image_full_url)
             logging.info(f'Saved door detecting:{processing_result} on s3')
         logging.info(f"Finished processing and result:{processing_result} save result on s3.")
         return processing_result

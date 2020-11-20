@@ -126,9 +126,16 @@ class TestSqsProcessor(TestCase):
         s3_helper = self.s3_helper
         message_type = 'test-message-type'
         inference_id = 'test-inference-id'
+        image_id = 'test-image-id'
         processing_result = 'test-processing-result-content'
-        self.processor.create_path_and_save_on_s3(message_type, inference_id, processing_result)
+        image_url = 'http://s3.com/path/image.jpg'
+        self.processor.create_path_and_save_on_s3(message_type,
+                                                  inference_id,
+                                                  processing_result,
+                                                  image_id,
+                                                  image_url)
         s3_key = 'api/inference/test-message-type/test-inference-id/asset/'
+        # todo check tags
         self.assertTrue(s3_helper.is_object_exist(s3_key))
 
     def clear_local_directory(self, path_in_project):

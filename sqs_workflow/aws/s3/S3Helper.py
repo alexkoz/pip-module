@@ -1,5 +1,6 @@
 import logging
 import os
+from sqs_workflow.utils.StringConstants import StringConstants
 
 import boto3
 
@@ -27,7 +28,7 @@ class S3Helper:
                     return True
         return False
 
-    def save_object_on_s3(self, s3_key: str, object_body: str):
+    def save_object_on_s3(self, s3_key: str, object_body: str, full_url_tag="document"):
         logging.info(f'Start saving object: {s3_key}')
 
         session = boto3.Session(
@@ -36,7 +37,8 @@ class S3Helper:
         )
         s3 = session.resource('s3')
         obj = s3.Object(self.s3_bucket, s3_key)
-        obj.put(Body=object_body)
+        obj.put(Body=object_body,
+                Tagging=f'{StringConstants.PANO_URL_KEY}={full_url_tag}')
         logging.info(f'Uploaded new file: {s3_key} to s3')
 
     def read_s3_object(self, s3_key) -> str:
@@ -72,4 +74,3 @@ class S3Helper:
         list_of_objects = self.list_s3_objects(prefix)
         logging.info(f'Len of s3_objects_list w/ prefix: {prefix} =', len(list_of_objects))
         return len(list_of_objects) == num_of_expected_results
-
