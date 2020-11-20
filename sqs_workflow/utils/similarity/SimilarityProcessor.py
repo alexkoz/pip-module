@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+from typing import List
 
 import numpy as np
 
@@ -92,3 +93,11 @@ class SimilarityProcessor:
         if step == StringConstants.DOOR_DETECTION_KEY:
             pass
         return layout_object
+
+    @staticmethod
+    def start_pre_processing(message_object) -> List[str]:
+
+        message_objects = []
+        # todo create big similarity message
+        # todo create step messages per image roombox + doordetection
+        return message_objects

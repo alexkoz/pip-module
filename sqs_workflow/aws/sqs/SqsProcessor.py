@@ -49,7 +49,7 @@ class SqsProcessor:
         attr_value = json.loads(message.body)[attribute_name]
         return attr_value
 
-    def send_message_to_queue(self, message_body, queue_url):
+    def send_message_to_queue(self, message_body: str, queue_url: str):
         response_send = self.sqs_client.send_message(QueueUrl=queue_url, MessageBody=message_body)
         logging.info(f'Sent message: {message_body} to queue: {queue_url}')
         return response_send
@@ -103,6 +103,13 @@ class SqsProcessor:
         message_type = message_object[StringConstants.MESSAGE_TYPE_KEY]
         logging.info(f'Message type of message:{message_type} inference:{inference_id}')
         assert inference_id
+
+        if message_type == ProcessingTypesEnum.Preprocessing.value:
+            logging.info(f'Start preprocessing similarity inference:{inference_id}')
+            messages_for_sending = SimilarityProcessor.start_pre_processing(message_object)
+            for send_message in messages_for_sending:
+                self.send_message_to_queue(send_message, self.queue_url)
+            return "preprocessing is successful"
 
         if message_type == ProcessingTypesEnum.Similarity.value:
             logging.info(f'Start processing similarity inference:{inference_id}')
@@ -162,10 +169,6 @@ class SqsProcessor:
 
     def run_process(self, executable: str, script: str, executable_params: str) -> str:
         logging.info(f'Start processing executable:{executable} script:{script} params:{executable_params}')
-        #subprocess_result = subprocess.run([executable,
-        #                                    script + " " + executable_params],
-        #                                   universal_newlines=True,
-        #                                   capture_output=True)
         subprocess_result = subprocess.run(executable + " " + script + " " + executable_params,
                                            shell=True,
                                            check=True,

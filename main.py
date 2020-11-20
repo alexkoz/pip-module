@@ -10,7 +10,6 @@ fileConfig(os.path.dirname(os.path.realpath(__file__)) + '/logging_config.ini')
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
-
 processor = SqsProcessor()
 aws_profile = os.environ['AWS_PROFILE']
 queue_url = os.environ['QUEUE_LINK']
@@ -24,8 +23,8 @@ if __name__ == '__main__':
     while len(list_of_messages) > 0:
         for message in list_of_messages:
             message_body = processor.prepare_for_processing(message.body)
-            processor.process_message_in_subprocess(message_body)
-            processor.complete_processing_message(message)
+            if processor.process_message_in_subprocess(message_body) is not None:
+                processor.complete_processing_message(message)
         logging.info(f"Start pulling messages")
         list_of_messages = processor.pull_messages(1)
 logging.info(f"The queue is empty. Exit waiting for next iteration.")
