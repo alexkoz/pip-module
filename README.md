@@ -5,6 +5,12 @@ Before run an application do:
 bash aids/environment.sh
 ```
 
+To run tests
+
+```bash
+python -m unittest discover -s /Users/alexkoz/projects/sqs_workflow/sqs_workflow/tests -p 'test_*.py
+```
+
 Environment variables:
 
 ```S3_BUCKET```  – Name of your S3 bucket. S3://your-bucket-name/

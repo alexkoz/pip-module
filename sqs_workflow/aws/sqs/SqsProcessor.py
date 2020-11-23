@@ -80,12 +80,10 @@ class SqsProcessor:
 
     # todo finish test
     def complete_processing_message(self, message):
-        if message.body:
-            self.send_message_to_queue(message.body, self.return_queue_url)
-        else:
-            self.send_message_to_queue(message, self.return_queue_url)
+        logging.info(f'Start completing processing message:{message}')
+        self.send_message_to_queue(message.body, self.return_queue_url)
         message.delete()
-        logging.info(f'Message: {message} is deleted')
+        logging.info(f'Message:{message} is deleted')
 
     def create_path_and_save_on_s3(self, message_type: str,
                                    inference_id: str,
@@ -258,18 +256,18 @@ class SqsProcessor:
             return None  # return None when -> str ?
 
     def prepare_for_processing(self, message_body) -> str:
+
+        logging.info(f"Start preprocessing for message:{message_body}")
         message_object = json.loads(message_body)
-        message_type = message_object[StringConstants.MESSAGE_TYPE_KEY]
+        url_file_name = None
+        if StringConstants.DOCUMENT_PATH_KEY in message_object:
+            url_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
+        if StringConstants.PANO_URL_KEY in message_object:
+            url_file_name = message_object[StringConstants.PANO_URL_KEY]
 
-        if message_type == ProcessingTypesEnum.Similarity.value:
-            full_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
-            file_name = os.path.basename(message_object[StringConstants.DOCUMENT_PATH_KEY])
-        else:
-            full_file_name = message_object[StringConstants.PANO_URL_KEY]
-            file_name = os.path.basename(message_object[StringConstants.PANO_URL_KEY])
-
+        file_name = os.path.basename(url_file_name)
         url_hash = hashlib.md5(file_name.encode('utf-8')).hexdigest()
-
+        logging.info(f"Download url:{url_file_name} file:{file_name} hash:{url_hash}")
         input_path = os.path.join(self.input_processing_directory, url_hash)
         output_path = os.path.join(self.output_processing_directory, url_hash)
 
@@ -277,12 +275,14 @@ class SqsProcessor:
             try:
                 os.makedirs(input_path)
                 os.makedirs(output_path)
+                logging.info(f'Created directories input:{input_path}, output:{output_path}')
             except OSError:
                 logging.error(f"Creation of the directory input:{input_path} or output:{output_path}  failed")
                 raise
             logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
-            Utils.download_from_http(full_file_name, os.path.join(input_path, file_name))
+            Utils.download_from_http(url_file_name, os.path.join(input_path, file_name))
 
         message_object[
             StringConstants.EXECUTABLE_PARAMS_KEY] = f' --input_path {os.path.join(input_path, file_name)} --output_path {output_path}'
+        logging.info(f"Downloaded and prepared executables:{message_object[StringConstants.EXECUTABLE_PARAMS_KEY]}")
         return json.dumps(message_object)
