@@ -1,16 +1,11 @@
-import logging
-from unittest import TestCase
 import json
-import boto3
-import random
-import os
-import sys
-
-from sqs_workflow.utils.StringConstants import StringConstants
-from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
+from unittest import TestCase
+from os.path import dirname
+from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.S3HelperMock import S3HelperMock
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
-from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
+from sqs_workflow.utils.StringConstants import StringConstants
+from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
 
 
 class TestSimilarityProcessor(TestCase):
@@ -49,7 +44,7 @@ class TestSimilarityProcessor(TestCase):
 
     def test_start_pre_processing(self):
         sqs_processor = SqsProcessor()
-        similarity_test_message = {
+        preprocessing_message = {
             "messageType": ProcessingTypesEnum.Preprocessing.value,
             "orderId": "5da5d5164cedfd0050363a2e",
             "inferenceId": 1111,
@@ -58,35 +53,24 @@ class TestSimilarityProcessor(TestCase):
             "documentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
             "steps": [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value]
         }
-        json_message_object = sqs_processor.prepare_for_processing(json.dumps(similarity_test_message))
+        json_message_object = sqs_processor.prepare_for_processing(json.dumps(preprocessing_message))
 
-        # list_json_messages = self.similarity_processor.start_pre_processing(json_message_object,
-        #                                                                     os.environ['INPUT_DIRECTORY'])
         similarity_message = json.loads(json_message_object)
-        file_path = similarity_message[StringConstants.EXECUTABLE_PARAMS_KEY].replace('--input_path', '')\
+        file_path = similarity_message[StringConstants.EXECUTABLE_PARAMS_KEY].replace('--input_path', '') \
             .split()[0].strip()
 
         with open(file_path) as f:
             json_message_object = json.load(f)
 
         list_json_messages = self.similarity_processor.start_pre_processing(similarity_message,
-                                                                           os.environ['INPUT_DIRECTORY'])
+                                                                            dirname(file_path))
         self.assertTrue(
-            len(list_json_messages) == (len(json_message_object['steps']) * len(json_message_object['panos']) + 1))
+            len(list_json_messages) == (len(preprocessing_message[StringConstants.STEPS_KEY]) * len(json_message_object[StringConstants.PANOS_KEY]) + 1))
         for json_message in list_json_messages:
             message_object = json.loads(json_message)
             if message_object['messageType'] == ProcessingTypesEnum.Similarity.value:
-                self.assertTrue(len(message_object['panos']) == 2)
+                self.assertTrue(len(message_object[StringConstants.STEPS_KEY]) == 2)
+                self.assertTrue(StringConstants.DOCUMENT_PATH_KEY not in message_object)
             else:
-                print(message_object['messageType'])
                 self.assertTrue(message_object['messageType'] == ProcessingTypesEnum.DoorDetecting.value
                                 or message_object['messageType'] == ProcessingTypesEnum.RoomBox.value)
-
-        # todo define input dir
-        # todo read json from input dir
-        # todo get all panos out of
-        # todo send individual messages according to steps
-        # todo send main similarity message
-
-        # todo wait till processed
-        print("All Done")

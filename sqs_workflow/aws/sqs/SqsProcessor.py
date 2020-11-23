@@ -282,7 +282,8 @@ class SqsProcessor:
                 logging.error(f"Creation of the directory input:{input_path} or output:{output_path}  failed")
                 raise
             logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
-            Utils.download_from_http(url_file_name, os.path.join(input_path, file_name))
+
+        Utils.download_from_http(url_file_name, os.path.join(input_path, file_name))
 
         message_object[
             StringConstants.EXECUTABLE_PARAMS_KEY] = f' --input_path {os.path.join(input_path, file_name)} --output_path {output_path}'
