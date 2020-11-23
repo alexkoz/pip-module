@@ -146,10 +146,11 @@ class TestSqsProcessor(TestCase):
         # todo check tags
         self.assertTrue(s3_helper.is_object_exist(s3_key))
 
-    def clear_local_directory(self, path_in_project):
-        if os.path.isdir(os.path.join(os.getcwd(), path_in_project, 'input')):
-            shutil.rmtree(os.path.join(os.getcwd(), path_in_project, 'input'))
-            shutil.rmtree(os.path.join(os.getcwd(), path_in_project, 'output'))
+    @staticmethod
+    def clear_local_directory(path_in_project):
+        if os.path.isdir(os.environ['INPUT_DIRECTORY']):
+            shutil.rmtree(os.environ['INPUT_DIRECTORY'])
+            shutil.rmtree(os.environ['OUTPUT_DIRECTORY'])
             logging.info('Deleted all files from i/o directories')
 
     def test_prepare_for_processing_similarity(self):

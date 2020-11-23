@@ -108,7 +108,6 @@ class SimilarityProcessor:
 
     @staticmethod
     def start_pre_processing(message_object, input_path: str) -> List[str]:
-
         logging.info(f"Start pre-processing message:{message_object}, input:{input_path}")
         list_messages = []
 
@@ -128,7 +127,7 @@ class SimilarityProcessor:
 
         similarity_message = message_object.copy()
         del similarity_message[StringConstants.PANO_URL_KEY]
-        similarity_message[StringConstants.MESSAGE_TYPE_KEY] = ProcessingTypesEnum.Similarity
+        similarity_message[StringConstants.MESSAGE_TYPE_KEY] = ProcessingTypesEnum.Similarity.value
         list_messages.append(json.dumps(similarity_message))
         logging.info(f"Created list of messages:{list_messages}")
         return list_messages

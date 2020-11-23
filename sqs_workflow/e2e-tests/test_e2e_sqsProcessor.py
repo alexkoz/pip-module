@@ -12,9 +12,10 @@ import boto3
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.utils.StringConstants import StringConstants
+from sqs_workflow.tests.test_sqsProcessor import TestSqsProcessor
 
 
-class TestSqsProcessor(TestCase):
+class E2ETestSqsProcessor(TestCase):
     processor = SqsProcessor()
     s3_helper = S3Helper()
 
@@ -98,15 +99,10 @@ class TestSqsProcessor(TestCase):
             logging.info(f'Out of attempts')
         return list_of_messages
 
-    def clear_local_directory(self, path_in_project):
-        if os.path.isdir(os.path.join(str(Path.home()), 'projects', 'sqs_workflow', path_in_project, 'input')):
-            shutil.rmtree(os.path.join(str(Path.home()), 'projects', 'sqs_workflow', path_in_project, 'input'))
-            shutil.rmtree(os.path.join(str(Path.home()), 'projects', 'sqs_workflow', path_in_project, 'output'))
-            logging.info('Deleted all files from i/o directories')
-
     def test_e2e(self):
         # Clears local dirs and queues
-        self.clear_local_directory('sqs_workflow/tmp/')
+        TestSqsProcessor.clear_local_directory(os.environ['INPUT_DIRECTORY'])
+
         self.clear_directory(StringConstants.COMMON_PREFIX)
         self.purge_queue(self.processor.queue_url)
         self.purge_queue(self.processor.return_queue_url)

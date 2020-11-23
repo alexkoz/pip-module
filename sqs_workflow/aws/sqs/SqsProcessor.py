@@ -13,6 +13,7 @@ from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.Utils import Utils
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
+from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 
 boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'],
                             region_name=os.environ['REGION_NAME'])
@@ -35,16 +36,16 @@ class SqsProcessor:
     output_processing_directory = os.environ['OUTPUT_DIRECTORY']
 
     def __init__(self):
-        self.similarity_executable = os.environ['SIMILARITY_EXECUTABLE']
-        self.similarity_script = os.environ['SIMILARITY_SCRIPT']
-        self.roombox_executable = os.environ['ROOM_BOX_EXECUTABLE']
-        self.roombox_script = os.environ['ROOM_BOX_SCRIPT']
-        self.rmatrix_executable = os.environ['R_MATRIX_EXECUTABLE']
-        self.rmatrix_script = os.environ['R_MATRIX_SCRIPT']
-        self.doordetecting_executable = os.environ['DOOR_DETECTION_EXECUTABLE']
-        self.doordetecting_script = os.environ['DOOR_DETECTION_SCRIPT']
-        self.rotate_executable = os.environ['ROTATE_EXECUTABLE']
-        self.rotate_script = os.environ['ROTATE_SCRIPT']
+        self.similarity_executable = os.environ[f'{ProcessingTypesEnum.Similarity.value}_EXECUTABLE']
+        self.similarity_script = os.environ[f'{ProcessingTypesEnum.Similarity.value}_SCRIPT']
+        self.roombox_executable = os.environ[f'{ProcessingTypesEnum.RoomBox.value}_EXECUTABLE']
+        self.roombox_script = os.environ[f'{ProcessingTypesEnum.RoomBox.value}_SCRIPT']
+        self.rmatrix_executable = os.environ[f'{ProcessingTypesEnum.RMatrix.value}_EXECUTABLE']
+        self.rmatrix_script = os.environ[f'{ProcessingTypesEnum.RMatrix.value}_SCRIPT']
+        self.doordetecting_executable = os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_EXECUTABLE']
+        self.doordetecting_script = os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_SCRIPT']
+        self.rotate_executable = os.environ[f'{ProcessingTypesEnum.Rotate.value}_EXECUTABLE']
+        self.rotate_script = os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT']
 
     def get_attr_value(self, message, attribute_name):
         attr_value = json.loads(message.body)[attribute_name]

@@ -7,4 +7,4 @@ class ProcessingTypesEnum(Enum):
     Similarity = "SIMILARITY"
     RMatrix = "R_MATRIX"
     Rotate = "ROTATE"
-    DoorDetecting = "DOOR_DETECTING"
+    DoorDetecting = "DOOR_DETECTION"

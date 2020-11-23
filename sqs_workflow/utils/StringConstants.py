@@ -8,10 +8,6 @@ class StringConstants:
     PANO_URL_KEY: str = 'fileUrl'
     PANOS_KEY: str = 'panos'
     STEPS_KEY: str = 'steps'
-    R_MATRIX_KEY: str = 'R_MATRIX'
-    SIMILARITY_KEY: str = 'SIMILARITY'
-    DOOR_DETECTION_KEY: str = 'DOOR_DETECTION'
-    ROOM_BOX_KEY: str = 'ROOM_BOX'
     INFERENCE_ID_KEY: str = 'inferenceId'
     EXECUTABLE_PARAMS_KEY: str = 'executable_params'
 
