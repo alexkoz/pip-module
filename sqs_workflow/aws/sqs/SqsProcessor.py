@@ -124,7 +124,7 @@ class SqsProcessor:
 
         if message_type == ProcessingTypesEnum.Preprocessing.value:
             logging.info(f'Start preprocessing similarity inference:{inference_id}')
-            messages_for_sending = SimilarityProcessor.start_pre_processing(message_object)
+            messages_for_sending = SimilarityProcessor.start_pre_processing(message_object, self.input_processing_directory)
             for send_message in messages_for_sending:
                 self.send_message_to_queue(send_message, self.queue_url)
             return "preprocessing is successful"

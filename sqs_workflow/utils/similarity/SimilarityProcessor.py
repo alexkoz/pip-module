@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 
 from sqs_workflow.aws.s3.S3Helper import S3Helper
+from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.Utils import Utils
 
@@ -16,7 +17,6 @@ from sqs_workflow.utils.Utils import Utils
 
 
 class SimilarityProcessor:
-
 
     @staticmethod
     def is_similarity_ready(s3_helper: S3Helper, message_object):
@@ -33,7 +33,7 @@ class SimilarityProcessor:
 
                 logging.info(f'Start processing panorama: {panorama}')
 
-                for step in message_object[StringConstants.STEPS]:
+                for step in message_object[StringConstants.STEPS_KEY]:
                     logging.info(f'Start processing panorama: {panorama} for step: {step}')
                     s3_result_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                                                step,
@@ -112,46 +112,27 @@ class SimilarityProcessor:
         return result_message
 
     def start_pre_processing(self, message_object, input_path) -> List[str]:
+
+        logging.info(f"Start pre-processing message:{message_object}, input:{input_path}")
         list_messages = []
 
-        # similarity_message = message_object
-        # similarity_message = {
-        #     "messageType": "PREPROCESSING",
-        #     "orderId": "5da5d5164cedfd0050363a2e",
-        #     "inferenceId": 1111,
-        #     "floor": 1,
-        #     "tourId": "1342386",
-        #     "panoUrl": "urljson",
-        #     "documentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
-        #     "steps": ['ROOM_BOX', 'DOORDETECTION']
-        # }
-
-        document_absolute_path = os.path.join(input_path, os.path.basename(message_object['documentPath']))
+        document_absolute_path = os.path.join(input_path,
+                                              os.path.basename(message_object[StringConstants.DOCUMENT_PATH_KEY]))
         with open(document_absolute_path) as f:
             document = json.load(f)
             f.close()
 
-        for step in message_object['steps']:
-            for pano in document['panos']:
+        for step in message_object[StringConstants.STEPS_KEY]:
+            for pano in document[StringConstants.PANOS_KEY]:
                 message = message_object.copy()
-                del message['documentPath']
-                message['fileUrl'] = pano['fileUrl']
-                message['messageType'] = step
+                del message[StringConstants.DOCUMENT_PATH_KEY]
+                message[StringConstants.PANO_URL_KEY] = pano[StringConstants.PANO_URL_KEY]
+                message[StringConstants.MESSAGE_TYPE_KEY] = step
                 list_messages.append(json.dumps(message))
 
         similarity_message = message_object.copy()
-        del similarity_message['documentPath']
-        similarity_message['messageType'] = 'SIMILARITY'
+        del similarity_message[StringConstants.PANO_URL_KEY]
+        similarity_message[StringConstants.MESSAGE_TYPE_KEY] = ProcessingTypesEnum.Similarity
         list_messages.append(json.dumps(similarity_message))
-
+        logging.info(f"Created list of messages:{list_messages}")
         return list_messages
-
-
-        # todo read json
-        # todo get all panos out of
-        # todo send individual messages according to steps
-        # todo send main similarity message
-
-        # todo wait till processed
-        print("All Done")
-        # return message_objects #todo return message jsons

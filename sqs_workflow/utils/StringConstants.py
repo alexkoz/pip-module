@@ -7,7 +7,7 @@ class StringConstants:
     STEPS_DOCUMENT_PATH_KEY: str = "stepsDocumentPath"
     PANO_URL_KEY: str = 'fileUrl'
     PANOS_KEY: str = 'panos'
-    STEPS: str = 'steps'
+    STEPS_KEY: str = 'steps'
     R_MATRIX_KEY: str = 'R_MATRIX'
     SIMILARITY_KEY: str = 'SIMILARITY'
     DOOR_DETECTION_KEY: str = 'DOOR_DETECTION'
