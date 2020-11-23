@@ -106,7 +106,8 @@ class SimilarityProcessor:
                 # result_messages.append(result_message)
         return result_message
 
-    def start_pre_processing(self, message_object, input_path) -> List[str]:
+    @staticmethod
+    def start_pre_processing(message_object, input_path: str) -> List[str]:
 
         logging.info(f"Start pre-processing message:{message_object}, input:{input_path}")
         list_messages = []
