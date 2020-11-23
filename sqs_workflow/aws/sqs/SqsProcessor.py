@@ -76,7 +76,6 @@ class SqsProcessor:
             logging.info(f'Out of attempts')
         return list_of_messages
 
-    # todo finish test
     def complete_processing_message(self, message):
         if message.body:
             self.send_message_to_queue(message.body, self.return_queue_url)
@@ -200,7 +199,7 @@ class SqsProcessor:
         message_object = json.loads(message_body)
         message_type = message_object[StringConstants.MESSAGE_TYPE_KEY]
 
-        if message_type == ProcessingTypesEnum.Similarity.value:
+        if message_type == ProcessingTypesEnum.Similarity.value or message_type == ProcessingTypesEnum.Preprocessing.value:
             full_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
             file_name = os.path.basename(message_object[StringConstants.DOCUMENT_PATH_KEY])
         else:

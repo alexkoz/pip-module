@@ -47,13 +47,13 @@ similarity_test_message = {
     "inferenceId": 1111,
     "floor": 1,
     "tourId": "1342386",
-    "documentPath": "urljson",
-    "stepsDocumentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
-    "steps": ['ROOMBOX', 'DOORDETECTION']
+    "panoUrl": "urljson",
+    "documentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+    "steps": ['ROOM_BOX', 'DOORDETECTION']
 }
+list_messages = []
+list_messages.append(similarity_test_message)
 
-req_send = queue.send_message(QueueUrl=os.environ['QUEUE_LINK'], MessageBody=json.dumps(similarity_test_message))
-#
 panos_counter = 0
 for pano in floor_object['panos']:
     panos_counter += 1
@@ -62,21 +62,10 @@ for pano in floor_object['panos']:
     for step in [StringConstants.ROOM_BOX_KEY, StringConstants.DOOR_DETECTION_KEY]:
         message = pano
         message['inferenceId'] = random.randint(1, 100)
-        req_send = queue.send_message(QueueUrl=os.environ['QUEUE_LINK'], MessageBody=json.dumps(message))
+        list_messages.append(message)
 
-main_script_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow') + '/main.py'
-for i in range(panos_counter + 1):
-    list_of_messages = processor.pull_messages(1)
-    logging.info('Pulled message')
-    for message in list_of_messages:
-        if 'messageType' in json.loads(message.body):
-            message_type = json.loads(message.body)['messageType']
-            # if message_message_type == 'SIMILARITY':
-            #     message_type = 'SIMILARITY'
-        else:
-            message_type = 'ROOM_BOX'
-        processor.process_message_in_subprocess(message.body)
-
+print(list_messages)
+print(type(list_messages))
 # todo read json
 # todo get all panos out of
 # todo send individual messages according to steps
