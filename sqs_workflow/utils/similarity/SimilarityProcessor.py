@@ -2,18 +2,13 @@ import json
 import logging
 import os
 from typing import List
-import boto3
-import random
-from pathlib import Path
+
 import numpy as np
 
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.Utils import Utils
-
-
-# from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 
 
 class SimilarityProcessor:
@@ -106,7 +101,7 @@ class SimilarityProcessor:
         result_message = {}
         for step in steps:
             for key in pano_info.keys():
-                result_message['messageType'] = step
+                result_message[StringConstants.MESSAGE_TYPE_KEY] = step
                 result_message[key] = pano_info.get(key)
                 # result_messages.append(result_message)
         return result_message
