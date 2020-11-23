@@ -26,6 +26,8 @@ class Utils:
         assert os.environ['R_MATRIX_SCRIPT']
         assert os.environ['DOOR_DETECTION_SCRIPT']
         assert os.environ['DOOR_DETECTION_EXECUTABLE']
+        assert os.environ['ROTATE_EXECUTABLE']
+        assert os.environ['ROTATE_SCRIPT']
         assert os.environ['INPUT_DIRECTORY']
         assert os.environ['OUTPUT_DIRECTORY']
         assert os.environ['SLACK_URL']

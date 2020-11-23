@@ -147,27 +147,6 @@ class SimilarityProcessor:
         return list_messages
 
 
-        # for key in message_object[0].keys():
-        #     if key != 'messageType':
-        #         similarity_message[key] = message_object[0].get(key)
-        # final_message_result.append(similarity_message)
-        #
-        # steps = message_object[0]['steps']
-        #
-        # print(f'similar message: {similarity_message}')
-        #
-        # other_messages_by_steps = []
-        # for pano in message_object[1:]:
-        #     other_messages_by_steps.append(SimilarityProcessor.generate_message(pano, steps))
-        # print(f'other message: {other_messages_by_steps}')
-        #
-        # final_message_result += other_messages_by_steps
-        #
-        # print(f'final_message_result: {final_message_result}')
-
-        #
-        # list_messages = []
-        # print(list_messages)
         # todo read json
         # todo get all panos out of
         # todo send individual messages according to steps

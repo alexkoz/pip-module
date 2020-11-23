@@ -43,6 +43,8 @@ class SqsProcessor:
         self.rmatrix_script = os.environ['R_MATRIX_SCRIPT']
         self.doordetecting_executable = os.environ['DOOR_DETECTION_EXECUTABLE']
         self.doordetecting_script = os.environ['DOOR_DETECTION_SCRIPT']
+        self.rotate_executable = os.environ['ROTATE_EXECUTABLE']
+        self.rotate_script = os.environ['ROTATE_SCRIPT']
 
     def get_attr_value(self, message, attribute_name):
         attr_value = json.loads(message.body)[attribute_name]
@@ -77,22 +79,40 @@ class SqsProcessor:
         return list_of_messages
 
     def complete_processing_message(self, message):
-        if message.body:
-            self.send_message_to_queue(message.body, self.return_queue_url)
-        else:
-            self.send_message_to_queue(message, self.return_queue_url)
+        logging.info(f'Start completing processing message:{message}')
+        self.send_message_to_queue(message.body, self.return_queue_url)
         message.delete()
-        logging.info(f'Message: {message} is deleted')
+        logging.info(f'Message:{message} is deleted')
 
-    def create_path_and_save_on_s3(self, message_type: str, inference_id: str, processing_result, image_id='asset'):
+    def create_path_and_save_on_s3(self, message_type: str,
+                                   inference_id: str,
+                                   processing_result: str,
+                                   image_id: str,
+                                   image_full_url='document'):
+
         s3_path = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                              message_type,
                                              inference_id,
                                              image_id,
                                              StringConstants.RESULT_FILE_NAME)
 
-        self.s3_helper.save_object_on_s3(s3_path, processing_result)
+        self.s3_helper.save_string_object_on_s3(s3_path, processing_result, image_full_url)
         logging.info(f'Created S3 object key:{s3_path} content:{processing_result}')
+
+    # todo test
+    def create_output_file_on_s3(self, message_type: str,
+                                 image_hash: str,
+                                 image_id: str,
+                                 image_absolute_path: str):
+        logging.info(f'Start creating output for rotation file:{image_absolute_path}')
+        s3_path = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
+                                             message_type,
+                                             image_hash,
+                                             image_id,
+                                             "")
+
+        self.s3_helper.save_file_object_on_s3(s3_path, image_absolute_path)
+        logging.info(f'Created S3 object key:{s3_path} file:{image_absolute_path}')
 
     def process_message_in_subprocess(self, message_body: str) -> str:
         processing_result = None
@@ -118,15 +138,21 @@ class SqsProcessor:
                 processing_result = self.run_process(self.similarity_executable,
                                                      self.similarity_script,
                                                      message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-                self.create_path_and_save_on_s3(message_type, inference_id, processing_result)
+                self.create_path_and_save_on_s3(message_type,
+                                                inference_id,
+                                                processing_result,
+                                                "similarity")
                 return processing_result
             else:
                 logging.info(f'Document is under processing inference:{inference_id}')
                 return None
-        image_id = os.path.basename(message_object[StringConstants.PANO_URL_KEY])
 
-        if StringConstants.PRY_MATRIX_KEY not in message_object or message_type == ProcessingTypesEnum.RMatrix.value:
-            url_hash = hashlib.md5(message_object[StringConstants.PANO_URL_KEY].encode('utf-8')).hexdigest()
+        image_id = os.path.basename(message_object[StringConstants.PANO_URL_KEY])
+        image_full_url = message_object[StringConstants.PANO_URL_KEY]
+        url_hash = hashlib.md5(image_full_url.encode('utf-8')).hexdigest()
+
+        if message_type == ProcessingTypesEnum.RMatrix.value:
+
             processing_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value,
                                                      url_hash,
                                                      image_id)
@@ -138,8 +164,38 @@ class SqsProcessor:
                 self.create_path_and_save_on_s3(ProcessingTypesEnum.RMatrix.value,
                                                 url_hash,
                                                 processing_result,
-                                                image_id)
+                                                image_id,
+                                                image_full_url)
+                # todo send message for a rotation
             message_object[StringConstants.PRY_MATRIX_KEY] = processing_result
+
+        # todo check rotated image
+        rotated_result = self.s3_helper.is_object_exist(
+            Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
+                                       ProcessingTypesEnum.Rotate.value,
+                                       url_hash,
+                                       image_id,
+                                       ""))
+
+        if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
+            logging.info('Start processing door detecting')
+            processing_result = self.run_process(self.rotate_executable,
+                                                 self.rotate_script,
+                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+            self.create_output_file_on_s3(ProcessingTypesEnum.Rotate.value,
+                                          url_hash,
+                                          image_id,
+                                          processing_result)
+            logging.info(f'Saved door detecting:{processing_result} on s3')
+        else:
+            logging.info(f'Download from s3')
+            self.s3_helper.download_file_object_on_s3(
+                Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
+                                           ProcessingTypesEnum.Rotate.value,
+                                           url_hash,
+                                           image_id,
+                                           ""),
+                os.path.join(self.output_processing_directory, image_id))
 
         if message_type == ProcessingTypesEnum.RoomBox.value:
             logging.info('Start processing room box')
@@ -150,7 +206,8 @@ class SqsProcessor:
             self.create_path_and_save_on_s3(message_type,
                                             inference_id,
                                             processing_result,
-                                            image_id)
+                                            image_id,
+                                            image_full_url)
             logging.info(f'Saved roombox:{processing_result} on s3')
         elif message_type == ProcessingTypesEnum.DoorDetecting.value:
             logging.info('Start processing door detecting')
@@ -160,8 +217,10 @@ class SqsProcessor:
             self.create_path_and_save_on_s3(message_type,
                                             inference_id,
                                             processing_result,
-                                            image_id)
+                                            image_id,
+                                            image_full_url)
             logging.info(f'Saved door detecting:{processing_result} on s3')
+
         logging.info(f"Finished processing and result:{processing_result} save result on s3.")
         return processing_result
 
@@ -196,18 +255,18 @@ class SqsProcessor:
             return None  # return None when -> str ?
 
     def prepare_for_processing(self, message_body) -> str:
+
+        logging.info(f"Start preprocessing for message:{message_body}")
         message_object = json.loads(message_body)
-        message_type = message_object[StringConstants.MESSAGE_TYPE_KEY]
+        url_file_name = None
+        if StringConstants.DOCUMENT_PATH_KEY in message_object:
+            url_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
+        if StringConstants.PANO_URL_KEY in message_object:
+            url_file_name = message_object[StringConstants.PANO_URL_KEY]
 
-        if message_type == ProcessingTypesEnum.Similarity.value or message_type == ProcessingTypesEnum.Preprocessing.value:
-            full_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
-            file_name = os.path.basename(message_object[StringConstants.DOCUMENT_PATH_KEY])
-        else:
-            full_file_name = message_object[StringConstants.PANO_URL_KEY]
-            file_name = os.path.basename(message_object[StringConstants.PANO_URL_KEY])
-
+        file_name = os.path.basename(url_file_name)
         url_hash = hashlib.md5(file_name.encode('utf-8')).hexdigest()
-
+        logging.info(f"Download url:{url_file_name} file:{file_name} hash:{url_hash}")
         input_path = os.path.join(self.input_processing_directory, url_hash)
         output_path = os.path.join(self.output_processing_directory, url_hash)
 
@@ -215,12 +274,14 @@ class SqsProcessor:
             try:
                 os.makedirs(input_path)
                 os.makedirs(output_path)
+                logging.info(f'Created directories input:{input_path}, output:{output_path}')
             except OSError:
                 logging.error(f"Creation of the directory input:{input_path} or output:{output_path}  failed")
                 raise
             logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
-            Utils.download_from_http(full_file_name, os.path.join(input_path, file_name))
+            Utils.download_from_http(url_file_name, os.path.join(input_path, file_name))
 
         message_object[
             StringConstants.EXECUTABLE_PARAMS_KEY] = f' --input_path {os.path.join(input_path, file_name)} --output_path {output_path}'
+        logging.info(f"Downloaded and prepared executables:{message_object[StringConstants.EXECUTABLE_PARAMS_KEY]}")
         return json.dumps(message_object)
