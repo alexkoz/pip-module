@@ -78,7 +78,6 @@ class SqsProcessor:
             logging.info(f'Out of attempts')
         return list_of_messages
 
-    # todo finish test
     def complete_processing_message(self, message):
         logging.info(f'Start completing processing message:{message}')
         self.send_message_to_queue(message.body, self.return_queue_url)

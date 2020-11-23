@@ -2,7 +2,9 @@ import json
 import logging
 import os
 from typing import List
-
+import boto3
+import random
+from pathlib import Path
 import numpy as np
 
 from sqs_workflow.aws.s3.S3Helper import S3Helper
@@ -10,7 +12,11 @@ from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.Utils import Utils
 
 
+# from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
+
+
 class SimilarityProcessor:
+
 
     @staticmethod
     def is_similarity_ready(s3_helper: S3Helper, message_object):
@@ -95,11 +101,57 @@ class SimilarityProcessor:
         return layout_object
 
     @staticmethod
-    def start_pre_processing(message_object) -> List[str]:
+    def generate_message(pano_info, steps):
+        # result_messages = []
+        result_message = {}
+        for step in steps:
+            for key in pano_info.keys():
+                result_message['messageType'] = step
+                result_message[key] = pano_info.get(key)
+                # result_messages.append(result_message)
+        return result_message
 
-        message_objects = []
-        # todo create big similarity message
-        # todo dowload json document from message
-        # todo iterate panos
-        # todo create step messages per image roombox + doordetection
-        return message_objects #todo return message jsons
+    def start_pre_processing(self, message_object, input_path) -> List[str]:
+        list_messages = []
+
+        # similarity_message = message_object
+        # similarity_message = {
+        #     "messageType": "PREPROCESSING",
+        #     "orderId": "5da5d5164cedfd0050363a2e",
+        #     "inferenceId": 1111,
+        #     "floor": 1,
+        #     "tourId": "1342386",
+        #     "panoUrl": "urljson",
+        #     "documentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+        #     "steps": ['ROOM_BOX', 'DOORDETECTION']
+        # }
+
+        document_absolute_path = os.path.join(input_path, os.path.basename(message_object['documentPath']))
+        with open(document_absolute_path) as f:
+            document = json.load(f)
+            f.close()
+
+        for step in message_object['steps']:
+            for pano in document['panos']:
+                message = message_object.copy()
+                del message['documentPath']
+                message['fileUrl'] = pano['fileUrl']
+                message['messageType'] = step
+                list_messages.append(json.dumps(message))
+
+        similarity_message = message_object.copy()
+        del similarity_message['documentPath']
+        similarity_message['messageType'] = 'SIMILARITY'
+        list_messages.append(json.dumps(similarity_message))
+
+        return list_messages
+
+
+        # todo read json
+        # todo get all panos out of
+        # todo send individual messages according to steps
+        # todo send main similarity message
+
+        # todo wait till processed
+        print("All Done")
+        # return message_objects #todo return message jsons
