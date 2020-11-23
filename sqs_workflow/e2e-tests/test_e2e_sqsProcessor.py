@@ -1,17 +1,17 @@
-from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
-from sqs_workflow.aws.s3.S3Helper import S3Helper
-from sqs_workflow.utils.StringConstants import StringConstants
-
-import sqs_workflow.utils.Utils
-import time
-import shutil
+import logging
 import os
+import shutil
 import subprocess
 import sys
-import logging
-import boto3
+import time
 from pathlib import Path
 from unittest import TestCase
+
+import boto3
+
+from sqs_workflow.aws.s3.S3Helper import S3Helper
+from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
+from sqs_workflow.utils.StringConstants import StringConstants
 
 
 class TestSqsProcessor(TestCase):

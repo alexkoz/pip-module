@@ -1,17 +1,16 @@
+import json
 import logging
 import os
+import shutil
 import sys
 from pathlib import Path
 from unittest import TestCase
-import shutil
-import json
 
+from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 from sqs_workflow.tests.QueueMock import QueueMock
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
-from sqs_workflow.utils.StringConstants import StringConstants
-from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.utils.Utils import Utils
 
 
@@ -23,6 +22,7 @@ class TestSqsProcessor(TestCase):
     processor.return_queue = QueueMock()
 
     def test_send_message(self):
+        self.processor.queue = QueueMock()
         message_body = "message_body_"
         for i in range(8):
             self.processor.queue.send_message_to_queue(message_body=message_body + str(i),
@@ -30,6 +30,7 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(self.processor.queue.queue_messages[6]['Body'] == 'message_body_6')
 
     def test_receive_mock_messages(self):
+        self.processor.queue = QueueMock()
         self.processor.queue.receive_messages_from_queue(5)
         self.assertTrue(len(self.processor.queue.queue_messages) == 5)
 
@@ -72,7 +73,14 @@ class TestSqsProcessor(TestCase):
         self.assertIsNone(self.processor.process_message_in_subprocess(message1))
 
     def test_fail_in_subprocess(self):
-        common_path = os.path.join(str(Path.home()), 'projects', 'sqs_workflow', 'sqs_workflow', 'aids')
+
+        common_path = os.path.join(str(Path.home()),
+                                   'projects',
+                                   'python',
+                                   'misc',
+                                   'sqs_workflow',
+                                   'sqs_workflow',
+                                   'aids')
 
         room_box_python = common_path + '/dummy_roombox.py'
         room_box_python_fail = common_path + '/dummy_roombox_fail.py'
@@ -145,7 +153,8 @@ class TestSqsProcessor(TestCase):
             logging.info('Deleted all files from i/o directories')
 
     def test_prepare_for_processing_similarity(self):
-        self.clear_local_directory('tmp/')
+        self.clear_local_directory(self.processor.input_processing_directory)
+        self.clear_local_directory(self.processor.output_processing_directory)
 
         test_message_similarity = '{"messageType": "SIMILARITY",\
                            "tourId": "5fa1df49014bf357cf250d52",\
@@ -155,16 +164,17 @@ class TestSqsProcessor(TestCase):
                            "inferenceId": "1111"}'
 
         res_similarity = self.processor.prepare_for_processing(test_message_similarity)
-        input_path = os.path.join(os.getcwd(), 'tmp', 'input',
+        input_path = os.path.join(self.processor.input_processing_directory,
                                   'ad7ede0d6d45f7dc4656763b87b81db2') + '/order_1012550_floor_1.json.json'
-        output_path = os.path.join(os.getcwd(), 'tmp', 'output', 'ad7ede0d6d45f7dc4656763b87b81db2')
+        output_path = os.path.join(self.processor.output_processing_directory, 'ad7ede0d6d45f7dc4656763b87b81db2')
 
         self.assertTrue(json.loads(res_similarity)[
                             'executable_params'] == f' --input_path {input_path} --output_path {output_path}')
         self.assertTrue(os.path.isfile(input_path))
 
     def test_prepare_for_processing_roombox(self):
-        self.clear_local_directory('tmp/')
+        self.clear_local_directory(self.processor.input_processing_directory)
+        self.clear_local_directory(self.processor.output_processing_directory)
 
         test_message_room_box = '{"messageType": "ROOM_BOX",\
                            "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG",\
@@ -174,15 +184,18 @@ class TestSqsProcessor(TestCase):
                            "inferenceId": "222"}'
 
         res_room_box = self.processor.prepare_for_processing(test_message_room_box)
-        input_path = os.path.join(os.getcwd(), 'tmp', 'input', 'e52d12ec195bea3977909c8ae585e5b6') + '/n0l066b0r4.JPG'
-        output_path = os.path.join(os.getcwd(), 'tmp', 'output', 'e52d12ec195bea3977909c8ae585e5b6')
+        input_path = os.path.join(self.processor.input_processing_directory,
+                                  'e52d12ec195bea3977909c8ae585e5b6') + '/n0l066b0r4.JPG'
+        output_path = os.path.join(self.processor.output_processing_directory,
+                                   'e52d12ec195bea3977909c8ae585e5b6')
 
         self.assertTrue(
             json.loads(res_room_box)['executable_params'] == f' --input_path {input_path} --output_path {output_path}')
         self.assertTrue(os.path.isfile(input_path))
 
     def test_prepare_for_processing_door_detection(self):
-        self.clear_local_directory('tmp/')
+        self.clear_local_directory(self.processor.input_processing_directory)
+        self.clear_local_directory(self.processor.output_processing_directory)
 
         test_message_room_box = '{"messageType": "DOOR_DETECTION",\
                                "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG",\
@@ -192,8 +205,9 @@ class TestSqsProcessor(TestCase):
                                "inferenceId": "222"}'
 
         res_door_detection = self.processor.prepare_for_processing(test_message_room_box)
-        input_path = os.path.join(os.getcwd(), 'tmp', 'input', 'e52d12ec195bea3977909c8ae585e5b6') + '/n0l066b0r4.JPG'
-        output_path = os.path.join(os.getcwd(), 'tmp', 'output', 'e52d12ec195bea3977909c8ae585e5b6')
+        input_path = os.path.join(self.processor.input_processing_directory,
+                                  'e52d12ec195bea3977909c8ae585e5b6') + '/n0l066b0r4.JPG'
+        output_path = os.path.join(self.processor.output_processing_directory, 'e52d12ec195bea3977909c8ae585e5b6')
 
         self.assertTrue(json.loads(res_door_detection)[
                             'executable_params'] == f' --input_path {input_path} --output_path {output_path}')

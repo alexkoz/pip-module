@@ -16,6 +16,7 @@ class AlertServiceMock:
         self.message_type = message_type
 
     def run_process(self, executable, script, message_body) -> str:
+        logging.info(f"Start process executable:{executable} script:{script} message:{message_body}")
         subprocess_result = subprocess.run([executable,
                                             script,
                                             message_body],
