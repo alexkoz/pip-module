@@ -143,8 +143,8 @@ class SqsProcessor:
     def process_message_in_subprocess(self, message_body: str) -> str:
         processing_result = None
         message_object = json.loads(message_body)
-        inference_id = message_object[StringConstants.INFERENCE_ID_KEY]
-        message_type = message_object[StringConstants.MESSAGE_TYPE_KEY]
+        inference_id = str(message_object[StringConstants.INFERENCE_ID_KEY])
+        message_type = str(message_object[StringConstants.MESSAGE_TYPE_KEY])
         logging.info(f'Message type of message:{message_type} inference:{inference_id}')
         assert inference_id
 
