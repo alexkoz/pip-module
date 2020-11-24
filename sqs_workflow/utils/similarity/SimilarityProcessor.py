@@ -107,17 +107,14 @@ class SimilarityProcessor:
         return result_message
 
     @staticmethod
-    def start_pre_processing(message_object, input_path: str) -> List[str]:
-        logging.info(f"Start pre-processing message:{message_object}, input:{input_path}")
+    def start_pre_processing(message_object) -> List[str]:
+        logging.info(f"Start pre-processing message:{message_object}")
         list_messages = []
 
-        hash_directory = message_object[StringConstants.EXECUTABLE_PARAMS_KEY] \
+        input_file = message_object[StringConstants.EXECUTABLE_PARAMS_KEY] \
             .replace('--input_path', '') \
             .split()[0].strip()
-        document_absolute_path = os.path.join(input_path,
-                                              hash_directory,
-                                              os.path.basename(message_object[StringConstants.DOCUMENT_PATH_KEY]))
-        with open(document_absolute_path) as f:
+        with open(input_file) as f:
             document = json.load(f)
             f.close()
 

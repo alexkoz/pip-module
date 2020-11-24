@@ -55,9 +55,9 @@ class S3Helper:
         logging.info(f'Uploaded new file: {s3_key} to s3')
 
     # todo test
-    def download_file_object_on_s3(self,
-                                   s3_key: str,
-                                   file_absolute_path: str):
+    def download_file_object_from_s3(self,
+                                     s3_key: str,
+                                     file_absolute_path: str):
         logging.info(f'Start saving s3 object:{s3_key} file:{file_absolute_path}')
 
         with open(file_absolute_path, 'wb') as local_file:

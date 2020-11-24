@@ -150,9 +150,7 @@ class SqsProcessor:
 
         if message_type == ProcessingTypesEnum.Preprocessing.value:
             logging.info(f'Start preprocessing similarity inference:{inference_id}')
-            messages_for_sending = SimilarityProcessor.start_pre_processing(
-                message_object,
-                self.input_processing_directory)
+            messages_for_sending = SimilarityProcessor.start_pre_processing(message_object)
             for send_message in messages_for_sending:
                 self.send_message_to_queue(send_message, self.queue_url)
             return "preprocessing is successful"
@@ -202,27 +200,28 @@ class SqsProcessor:
             Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                        ProcessingTypesEnum.Rotate.value,
                                        url_hash,
-                                       image_id,
-                                       ""))
+                                       "",
+                                       image_id))
 
         if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
-            logging.info('Start processing door detecting')
+            logging.info('Start processing rotating')
             processing_result = self.run_process(self.rotate_executable,
                                                  self.rotate_script,
                                                  message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+            logging.info(f'Result rotating:{processing_result}')
             self.create_output_file_on_s3(ProcessingTypesEnum.Rotate.value,
                                           url_hash,
                                           image_id,
-                                          processing_result)
+                                          str(processing_result))
             logging.info(f'Saved door detecting:{processing_result} on s3')
         else:
             logging.info(f'Download from s3')
-            self.s3_helper.download_file_object_on_s3(
+            self.s3_helper.download_file_object_from_s3(
                 Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                            ProcessingTypesEnum.Rotate.value,
                                            url_hash,
-                                           image_id,
-                                           ""),
+                                           "",
+                                           image_id),
                 os.path.join(self.output_processing_directory, image_id))
 
         if message_type == ProcessingTypesEnum.RoomBox.value:
@@ -262,7 +261,9 @@ class SqsProcessor:
             message = f'Process has failed for process:{executable} script:{script} message:{executable_params}.'
             self.alert_service.send_slack_message(message, 0)
         logging.info(f'subprocess code: {subprocess_result.returncode} output: {subprocess_result.stdout}')
-        return subprocess_result.stdout
+        output = subprocess_result.stdout.decode("utf-8").rstrip()
+        logging.info(f"Output:{output}")
+        return output
 
     def check_pry_on_s3(self, message_type: str, url_hash: str, image_id: str) -> str:
         result_s3_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
