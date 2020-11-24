@@ -153,7 +153,7 @@ class E2ETestSqsProcessor(TestCase):
                     door_detection_messages.append(message)
                     message.delete()
                 else:
-                    assert 'Wrong message type'
+                    assert 'Incorrect message type'
 
         # Preprocessing and processing messages
         json_message_object = self.processor.prepare_for_processing(json.dumps(similarity_message))
