@@ -33,4 +33,17 @@ update_application "/home/ubuntu/projects/python/misc/sqs_workflow/"
 update_application "/home/ubuntu/projects/python/layout-validation/"
 update_application "/home/ubuntu/projects/python/ai-research"
 
+ec2_data=$(ec2metadata --public-ipv4 --instance-id --ami-id)
+echo "$(date '+%Y-%m-%d %H:%M:%S') Send slack notification for $ec2_data"
+
+message_body='{"text":"Ai sqs consumer launched. '
+message_body="$message_body $ec2_data"
+message_body=$message_body' "}'
+
+#
+curl -X POST -H 'Content-type: application/json' \
+  --data "$message_body" \
+  "$SLACK_URL"
+echo "Sent slack notification"
+
 echo "$(date) %%%%%%%%%%%%%%%%%%%%%% Finished sync for reboot %%%%%%%%%%%%%%%%%%%%%%"
