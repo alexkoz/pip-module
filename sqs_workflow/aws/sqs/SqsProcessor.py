@@ -188,14 +188,15 @@ class SqsProcessor:
                                        image_id))
 
         if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
-            logging.info('Start processing door detecting')
+            logging.info('Start processing rotating')
             processing_result = self.run_process(self.rotate_executable,
                                                  self.rotate_script,
                                                  message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+            logging.info(f'Result rotating:{processing_result}')
             self.create_output_file_on_s3(ProcessingTypesEnum.Rotate.value,
                                           url_hash,
                                           image_id,
-                                          processing_result)
+                                          str(processing_result))
             logging.info(f'Saved door detecting:{processing_result} on s3')
         else:
             logging.info(f'Download from s3')
@@ -244,7 +245,7 @@ class SqsProcessor:
             message = f'Process has failed for process:{executable} script:{script} message:{executable_params}.'
             self.alert_service.send_slack_message(message, 0)
         logging.info(f'subprocess code: {subprocess_result.returncode} output: {subprocess_result.stdout}')
-        return subprocess_result.stdout
+        return str(subprocess_result.stdout).rstrip()
 
     def check_pry_on_s3(self, message_type: str, url_hash: str, image_id: str) -> str:
         result_s3_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
