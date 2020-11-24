@@ -13,29 +13,37 @@ from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.Utils import Utils
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
-from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
-
-boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'],
-                            region_name=os.environ['REGION_NAME'])
 
 
 class SqsProcessor:
     alert_service = AlertService()
     s3_helper = S3Helper()
 
-    sqs_client = boto3.client('sqs')
-    sqs_resource = boto3.resource('sqs')
-
-    queue_url = os.environ['QUEUE_LINK']
-    return_queue_url = os.environ['QUEUE_LINK'] + "-return-queue"
-
-    queue = sqs_resource.Queue(os.environ['QUEUE_LINK'])
-    return_queue = sqs_resource.Queue(return_queue_url)
-
     input_processing_directory = os.environ['INPUT_DIRECTORY']
     output_processing_directory = os.environ['OUTPUT_DIRECTORY']
 
-    def __init__(self):
+    def __init__(self, queue_name):
+
+        if "immo" in queue_name:
+            logging.info(f'Activate immoviewer session')
+
+            self.session = boto3.session.Session(profile_name=os.environ['IMMO_AWS_PROFILE'],
+                                                 region_name=os.environ['IMMO_REGION_NAME'])
+        else:
+            logging.info(f'Activate docuscetch session')
+            self.session = boto3.session.Session(profile_name=os.environ['DOCU_AWS_PROFILE'],
+                                                 region_name=os.environ['DOCU_REGION_NAME'])
+        self.sqs_client = self.session.client('sqs')
+        self.sqs_resource = self.session.resource('sqs')
+
+        get_url_response = self.sqs_client.get_queue_url(QueueName=os.environ['QUEUE_PREFIX'] + queue_name)
+        queue_url = get_url_response['QueueUrl']
+        self.queue_url = queue_url
+        self.return_queue_url = queue_url + "-return-queue"
+        logging.info(f'Pulled queues{queue_url}')
+        self.queue = self.sqs_resource.Queue(self.queue_url)
+        self.return_queue = self.sqs_resource.Queue(self.return_queue_url)
+
         self.similarity_executable = os.environ[f'{ProcessingTypesEnum.Similarity.value}_EXECUTABLE']
         self.similarity_script = os.environ[f'{ProcessingTypesEnum.Similarity.value}_SCRIPT']
         self.roombox_executable = os.environ[f'{ProcessingTypesEnum.RoomBox.value}_EXECUTABLE']
@@ -46,6 +54,7 @@ class SqsProcessor:
         self.doordetecting_script = os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_SCRIPT']
         self.rotate_executable = os.environ[f'{ProcessingTypesEnum.Rotate.value}_EXECUTABLE']
         self.rotate_script = os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT']
+        logging.info(f'SQS processor initialized for profile:{queue_name}')
 
     def get_attr_value(self, message, attribute_name):
         attr_value = json.loads(message.body)[attribute_name]
@@ -63,11 +72,11 @@ class SqsProcessor:
             logging.info(f'response_message content:{response_messages[0].body}')
         return response_messages
 
-    def pull_messages(self, number_of_messages: int, queue_url) -> list:
+    def pull_messages(self, number_of_messages: int) -> list:
         attempts = 0
-        list_of_messages = self.receive_messages_from_queue(number_of_messages, queue_url)
+        list_of_messages = self.receive_messages_from_queue(number_of_messages, self.queue_url)
         while attempts < 7 and len(list_of_messages) < number_of_messages:
-            messages_received = self.receive_messages_from_queue(1, queue_url)
+            messages_received = self.receive_messages_from_queue(1, self.queue_url)
             if len(messages_received) > 0:
                 list_of_messages += messages_received
                 logging.info(f'Len list of messages:{len(list_of_messages)}')

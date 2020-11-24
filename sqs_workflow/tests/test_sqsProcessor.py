@@ -26,7 +26,7 @@ class TestSqsProcessor(TestCase):
         message_body = "message_body_"
         for i in range(8):
             self.processor.queue.send_message_to_queue(message_body=message_body + str(i),
-                                                       queue_url=os.environ['QUEUE_LINK'])
+                                                       queue_url=os.environ['QUEUE_PREFIX'])
         self.assertTrue(self.processor.queue.queue_messages[6]['Body'] == 'message_body_6')
 
     def test_receive_mock_messages(self):

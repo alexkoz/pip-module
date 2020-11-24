@@ -36,10 +36,10 @@ floor_string = obj.get()['Body'].read().decode('utf-8')
 floor_object = json.loads(floor_string)
 
 sqs_client = boto3.resource('sqs', region_name=os.environ['REGION_NAME'])
-queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
+queue = sqs_client.Queue(os.environ['QUEUE_PREFIX'])
 
 # todo send major message first
-purge_queue(os.environ['QUEUE_LINK'])
+purge_queue(os.environ['QUEUE_PREFIX'])
 
 similarity_test_message = {
     "messageType": "PREPROCESSING",

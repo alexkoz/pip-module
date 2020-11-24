@@ -2,30 +2,42 @@ import logging
 import os
 import sys
 from logging.config import fileConfig
-
+from time import sleep
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.utils.Utils import Utils
+from concurrent.futures import ThreadPoolExecutor
 
-fileConfig(os.path.dirname(os.path.realpath(__file__)) + '/logging_config.ini')
+# fileConfig(os.path.dirname(os.path.realpath(__file__)) + '/logging_config.ini')
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
-processor = SqsProcessor()
-aws_profile = os.environ['AWS_PROFILE']
-queue_url = os.environ['QUEUE_LINK']
-region_name = os.environ['REGION_NAME']
+
+def run_queue_processor(queue_name):
+    try:
+        logging.info(f'Started process for queue:{queue_name}')
+        Utils.check_environment()
+        processor = SqsProcessor(queue_name)
+        list_of_messages = processor.pull_messages(1)
+        logging.info(f'Pulled messages {len(list_of_messages)} s')
+        while len(list_of_messages) > 0:
+            for message in list_of_messages:
+                message_body = processor.prepare_for_processing(message.body)
+                if processor.process_message_in_subprocess(message_body) is not None:
+                    processor.complete_processing_message(message)
+            logging.info(f"Start pulling messages")
+            list_of_messages = processor.pull_messages(1)
+    except Exception as e:
+        logging.critical(e, exc_info=True)  # log exception info at CRITICAL log level
+
 
 if __name__ == '__main__':
     logging.info(f"Start the application")
-    Utils.check_environment()
-    list_of_messages = processor.pull_messages(1, queue_url)
-    logging.info(f'Pulled messages {len(list_of_messages)} s')
-    while len(list_of_messages) > 0:
-        for message in list_of_messages:
-            message_body = processor.prepare_for_processing(message.body)
-            if processor.process_message_in_subprocess(message_body) is not None:
-                processor.complete_processing_message(message)
-        logging.info(f"Start pulling messages")
-        list_of_messages = processor.pull_messages(1, queue_url)
+    executor = ThreadPoolExecutor(2)
+    ducu_process = executor.submit(run_queue_processor, "-docusketch-ai")
+    immo_process = executor.submit(run_queue_processor, "-immoviewer-ai")
+    while not ducu_process.done() and not immo_process.done():
+        sleep(5)
+        logging.info("Keep waiting till all done")
+
 logging.info(f"The queue is empty. Exit waiting for next iteration.")
 sys.exit(0)

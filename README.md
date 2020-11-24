@@ -23,7 +23,7 @@ Environment variables:
 
 ```AWS_PROFILE``` – AWS profile
 
-```QUEUE_LINK``` – SQS Queue URL
+```QUEUE_PREFIX``` – SQS Queue URL
 
 ```SIMILARITY_SCRIPT``` – Path to 1st dummy script. aids/dummy_similarity.py
 

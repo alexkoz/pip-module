@@ -118,7 +118,7 @@ class E2ETestSqsProcessor(TestCase):
             StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value]
         }
         # Sends message to queue
-        self.processor.send_message_to_queue(str(preprocessing_message), os.environ['QUEUE_LINK'])
+        self.processor.send_message_to_queue(str(preprocessing_message), os.environ['QUEUE_PREFIX'])
         logging.info('Preprocessing_message sent to queue')
 
         # Sleep 5 min
@@ -140,7 +140,7 @@ class E2ETestSqsProcessor(TestCase):
         while similarity_message is None:
 
             # Pulls messages from return queue
-            messages_in_return_queue = self.processor.pull_messages(2, SqsProcessor.return_queue_url)
+            messages_in_return_queue = self.processor.pull_messages(2)
             for message in messages_in_return_queue:
                 if message[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
                     similarity_message = message

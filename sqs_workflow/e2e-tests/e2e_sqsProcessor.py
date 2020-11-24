@@ -8,8 +8,8 @@ boto3.setup_default_session(profile_name=os.environ['AWS_PROFILE'],
 class SqsProcessor:
     sqs_client = boto3.resource('sqs')
 
-    queue = sqs_client.Queue(os.environ['QUEUE_LINK'])
-    queue_str = os.environ['QUEUE_LINK']
+    queue = sqs_client.Queue(os.environ['QUEUE_PREFIX'])
+    queue_str = os.environ['QUEUE_PREFIX']
 
     def __init__(self):
         pass

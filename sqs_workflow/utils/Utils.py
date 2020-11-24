@@ -12,12 +12,17 @@ class Utils:
 
     @staticmethod
     def check_environment():
+
         assert os.environ['S3_BUCKET']
-        assert os.environ['ACCESS']
-        assert os.environ['SECRET']
-        assert os.environ['REGION_NAME']
-        assert os.environ['AWS_PROFILE']
-        assert os.environ['QUEUE_LINK']
+        assert os.environ['S3_REGION']
+
+        for profile in ['DOCU', 'IMMO']:
+            assert os.environ[f'{profile}_ACCESS']
+            assert os.environ[f'{profile}_SECRET']
+            assert os.environ[f'{profile}_REGION_NAME']
+            assert os.environ[f'{profile}_AWS_PROFILE']
+
+        assert os.environ['QUEUE_PREFIX']
         assert os.environ['SIMILARITY_EXECUTABLE']
         assert os.environ['SIMILARITY_SCRIPT']
         assert os.environ['ROOM_BOX_EXECUTABLE']
