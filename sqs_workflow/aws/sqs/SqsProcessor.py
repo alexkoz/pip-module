@@ -245,7 +245,7 @@ class SqsProcessor:
             message = f'Process has failed for process:{executable} script:{script} message:{executable_params}.'
             self.alert_service.send_slack_message(message, 0)
         logging.info(f'subprocess code: {subprocess_result.returncode} output: {subprocess_result.stdout}')
-        output = str(subprocess_result.stdout)
+        output = subprocess_result.stdout.decode("utf-8")
         output.rstrip()
         logging.info(f"Output:{output}")
         return output
