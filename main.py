@@ -7,9 +7,11 @@ from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.utils.Utils import Utils
 from concurrent.futures import ThreadPoolExecutor
 
-# fileConfig(os.path.dirname(os.path.realpath(__file__)) + '/logging_config.ini')
 
+fileConfig(os.path.dirname(os.path.realpath(__file__)) + '/logging_config.ini')
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+
+
 
 
 def run_queue_processor(queue_name):

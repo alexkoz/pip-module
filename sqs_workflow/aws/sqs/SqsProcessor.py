@@ -36,7 +36,7 @@ class SqsProcessor:
         self.sqs_client = self.session.client('sqs')
         self.sqs_resource = self.session.resource('sqs')
 
-        get_url_response = self.sqs_client.get_queue_url(QueueName=os.environ['QUEUE_PREFIX'] + queue_name)
+        get_url_response = self.sqs_client.get_queue_url(QueueName=os.environ['APP_BRANCH'] + queue_name)
         queue_url = get_url_response['QueueUrl']
         self.queue_url = queue_url
         self.return_queue_url = queue_url + "-return-queue"

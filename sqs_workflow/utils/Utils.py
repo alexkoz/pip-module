@@ -22,7 +22,7 @@ class Utils:
             assert os.environ[f'{profile}_REGION_NAME']
             assert os.environ[f'{profile}_AWS_PROFILE']
 
-        assert os.environ['QUEUE_PREFIX']
+        assert os.environ['APP_BRANCH']
         assert os.environ['SIMILARITY_EXECUTABLE']
         assert os.environ['SIMILARITY_SCRIPT']
         assert os.environ['ROOM_BOX_EXECUTABLE']
