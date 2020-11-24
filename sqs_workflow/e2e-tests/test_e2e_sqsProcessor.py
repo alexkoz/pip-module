@@ -118,7 +118,7 @@ class E2ETestSqsProcessor(TestCase):
             StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value]
         }
         # Sends message to queue
-        self.processor.send_message_to_queue(str(preprocessing_message), os.environ['QUEUE_PREFIX'])
+        self.processor.send_message_to_queue(str(preprocessing_message), os.environ['APP_BRANCH'])
         logging.info('Preprocessing_message sent to queue')
 
         # Sleep 5 min

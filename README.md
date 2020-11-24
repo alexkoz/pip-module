@@ -23,7 +23,7 @@ python -m unittest discover -s /Users/your-user/projects/sqs_workflow/sqs_workfl
 
 ```AWS_PROFILE``` – AWS profile
 
-```QUEUE_PREFIX``` – SQS Queue URL
+```APP_BRANCH``` – SQS Queue URL
 
 ```SIMILARITY_SCRIPT``` – Path to 1st dummy script. aids/dummy_similarity.py
 
