@@ -8,7 +8,7 @@ bash aids/environment.sh
 To run tests
 
 ```bash
-python -m unittest discover -s /Users/your-user/projects/sqs_workflow/sqs_workflow/tests -p 'test_*.py
+python -m unittest discover -s /Users/your-user/projects/sqs_workflow/sqs_workflow/tests -p 'test_*.py'
 ```
 
 ## Environment variables:
@@ -276,7 +276,7 @@ Message example after processing:
         "computedValues": {
           "width": 71.97554911272209
         },
-        "doorDirectionRight": True,
+        "doorDirectionRight": "True",
         "doorType": 1,
         "elementId": "beta",
         "id": "door_108",
@@ -312,7 +312,7 @@ Message example after processing:
         "computedValues": {
           "width": 71.97554911272209
         },
-        "doorDirectionRight": True,
+        "doorDirectionRight": "True",
         "doorType": 1,
         "elementId": "beta",
         "id": "door_110",
@@ -362,7 +362,7 @@ Input message example before processing:
 ```
 
 Output message example after processing:
-```json
+```text
 [layout:
   [z0:0, z1:0, uv:[
     [0.874929459690343, 0.0499472701727508],
