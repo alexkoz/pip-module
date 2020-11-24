@@ -134,8 +134,8 @@ class SqsProcessor:
         s3_path = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                              message_type,
                                              image_hash,
-                                             image_id,
-                                             "")
+                                             "",
+                                             image_id)
 
         self.s3_helper.save_file_object_on_s3(s3_path, image_absolute_path)
         logging.info(f'Created S3 object key:{s3_path} file:{image_absolute_path}')
