@@ -88,6 +88,22 @@ class SqsProcessor:
             logging.info(f'Out of attempts')
         return list_of_messages
 
+    def pull_messages_from_return_queue(self, number_of_messages: int) -> list:
+        attempts = 0
+        list_of_messages = self.receive_messages_from_queue(number_of_messages, self.return_queue_url)
+        while attempts < 7 and len(list_of_messages) < number_of_messages:
+            messages_received = self.receive_messages_from_queue(1, self.return_queue_url)
+            if len(messages_received) > 0:
+                list_of_messages += messages_received
+                logging.info(f'Len list of messages:{len(list_of_messages)}')
+            else:
+                attempts += 1
+                time.sleep(1)
+            logging.info(f'attempts:{attempts} left')
+        if attempts == 7:
+            logging.info(f'Out of attempts')
+        return list_of_messages
+
     def complete_processing_message(self, message):
         logging.info(f'Start completing processing message:{message}')
         self.send_message_to_queue(message.body, self.return_queue_url)

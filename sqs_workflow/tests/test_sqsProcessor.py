@@ -16,7 +16,7 @@ from sqs_workflow.utils.Utils import Utils
 
 class TestSqsProcessor(TestCase):
     test_list = []
-    processor = SqsProcessor()
+    processor = SqsProcessor("-immoviewer-ai")
     s3_helper = S3Helper()
     processor.queue = QueueMock()
     processor.return_queue = QueueMock()
@@ -90,6 +90,8 @@ class TestSqsProcessor(TestCase):
         rmatrix_python_fail = common_path + '/dummy_rmatrix_fail.py'
         door_detecting_python = common_path + '/dummy_dd.py'
         door_detecting_python_fail = common_path + '/dummy_dd_fail.py'
+        rotate_python = common_path + '/dummy_rotate.py'
+        rotate_python_fail = common_path + '/dummy_rotate_fail.py'
 
         test_executables = {
             room_box_python: ProcessingTypesEnum.RoomBox.value,  #
@@ -100,6 +102,8 @@ class TestSqsProcessor(TestCase):
             rmatrix_python_fail: ProcessingTypesEnum.RMatrix.value,
             door_detecting_python: ProcessingTypesEnum.DoorDetecting.value,
             door_detecting_python_fail: ProcessingTypesEnum.DoorDetecting.value,
+            rotate_python: ProcessingTypesEnum.Rotate.value,
+            rotate_python_fail: ProcessingTypesEnum.Rotate.value
         }
         ok_counter = 0
         fail_counter = 0
@@ -120,8 +124,8 @@ class TestSqsProcessor(TestCase):
                 fail_counter += 1
             else:
                 ok_counter += 1
-        self.assertEqual(ok_counter, 4)  # because of dummy_Similarity returns layout array, not just 'ok'
-        self.assertEqual(fail_counter, 4)
+        self.assertEqual(ok_counter, 5)  # because of dummy_Similarity returns layout array, not just 'ok'
+        self.assertEqual(fail_counter, 5)
 
     def clear_directory(self, path_to_folder_in_bucket: str):
         sync_command = f"aws s3 --profile {os.environ['AWS_PROFILE']} rm s3://{os.environ['S3_BUCKET']}/{path_to_folder_in_bucket} --recursive"
