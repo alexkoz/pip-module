@@ -200,12 +200,12 @@ class SqsProcessor:
             logging.info(f'Saved door detecting:{processing_result} on s3')
         else:
             logging.info(f'Download from s3')
-            self.s3_helper.download_file_object_on_s3(
+            self.s3_helper.download_file_object_from_s3(
                 Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                            ProcessingTypesEnum.Rotate.value,
                                            url_hash,
-                                           image_id,
-                                           ""),
+                                           "",
+                                           image_id),
                 os.path.join(self.output_processing_directory, image_id))
 
         if message_type == ProcessingTypesEnum.RoomBox.value:
@@ -245,7 +245,10 @@ class SqsProcessor:
             message = f'Process has failed for process:{executable} script:{script} message:{executable_params}.'
             self.alert_service.send_slack_message(message, 0)
         logging.info(f'subprocess code: {subprocess_result.returncode} output: {subprocess_result.stdout}')
-        return str(subprocess_result.stdout).rstrip()
+        output = str(subprocess_result.stdout)
+        output.rstrip()
+        logging.info(f"Output:{output}")
+        return output
 
     def check_pry_on_s3(self, message_type: str, url_hash: str, image_id: str) -> str:
         result_s3_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
