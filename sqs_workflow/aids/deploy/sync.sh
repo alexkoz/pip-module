@@ -36,8 +36,8 @@ update_application "/home/ubuntu/projects/python/ai-research"
 ec2_data=$(ec2metadata --public-ipv4 --instance-id --ami-id)
 echo "$(date '+%Y-%m-%d %H:%M:%S') Send slack notification for $ec2_data"
 
-message_body='{"text":"Ai sqs consumer launched. '
-message_body="$message_body $ec2_data"
+message_body='{"text":"Ai sqs consumer launched.'
+message_body="$message_body $ec2_data Branch:$APP_BRANCH "
 message_body=$message_body' "}'
 
 #
