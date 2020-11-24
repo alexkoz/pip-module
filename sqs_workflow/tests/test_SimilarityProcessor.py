@@ -45,7 +45,7 @@ class TestSimilarityProcessor(TestCase):
         self.assertEqual(new_message_object['panos'][1]['layout'][8]['id'], 'door_108')
 
     def test_start_pre_processing(self):
-        sqs_processor = SqsProcessor()
+        sqs_processor = SqsProcessor('-immoviewer-ai')
         preprocessing_message = {
             "messageType": ProcessingTypesEnum.Preprocessing.value,
             "orderId": "5da5d5164cedfd0050363a2e",
@@ -63,8 +63,7 @@ class TestSimilarityProcessor(TestCase):
         with open(file_path) as f:
             json_message_object = json.load(f)
 
-        list_json_messages = self.similarity_processor.start_pre_processing(similarity_message,
-                                                                            dirname(file_path))
+        list_json_messages = self.similarity_processor.start_pre_processing(similarity_message)
         self.assertTrue(
             len(list_json_messages) == (len(preprocessing_message[StringConstants.STEPS_KEY]) * len(
                 json_message_object[StringConstants.PANOS_KEY]) + 1))
