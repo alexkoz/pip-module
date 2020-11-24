@@ -92,14 +92,14 @@ class TestSqsProcessor(TestCase):
         door_detecting_python_fail = common_path + '/dummy_dd_fail.py'
 
         test_executables = {
-            room_box_python: ProcessingTypesEnum.RoomBox,  #
-            room_box_python_fail: ProcessingTypesEnum.RoomBox,
-            similarity_python: ProcessingTypesEnum.Similarity,
-            similarity_python_fail: ProcessingTypesEnum.Similarity,
-            rmatrix_python: ProcessingTypesEnum.RMatrix,
-            rmatrix_python_fail: ProcessingTypesEnum.RMatrix,
-            door_detecting_python: ProcessingTypesEnum.DoorDetecting,
-            door_detecting_python_fail: ProcessingTypesEnum.DoorDetecting,
+            room_box_python: ProcessingTypesEnum.RoomBox.value,  #
+            room_box_python_fail: ProcessingTypesEnum.RoomBox.value,
+            similarity_python: ProcessingTypesEnum.Similarity.value,
+            similarity_python_fail: ProcessingTypesEnum.Similarity.value,
+            rmatrix_python: ProcessingTypesEnum.RMatrix.value,
+            rmatrix_python_fail: ProcessingTypesEnum.RMatrix.value,
+            door_detecting_python: ProcessingTypesEnum.DoorDetecting.value,
+            door_detecting_python_fail: ProcessingTypesEnum.DoorDetecting.value,
         }
         ok_counter = 0
         fail_counter = 0

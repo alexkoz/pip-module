@@ -1,21 +1,28 @@
 import logging
 import os
+import random
 import shutil
 import subprocess
 import sys
 import time
-from pathlib import Path
-from unittest import TestCase
-
+import json
 import boto3
 
+from pathlib import Path
+from unittest import TestCase
+from os.path import dirname
+
+from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.utils.StringConstants import StringConstants
+from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
 from sqs_workflow.tests.test_sqsProcessor import TestSqsProcessor
 
 
 class E2ETestSqsProcessor(TestCase):
+
+    similarity_processor = SimilarityProcessor()
     processor = SqsProcessor()
     s3_helper = S3Helper()
 
@@ -100,64 +107,87 @@ class E2ETestSqsProcessor(TestCase):
         return list_of_messages
 
     def test_e2e(self):
-        # Clears local dirs and queues
-        TestSqsProcessor.clear_local_directory(os.environ['INPUT_DIRECTORY'])
+        inference_id = random.randint(5, 10)
+        preprocessing_message = {
+            StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Preprocessing.value,
+            "orderId": "5da5d5164cedfd0050363a2e",
+            "floor": 1,
+            "tourId": "1342386",
+            StringConstants.INFERENCE_ID_KEY: inference_id,
+            StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+            StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value]
+        }
+        # Sends message to queue
+        self.processor.send_message_to_queue(str(preprocessing_message), os.environ['QUEUE_LINK'])
+        logging.info('Preprocessing_message sent to queue')
 
-        self.clear_directory(StringConstants.COMMON_PREFIX)
-        self.purge_queue(self.processor.queue_url)
-        self.purge_queue(self.processor.return_queue_url)
+        # Sleep 5 min
+        time.sleep(3)  # 300 sec
 
-        # Checks that queue is empty
-        req_receive = self.processor.receive_messages_from_queue(5)
-        self.assertTrue(len(req_receive) == 0)
-
-        # Sends messages
-        for i in range(1):
-            roombox_message = '{\"messageType\": \"ROOM_BOX\",\
-                                       \"inferenceId\": \"'f'123{i}\", \
-                                       \"fileUrl\": \"https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG\", \
-                                       \"tourId\": \"5fa1df49014bf357cf250d52\",\
-                                       \"panoId\": \"5fa1df55014bf357cf250d64\"' + '}'
-            self.processor.send_message_to_queue(roombox_message, os.environ['QUEUE_LINK'])
-            logging.info('sent roombox message')
-
-        for i in range(1):
-            similarity_message = '{\"messageType\": \"SIMILARITY\",\
-                                   \"inferenceId\": \"'f'345{i}\", \
-                                   \"panoUrl\": \"'f'https://img.docusketch.com/items/s967284636/5fa1d{i}f49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG\",\
-                                   \"tourId\": \"5fa1df49014bf357cf250d52\",\
-                                   \"documentPath\": \"https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json\", \
-                                   \"steps\": ["SIMILARITY"], \
-                                   \"panoId\": \"5fa1df55014bf357cf250d64\"' + '}'
-            self.processor.send_message_to_queue(similarity_message, os.environ['QUEUE_LINK'])
-            logging.info('sent similarity message')
-
-        # Runs main.py script w/ messages pre-processing and processing
         main_script_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow') + '/main.py'
 
         subprocess.run([sys.executable,  # path to python
                         main_script_path],  # path to main.py
                        universal_newlines=True)
 
-        object_list = self.s3_helper.list_s3_objects(StringConstants.COMMON_PREFIX)
-        print('Object list =', object_list)
-        print('Len of obj list =', len(object_list))
-        self.assertTrue(self.s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/ROOM_BOX/', 1))
-        self.assertTrue(self.s3_helper.is_processing_complete(StringConstants.COMMON_PREFIX + '/SIMILARITY/', 1))
-
-        # Checks num of messages in returnQueue w/ returned messages
+        # todo check that similarity message is returned
         resp_return = self.processor.sqs_client.get_queue_attributes(QueueUrl=self.processor.return_queue_url,
                                                                      AttributeNames=['All'])
-        num_of_messages = int(resp_return['Attributes']['ApproximateNumberOfMessages'])
-        self.assertEqual(num_of_messages, 2)
+        similarity_message = None
+        room_box_messages = []
+        door_detection_messages = []
 
-        # Sleep for 10 sec
-        for remaining in range(10, 0, -1):
-            sys.stdout.write("\r")
-            sys.stdout.write("{:2d} seconds remaining.".format(remaining))
-            sys.stdout.flush()
-            time.sleep(1)
+        while similarity_message is None:
 
-        # Checks files on S3
-        result_files_on_s3 = self.s3_helper.count_files_s3('api/inference/')
-        self.assertEqual(len(result_files_on_s3), 2)
+            # Pulls messages from return queue
+            messages_in_return_queue = self.processor.pull_messages(2, SqsProcessor.return_queue_url)
+            for message in messages_in_return_queue:
+                if message[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
+                    similarity_message = message
+                    message.delete()
+                    self.assertTrue(len(message[StringConstants.PANOS_KEY] == 4))
+                elif message[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.RoomBox.value:
+                    room_box_messages.append(message)
+                    message.delete()
+                elif message[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.DoorDetecting.value:
+                    door_detection_messages.append(message)
+                    message.delete()
+                else:
+                    assert 'Wrong message type'
+
+        # Preprocessing and processing messages
+        json_message_object = self.processor.prepare_for_processing(json.dumps(similarity_message))
+        json_similarity_message = json.loads(json_message_object)
+        file_path = similarity_message[StringConstants.EXECUTABLE_PARAMS_KEY].replace('--input_path', '') \
+            .split()[0].strip()
+
+        with open(file_path) as f:
+            json_message_object = json.load(f)
+
+        list_json_messages = self.similarity_processor.start_pre_processing(json_similarity_message,
+                                                                            dirname(file_path))
+
+        # Asserts similarity processed
+        self.assertTrue(
+            len(list_json_messages) == (len(preprocessing_message[StringConstants.STEPS_KEY]) * len(
+                json_message_object[StringConstants.PANOS_KEY]) + 1))
+        for json_message in list_json_messages:
+            message_object = json.loads(json_message)
+            if message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
+                self.assertTrue(len(message_object[StringConstants.STEPS_KEY]) == 2)
+                self.assertTrue(StringConstants.DOCUMENT_PATH_KEY not in message_object)
+            else:
+                self.assertTrue(message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.DoorDetecting.value
+                                or message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.RoomBox.value)
+
+        self.assertTrue(len(list_json_messages) == len(room_box_messages))
+        self.assertTrue(len(list_json_messages) == len(door_detection_messages))
+
+            # todo check message type
+            # todo if similarity -- check for similar
+            # todo if not similarity -- append message to list w/ same type
+            # todo delete message from return queue
+
+        # todo assert similarity processed
+        # todo len room_box_messages == num of panos
+        # todo len door_detection_mesages == num of panos

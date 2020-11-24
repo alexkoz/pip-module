@@ -56,18 +56,18 @@ class SqsProcessor:
         logging.info(f'Sent message: {message_body} to queue: {queue_url}')
         return response_send
 
-    def receive_messages_from_queue(self, max_number_of_messages: int):
-        response_messages = self.queue.receive_messages(QueueUrl=self.queue_url,
+    def receive_messages_from_queue(self, max_number_of_messages: int, queue_url):
+        response_messages = self.queue.receive_messages(QueueUrl=queue_url,
                                                         MaxNumberOfMessages=max_number_of_messages)
         if len(response_messages) != 0:
             logging.info(f'response_message content:{response_messages[0].body}')
         return response_messages
 
-    def pull_messages(self, number_of_messages: int) -> list:
+    def pull_messages(self, number_of_messages: int, queue_url) -> list:
         attempts = 0
-        list_of_messages = self.receive_messages_from_queue(number_of_messages)
+        list_of_messages = self.receive_messages_from_queue(number_of_messages, queue_url)
         while attempts < 7 and len(list_of_messages) < number_of_messages:
-            messages_received = self.receive_messages_from_queue(1)
+            messages_received = self.receive_messages_from_queue(1, queue_url)
             if len(messages_received) > 0:
                 list_of_messages += messages_received
                 logging.info(f'Len list of messages:{len(list_of_messages)}')

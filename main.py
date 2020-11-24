@@ -18,7 +18,7 @@ region_name = os.environ['REGION_NAME']
 if __name__ == '__main__':
     logging.info(f"Start the application")
     Utils.check_environment()
-    list_of_messages = processor.pull_messages(1)
+    list_of_messages = processor.pull_messages(1, queue_url)
     logging.info(f'Pulled messages {len(list_of_messages)} s')
     while len(list_of_messages) > 0:
         for message in list_of_messages:
@@ -26,6 +26,6 @@ if __name__ == '__main__':
             if processor.process_message_in_subprocess(message_body) is not None:
                 processor.complete_processing_message(message)
         logging.info(f"Start pulling messages")
-        list_of_messages = processor.pull_messages(1)
+        list_of_messages = processor.pull_messages(1, queue_url)
 logging.info(f"The queue is empty. Exit waiting for next iteration.")
 sys.exit(0)

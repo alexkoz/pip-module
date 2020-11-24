@@ -78,7 +78,7 @@ class SimilarityProcessor:
     @staticmethod
     def create_layout_object(step, result):
         layout_object = []
-        if step == StringConstants.ROOM_BOX_KEY:
+        if step == ProcessingTypesEnum.RoomBox.value:
             result_object = json.loads(result)
             room_box = np.array(result_object['layout']['uv']).astype(np.float)
             room_box = (room_box - [0.5, 0.5]) * [360, 180]
@@ -91,7 +91,7 @@ class SimilarityProcessor:
                 })
 
             return layout_object
-        if step == StringConstants.DOOR_DETECTION_KEY:
+        if step == ProcessingTypesEnum.DoorDetecting.value:
             pass
         return layout_object
 
