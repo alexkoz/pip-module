@@ -380,9 +380,7 @@ models.json:[:],
 inference:
   [inference_id:7394979587235]
   ```
-  
-  ### Rotation
-  
+    
   ### R Matrix
   Returns rotation matrix – ```pitch, roll, yaw``` format.
   
