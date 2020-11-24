@@ -24,7 +24,7 @@ class S3Helper:
         response = self.s3_client.list_objects_v2(Bucket=self.s3_bucket, Prefix=s3_key, Delimiter='/')
         if 'Contents' in response:
             for obj in response['Contents']:
-                if obj['Key'] == s3_key + 'result.json':
+                if obj['Key'] == s3_key:
                     return True
         return False
 

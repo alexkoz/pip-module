@@ -146,7 +146,7 @@ class TestSqsProcessor(TestCase):
                                                   processing_result,
                                                   image_id,
                                                   image_url)
-        s3_key = 'api/inference/test-message-type/test-inference-id/asset/'
+        s3_key = 'api/inference/test-message-type/test-inference-id/test-image-id/result.json'
         # todo check tags
         self.assertTrue(s3_helper.is_object_exist(s3_key))
 
