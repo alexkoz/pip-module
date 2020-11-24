@@ -184,8 +184,8 @@ class SqsProcessor:
             Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                        ProcessingTypesEnum.Rotate.value,
                                        url_hash,
-                                       image_id,
-                                       ""))
+                                       "",
+                                       image_id))
 
         if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
             logging.info('Start processing door detecting')
