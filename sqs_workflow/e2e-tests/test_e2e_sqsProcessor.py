@@ -23,7 +23,7 @@ from sqs_workflow.tests.test_sqsProcessor import TestSqsProcessor
 class E2ETestSqsProcessor(TestCase):
 
     similarity_processor = SimilarityProcessor()
-    processor = SqsProcessor()
+    processor = SqsProcessor("-immoviewer-ai")
     s3_helper = S3Helper()
 
     def pull_messages(self, processor: SqsProcessor, number_of_messages: int) -> list:
@@ -79,7 +79,7 @@ class E2ETestSqsProcessor(TestCase):
         logging.info(f'output: {output}')
 
     def purge_queue(self, queue_url):
-        sqs_client = boto3.client('sqs')
+        sqs_client = boto3.client('sqs', region_name='eu-central-1')
         req_purge = sqs_client.purge_queue(QueueUrl=queue_url)
         logging.info(f'Queue is purged')
         return req_purge
@@ -107,6 +107,10 @@ class E2ETestSqsProcessor(TestCase):
         return list_of_messages
 
     def test_e2e(self):
+        self.purge_queue(self.processor.queue_url)
+        self.purge_queue(self.processor.return_queue_url)
+        logging.info('Purged queues')
+
         inference_id = random.randint(5, 10)
         preprocessing_message = {
             StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Preprocessing.value,
@@ -118,20 +122,14 @@ class E2ETestSqsProcessor(TestCase):
             StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value]
         }
         # Sends message to queue
-        self.processor.send_message_to_queue(str(preprocessing_message), os.environ['APP_BRANCH'])
+        self.processor.send_message_to_queue(json.dumps(preprocessing_message), self.processor.queue_url)
         logging.info('Preprocessing_message sent to queue')
 
         # Sleep 5 min
         time.sleep(3)  # 300 sec
 
-        main_script_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow') + '/main.py'
-
-        subprocess.run([sys.executable,  # path to python
-                        main_script_path],  # path to main.py
-                       universal_newlines=True)
-
         # todo check that similarity message is returned
-        resp_return = self.processor.sqs_client.get_queue_attributes(QueueUrl=self.processor.return_queue_url,
+        resp_return = self.processor.sqs_client.get_queue_attributes(QueueUrl=self.processor.queue_url,
                                                                      AttributeNames=['All'])
         similarity_message = None
         room_box_messages = []
@@ -139,8 +137,8 @@ class E2ETestSqsProcessor(TestCase):
 
         while similarity_message is None:
 
-            # Pulls messages from return queue
-            messages_in_return_queue = self.processor.pull_messages(2)
+            # Pulls messages from queue
+            messages_in_return_queue = self.processor.pull_messages_from_return_queue(1)
             for message in messages_in_return_queue:
                 if message[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
                     similarity_message = message

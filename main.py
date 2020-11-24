@@ -12,8 +12,6 @@ fileConfig(os.path.dirname(os.path.realpath(__file__)) + '/logging_config.ini')
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 
-
-
 def run_queue_processor(queue_name):
     try:
         logging.info(f'Started process for queue:{queue_name}')
