@@ -231,6 +231,9 @@ class SqsProcessor:
                                                  self.roombox_script,
                                                  message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
             logging.info(f'Executed roombox:{processing_result}')
+            processing_result = SimilarityProcessor.create_layout_object(ProcessingTypesEnum.RoomBox.value,
+                                                                         processing_result)
+            logging.info(f'Executed roombox:{processing_result}')
             self.create_path_and_save_on_s3(message_type,
                                             inference_id,
                                             processing_result,

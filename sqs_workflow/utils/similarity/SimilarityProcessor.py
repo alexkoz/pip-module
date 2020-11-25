@@ -78,7 +78,7 @@ class SimilarityProcessor:
         return message_object
 
     @staticmethod
-    def create_layout_object(step, result):
+    def create_layout_object(step: str, result: str) -> str:
         layout_object = []
         if step == ProcessingTypesEnum.RoomBox.value:
             result_object = json.loads(result)
@@ -92,10 +92,10 @@ class SimilarityProcessor:
                     "type": "corner"
                 })
 
-            return layout_object
         if step == ProcessingTypesEnum.DoorDetecting.value:
             pass
-        return layout_object
+
+        return json.dumps(layout_object)
 
     @staticmethod
     def generate_message(pano_info, steps):
