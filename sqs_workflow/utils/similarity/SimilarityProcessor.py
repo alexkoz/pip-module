@@ -54,6 +54,7 @@ class SimilarityProcessor:
     @staticmethod
     def assemble_results_into_document(s3_helper: S3Helper, message_object, list_results_keys):
 
+        logging.info(f'Start assembling results into document message:{message_object}')
         panos = {}
         for s3_key in list_results_keys:
             logging.info(f'Start processing key:{s3_key}')
@@ -73,6 +74,7 @@ class SimilarityProcessor:
 
         message_object[StringConstants.PANOS_KEY] = list(panos.values())
         logging.info(f'Returning message with {len(message_object[StringConstants.PANOS_KEY])} panos')
+        logging.info(f'Assembled message:{message_object}')
         return message_object
 
     @staticmethod
