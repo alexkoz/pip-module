@@ -116,7 +116,7 @@ class SqsProcessor:
                                    processing_result: str,
                                    image_id: str,
                                    image_full_url='document',
-                                   is_public=False):
+                                   is_public=False) -> str:
 
         s3_path = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                              message_type,
@@ -124,11 +124,12 @@ class SqsProcessor:
                                              image_id,
                                              StringConstants.RESULT_FILE_NAME)
 
-        self.s3_helper.save_string_object_on_s3(s3_path,
-                                                processing_result,
-                                                image_full_url,
-                                                is_public)
-        logging.info(f'Created S3 object key:{s3_path} content:{processing_result}')
+        s3_url = self.s3_helper.save_string_object_on_s3(s3_path,
+                                                         processing_result,
+                                                         image_full_url,
+                                                         is_public)
+        logging.info(f'Created S3 object key:{s3_path} url:{s3_url} content:{processing_result}')
+        return s3_url
 
     # todo test
     def create_output_file_on_s3(self, message_type: str,
@@ -172,15 +173,12 @@ class SqsProcessor:
                 processing_result = self.run_process(self.similarity_executable,
                                                      self.similarity_script,
                                                      message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-                self.create_path_and_save_on_s3(message_type,
-                                                inference_id,
-                                                processing_result,
-                                                "similarity",
-                                                is_public=True)
-                # todo change return similarity url
-                # todo update message_object. do not return processing_result
-                assert not "Generate S3 public url"
-                message_object[StringConstants.DOCUMENT_PATH_KEY] = "new s3 url"
+                s3_url = self.create_path_and_save_on_s3(message_type,
+                                                         inference_id,
+                                                         processing_result,
+                                                         "similarity",
+                                                         is_public=True)
+                message_object[StringConstants.DOCUMENT_PATH_KEY] = s3_url
                 return json.dumps(message_object)
             else:
                 logging.info(f'Document is under processing inference:{inference_id}')

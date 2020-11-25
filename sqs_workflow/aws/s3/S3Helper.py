@@ -28,11 +28,11 @@ class S3Helper:
                     return True
         return False
 
-    #todo add e2e test for public true
+    # todo add e2e test for public true
     def save_string_object_on_s3(self, s3_key: str,
                                  object_body: str,
                                  full_url_tag="document",
-                                 is_public=False):
+                                 is_public=False) -> str:
         logging.info(f'Start saving object: {s3_key}')
 
         session = boto3.Session(
@@ -41,10 +41,16 @@ class S3Helper:
         )
         s3 = session.resource('s3')
         obj = s3.Object(self.s3_bucket, s3_key)
-        #todo add ACL public
+        # todo add ACL public
         obj.put(Body=object_body,
                 Tagging=f'{StringConstants.PANO_URL_KEY}={full_url_tag}')
-        logging.info(f'Uploaded new file: {s3_key} to s3')
+        if is_public:
+            object_acl = s3.ObjectAcl(self.s3_bucket, s3_key)
+            object_acl.put(ACL='public-read')
+            logging.info(f'Public access to key:{s3_key}')
+        object_url = f"https://{self.s3_bucket}.s3-{os.environ['S3_REGION']}.amazonaws.com/{s3_key}"
+        logging.info(f'Uploaded new file: {s3_key} to s3 with url:{object_url}')
+        return object_url
 
     # todo test
     def save_file_object_on_s3(self,

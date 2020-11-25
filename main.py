@@ -1,13 +1,12 @@
 import logging
 import os
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from logging.config import fileConfig
 from time import sleep
-import json
+
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.utils.Utils import Utils
-from concurrent.futures import ThreadPoolExecutor
-
 
 fileConfig(os.path.dirname(os.path.realpath(__file__)) + '/logging_config.ini')
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
