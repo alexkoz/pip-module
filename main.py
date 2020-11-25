@@ -3,6 +3,7 @@ import os
 import sys
 from logging.config import fileConfig
 from time import sleep
+import json
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.utils.Utils import Utils
 from concurrent.futures import ThreadPoolExecutor
@@ -22,7 +23,9 @@ def run_queue_processor(queue_name):
         while len(list_of_messages) > 0:
             for message in list_of_messages:
                 message_body = processor.prepare_for_processing(message.body)
-                if processor.process_message_in_subprocess(message_body) is not None:
+                message_body = processor.process_message_in_subprocess(message_body)
+                if message_body is not None:
+                    message.body = message_body
                     processor.complete_processing_message(message)
             logging.info(f"Start pulling messages")
             list_of_messages = processor.pull_messages(1)

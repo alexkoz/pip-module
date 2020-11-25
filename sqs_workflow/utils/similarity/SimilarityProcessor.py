@@ -49,6 +49,15 @@ class SimilarityProcessor:
                 steps_document,
                 list_results_keys)
             logging.info(f'All {len(list_results_keys)} steps for similarity are done.')
+            # todo update document in input file
+            # todo test this bit here
+            input_file = message_object[StringConstants.EXECUTABLE_PARAMS_KEY] \
+                .replace('--input_path', '') \
+                .split()[0].strip()
+            with open(input_file, 'wb') as local_file:
+                local_file.write(json.dumps(document_object).encode('utf-8'))
+                logging.info(f'Write to a file:{input_file}')
+                local_file.close()
         return document_object
 
     @staticmethod

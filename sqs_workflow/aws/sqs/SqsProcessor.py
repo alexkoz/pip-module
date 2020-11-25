@@ -115,7 +115,8 @@ class SqsProcessor:
                                    inference_id: str,
                                    processing_result: str,
                                    image_id: str,
-                                   image_full_url='document'):
+                                   image_full_url='document',
+                                   is_public=False):
 
         s3_path = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                              message_type,
@@ -123,7 +124,10 @@ class SqsProcessor:
                                              image_id,
                                              StringConstants.RESULT_FILE_NAME)
 
-        self.s3_helper.save_string_object_on_s3(s3_path, processing_result, image_full_url)
+        self.s3_helper.save_string_object_on_s3(s3_path,
+                                                processing_result,
+                                                image_full_url,
+                                                is_public)
         logging.info(f'Created S3 object key:{s3_path} content:{processing_result}')
 
     # todo test
@@ -154,7 +158,7 @@ class SqsProcessor:
             messages_for_sending = SimilarityProcessor.start_pre_processing(message_object)
             for send_message in messages_for_sending:
                 self.send_message_to_queue(send_message, self.queue_url)
-            return "preprocessing is successful"
+            return json.dumps({'preprocessing': 'ok'})
 
         if message_type == ProcessingTypesEnum.Similarity.value:
             logging.info(f'Start processing similarity inference:{inference_id}')
@@ -168,8 +172,13 @@ class SqsProcessor:
                 self.create_path_and_save_on_s3(message_type,
                                                 inference_id,
                                                 processing_result,
-                                                "similarity")
-                return processing_result
+                                                "similarity",
+                                                is_public=True)
+                # todo change return similarity url
+                # todo update message_object. do not return processing_result
+                assert not "Generate S3 public url"
+                message_object[StringConstants.DOCUMENT_PATH_KEY] = "new s3 url"
+                return json.dumps(message_object)
             else:
                 logging.info(f'Document is under processing inference:{inference_id}')
                 return None
@@ -193,8 +202,6 @@ class SqsProcessor:
                                                 processing_result,
                                                 image_id,
                                                 image_full_url)
-                # todo send message for a rotation
-            message_object[StringConstants.PRY_MATRIX_KEY] = processing_result
 
         # todo check rotated image
         rotated_result = self.s3_helper.is_object_exist(
@@ -240,6 +247,7 @@ class SqsProcessor:
                                             image_id,
                                             image_full_url)
             logging.info(f'Saved roombox:{processing_result} on s3')
+
         elif message_type == ProcessingTypesEnum.DoorDetecting.value:
             logging.info('Start processing door detecting')
             processing_result = self.run_process(self.doordetecting_executable,
@@ -252,8 +260,9 @@ class SqsProcessor:
                                             image_full_url)
             logging.info(f'Saved door detecting:{processing_result} on s3')
 
-        logging.info(f"Finished processing and result:{processing_result} save result on s3.")
-        return processing_result
+        message_object['returnData'] = json.loads(processing_result)
+        logging.info(f"Finished processing and updated message:{message_object} save result on s3.")
+        return json.dumps(message_object['returnData'])
 
     def run_process(self, executable: str, script: str, executable_params: str) -> str:
         logging.info(f'Start processing executable:{executable} script:{script} params:{executable_params}')
@@ -296,7 +305,8 @@ class SqsProcessor:
             url_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
         if StringConstants.PANO_URL_KEY in message_object:
             url_file_name = message_object[StringConstants.PANO_URL_KEY]
-        if not url_file_name and message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
+        if not url_file_name and message_object[
+            StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
             logging.info(f'Similarity does not have a document yet. Has to be assembled.')
             return message_body
 
