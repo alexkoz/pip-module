@@ -39,5 +39,5 @@ if __name__ == '__main__':
         sleep(5)
         logging.info("Keep waiting till all done")
 
-logging.info(f"The queue is empty. Exit waiting for next iteration.")
+logging.info(f"Both queues are empty. Exit waiting for next iteration.")
 sys.exit(0)

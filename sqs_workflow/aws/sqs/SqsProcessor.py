@@ -86,6 +86,7 @@ class SqsProcessor:
             logging.info(f'attempts:{attempts} left')
         if attempts == 7:
             logging.info(f'Out of attempts')
+        logging.info(f"Pulled {len(list_of_messages)} from a queue:{self.queue_url}")
         return list_of_messages
 
     def pull_messages_from_return_queue(self, number_of_messages: int) -> list:
