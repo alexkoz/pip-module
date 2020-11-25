@@ -66,10 +66,11 @@ class S3Helper:
         logging.info(f'Uploaded new file: {s3_key} to s3')
 
     def read_s3_object(self, s3_key) -> str:
-        obj = self.s3_client.Object(self.s3_bucket, s3_key)
-        object_from_s3 = obj.get()['Body'].read().decode('utf-8')
-        # todo save object locally
-        return object_from_s3
+        logging.info(f'Start reading s3 file:{s3_key}')
+        data = self.s3_client.get_object(Bucket=self.s3_bucket, Key=s3_key)
+        file_content_from_s3 = data['Body'].read().decode('utf-8')
+        logging.info(f'S3 file:{s3_key} has body:{file_content_from_s3}')
+        return file_content_from_s3
 
     def list_s3_objects(self, prefix: str):
         paginator = self.s3_client.get_paginator('list_objects_v2')
