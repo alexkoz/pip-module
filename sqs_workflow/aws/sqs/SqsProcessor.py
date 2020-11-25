@@ -283,7 +283,7 @@ class SqsProcessor:
             logging.info(f'result.json in {result_s3_key} does not exist')
             return None  # return None when -> str ?
 
-    def prepare_for_processing(self, message_body) -> str:
+    def prepare_for_processing(self, message_body: str) -> str:
 
         logging.info(f"Start preprocessing for message:{message_body}")
         message_object = json.loads(message_body)
@@ -292,6 +292,9 @@ class SqsProcessor:
             url_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
         if StringConstants.PANO_URL_KEY in message_object:
             url_file_name = message_object[StringConstants.PANO_URL_KEY]
+        if not url_file_name and message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
+            logging.info(f'Similarity does not have a document yet. Has to be assembled.')
+            return message_body
 
         file_name = os.path.basename(url_file_name)
         url_hash = hashlib.md5(file_name.encode('utf-8')).hexdigest()
