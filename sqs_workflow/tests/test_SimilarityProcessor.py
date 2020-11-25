@@ -13,12 +13,13 @@ class TestSimilarityProcessor(TestCase):
     similarity_processor = SimilarityProcessor()
 
     def test_create_layout_object(self):
-        room_box_result = "{\"layout\":{\"z0\":\"0\", \"z1\":\"0\", \"uv\":[[\"0.874929459690343\", \"0.0499472701727508\"], [\"0.6246948329880218\", \"0.836521256741644\"], [\"0.6246948553348896\", \"0.04983696464707826\"], [\"0.8752748643537904\", \"0.8359191738972793\"], [\"0.3744601886079243\", \"0.04994725051497806\"], [\"0.12493895615154749\", \"0.8353210349449639\"], [\"0.12493893386684474\", \"0.05005729692317301\"], [\"0.37411478400664344\", \"0.83591919355491\"]]},\"inference\":{\"inference_id\":\"7394979587235\"}}"
+        room_box_result = '{"z0": "0", "z1": "0", "uv": [[0.8942103326473919, 0.3353772676236854], [0.5747235927670448, 0.6223832045044406], [0.575059459160671, 0.37344853854460625], [0.8946108521103336, 0.6597705138137632], [0.4391388923396096, 0.3687213328274126], [0.08800329189223322, 0.6700959772611611], [0.08779664823660581, 0.3244858638081926], [0.4389803229974563, 0.6268292928215364]]}'
         layout_object = self.similarity_processor.create_layout_object(ProcessingTypesEnum.RoomBox.value,
                                                                        room_box_result)
-        self.assertTrue(layout_object[0]['x'] == 134.97460548852348)
-        print(json.dumps(layout_object))
-        self.assertTrue(layout_object[0]['y'] == -81.00949136890486)
+        layout_object = json.loads(layout_object)
+        self.assertTrue(layout_object[0]['x'] == 141.9157197530611)
+
+        self.assertTrue(layout_object[0]['y'] == -29.632091827736627)
         self.assertTrue(layout_object[0]['type'] == 'corner')
         # todo test door detecting object
 
