@@ -127,8 +127,12 @@ class SimilarityProcessor:
                 list_messages.append(json.dumps(message))
 
         similarity_message = message_object.copy()
+        similarity_message[StringConstants.STEPS_DOCUMENT_PATH_KEY] = similarity_message[
+            StringConstants.DOCUMENT_PATH_KEY]
         if StringConstants.DOCUMENT_PATH_KEY in similarity_message:
             del similarity_message[StringConstants.DOCUMENT_PATH_KEY]
+        assert (not StringConstants.DOCUMENT_PATH_KEY in similarity_message) and similarity_message[
+            StringConstants.STEPS_DOCUMENT_PATH_KEY]
         similarity_message[StringConstants.MESSAGE_TYPE_KEY] = ProcessingTypesEnum.Similarity.value
         list_messages.append(json.dumps(similarity_message))
         logging.info(f"Created list of messages:{list_messages}")
