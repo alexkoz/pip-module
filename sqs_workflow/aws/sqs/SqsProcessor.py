@@ -105,9 +105,9 @@ class SqsProcessor:
             logging.info(f'Out of attempts')
         return list_of_messages
 
-    def complete_processing_message(self, message):
+    def complete_processing_message(self, message, message_body: str):
         logging.info(f'Start completing processing message:{message}')
-        self.send_message_to_queue(message.body, self.return_queue_url)
+        self.send_message_to_queue(message_body, self.return_queue_url)
         message.delete()
         logging.info(f'Message:{message} is deleted')
 
@@ -158,7 +158,10 @@ class SqsProcessor:
             messages_for_sending = SimilarityProcessor.start_pre_processing(message_object)
             for send_message in messages_for_sending:
                 self.send_message_to_queue(send_message, self.queue_url)
-            return json.dumps({'preprocessing': 'ok'})
+
+            message_object['returnData'] = {'preprocessing': 'ok'}
+            logging.info(f"Finished processing and updated message:{message_object}.")
+            return json.dumps(message_object)
 
         if message_type == ProcessingTypesEnum.Similarity.value:
             logging.info(f'Start processing similarity inference:{inference_id}')
@@ -262,7 +265,7 @@ class SqsProcessor:
 
         message_object['returnData'] = json.loads(processing_result)
         logging.info(f"Finished processing and updated message:{message_object} save result on s3.")
-        return json.dumps(message_object['returnData'])
+        return json.dumps(message_object)
 
     def run_process(self, executable: str, script: str, executable_params: str) -> str:
         logging.info(f'Start processing executable:{executable} script:{script} params:{executable_params}')
