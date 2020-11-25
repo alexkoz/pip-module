@@ -25,6 +25,7 @@ def run_queue_processor(queue_name):
                 message_body = processor.prepare_for_processing(message.body)
                 message_body = processor.process_message_in_subprocess(message_body)
                 if message_body is not None:
+                    logging.info(f"Setting message body:{message_body}")
                     message.body = message_body
                     processor.complete_processing_message(message)
             logging.info(f"Start pulling messages")
