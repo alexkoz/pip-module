@@ -22,7 +22,7 @@ class SimilarityProcessor:
         else:
             steps_document = json.loads(
                 Utils.download_from_http(message_object[StringConstants.STEPS_DOCUMENT_PATH_KEY]))
-            logging.info(f'There is no similarity document: {steps_document}')
+            logging.info(f'There is no similarity but steps document:{steps_document}')
             list_results_keys = []
             for panorama in steps_document[StringConstants.PANOS_KEY]:
 
@@ -46,7 +46,7 @@ class SimilarityProcessor:
 
             document_object = SimilarityProcessor.assemble_results_into_document(
                 s3_helper,
-                message_object,
+                steps_document,
                 list_results_keys)
             logging.info(f'All {len(list_results_keys)} steps for similarity are done.')
         return document_object
