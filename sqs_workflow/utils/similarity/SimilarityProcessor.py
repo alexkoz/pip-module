@@ -49,17 +49,23 @@ class SimilarityProcessor:
                 steps_document,
                 list_results_keys)
             logging.info(f'All {len(list_results_keys)} steps for similarity are done.')
-            # todo update document in input file
-            # todo test this bit here
-            output_file = message_object[StringConstants.EXECUTABLE_PARAMS_KEY] \
-                .split('--output_path')[1].strip()
-            output_file = os.path.join(output_file, StringConstants.RESULT_FILE_NAME)
-            logging.info(f'Start writing output file:{output_file}.')
-            with open(output_file, 'wb') as local_file:
-                local_file.write(json.dumps(document_object).encode('utf-8'))
-                logging.info(f'Write to a file:{output_file}')
-                local_file.close()
+            SimilarityProcessor.process_result_files(document_object, message_object)
+
         return document_object
+
+    #todo test
+    @staticmethod
+    def process_result_files(document_object, message_object):
+
+        logging.info(f'Start writing document to input file')
+        input_file = message_object[StringConstants.EXECUTABLE_PARAMS_KEY] \
+            .replace('--input_path', '') \
+            .split()[0].strip()
+        logging.info(f'Start writing document to input file:{input_file}')
+        with open(input_file, 'wb') as local_input_file:
+            local_input_file.write(json.dumps(document_object).encode('utf-8'))
+            logging.info(f'Write to a input file:{input_file}')
+            local_input_file.close()
 
     @staticmethod
     def assemble_results_into_document(s3_helper: S3Helper, message_object, list_results_keys):
