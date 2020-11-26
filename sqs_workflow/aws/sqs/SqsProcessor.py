@@ -179,6 +179,7 @@ class SqsProcessor:
                                                          "similarity",
                                                          is_public=True)
                 message_object[StringConstants.DOCUMENT_PATH_KEY] = s3_url
+                logging.info(f'Finished similarity inference:{inference_id} s3 result:{s3_url}')
                 return json.dumps(message_object)
             else:
                 logging.info(f'Document is under processing inference:{inference_id}')
@@ -305,8 +306,13 @@ class SqsProcessor:
         url_file_name = None
         if StringConstants.DOCUMENT_PATH_KEY in message_object:
             url_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
+            logging.info(f"Document:{message_body}")
+        if StringConstants.IMAGE_PATH_KEY in message_object:
+            url_file_name = message_object[StringConstants.IMAGE_PATH_KEY]
+            logging.info(f"Image:{message_body}")
         if StringConstants.PANO_URL_KEY in message_object:
             url_file_name = message_object[StringConstants.PANO_URL_KEY]
+            logging.info(f"Pano:{message_body}")
         if not url_file_name and message_object[
             StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
             logging.info(f'Similarity does not have a document yet. Has to be assembled.')
