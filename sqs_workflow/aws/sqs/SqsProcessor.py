@@ -4,6 +4,7 @@ import logging
 import os
 import subprocess
 import time
+import uuid
 
 import boto3
 
@@ -335,6 +336,10 @@ class SqsProcessor:
             logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
 
         Utils.download_from_http(url_file_name, os.path.join(input_path, file_name))
+
+        if StringConstants.INFERENCE_ID_KEY not in message_object:
+            message_object[StringConstants.INFERENCE_ID_KEY] = uuid.uuid4()
+            logging.info(f'Create inference-id:{message_object[StringConstants.INFERENCE_ID_KEY]}')
 
         message_object[
             StringConstants.EXECUTABLE_PARAMS_KEY] = f' --input_path {os.path.join(input_path, file_name)} --output_path {output_path}'
