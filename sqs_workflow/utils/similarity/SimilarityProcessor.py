@@ -52,9 +52,9 @@ class SimilarityProcessor:
             # todo update document in input file
             # todo test this bit here
             output_file = message_object[StringConstants.EXECUTABLE_PARAMS_KEY] \
-                .replace('--output_path', '') \
-                .split()[1].strip()
+                .split('--output_path')[1].strip()
             output_file = os.path.join(output_file, StringConstants.RESULT_FILE_NAME)
+            logging.info(f'Start writing output file:{output_file}.')
             with open(output_file, 'wb') as local_file:
                 local_file.write(json.dumps(document_object).encode('utf-8'))
                 logging.info(f'Write to a file:{output_file}')
