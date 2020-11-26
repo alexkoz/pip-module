@@ -51,12 +51,13 @@ class SimilarityProcessor:
             logging.info(f'All {len(list_results_keys)} steps for similarity are done.')
             # todo update document in input file
             # todo test this bit here
-            input_file = message_object[StringConstants.EXECUTABLE_PARAMS_KEY] \
-                .replace('--input_path', '') \
-                .split()[0].strip()
-            with open(input_file, 'wb') as local_file:
+            output_file = message_object[StringConstants.EXECUTABLE_PARAMS_KEY] \
+                .replace('--output_path', '') \
+                .split()[1].strip()
+            output_file = os.path.join(output_file, StringConstants.RESULT_FILE_NAME)
+            with open(output_file, 'wb') as local_file:
                 local_file.write(json.dumps(document_object).encode('utf-8'))
-                logging.info(f'Write to a file:{input_file}')
+                logging.info(f'Write to a file:{output_file}')
                 local_file.close()
         return document_object
 
