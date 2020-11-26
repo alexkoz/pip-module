@@ -310,6 +310,7 @@ class SqsProcessor:
             logging.info(f"Document:{message_body}")
         if StringConstants.IMAGE_PATH_KEY in message_object:
             url_file_name = message_object[StringConstants.IMAGE_PATH_KEY]
+            message_object[StringConstants.PANO_URL_KEY] = url_file_name
             logging.info(f"Image:{message_body}")
         if StringConstants.PANO_URL_KEY in message_object:
             url_file_name = message_object[StringConstants.PANO_URL_KEY]
