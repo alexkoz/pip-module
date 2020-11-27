@@ -15,7 +15,10 @@ class SimilarityProcessor:
 
     @staticmethod
     def is_similarity_ready(s3_helper: S3Helper, message_object):
+        """
 
+        :rtype: object
+        """
         if StringConstants.DOCUMENT_PATH_KEY in message_object:
             logging.info(f'Found similarity return True')
             document_object = json.loads(Utils.download_from_http(message_object[StringConstants.DOCUMENT_PATH_KEY]))

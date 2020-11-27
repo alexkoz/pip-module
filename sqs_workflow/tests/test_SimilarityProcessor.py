@@ -7,6 +7,11 @@ from sqs_workflow.tests.S3HelperMock import S3HelperMock
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
+from sqs_workflow.aws.s3.S3Helper import S3Helper
+import logging
+
+
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 
 class TestSimilarityProcessor(TestCase):
@@ -76,3 +81,33 @@ class TestSimilarityProcessor(TestCase):
             else:
                 self.assertTrue(message_object['messageType'] == ProcessingTypesEnum.DoorDetecting.value
                                 or message_object['messageType'] == ProcessingTypesEnum.RoomBox.value)
+
+    def test_is_similarity_ready(self):
+        similarity_message_w_document_path = {
+            "messageType": "SIMILARITY",
+            "documentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+            "tourId": "5fa1df49014bf357cf250d52",
+            "panoId": "5fa1df55014bf357cf250d64"
+        }
+        res = self.similarity_processor.is_similarity_ready(S3Helper(), similarity_message_w_document_path)
+        self.assertTrue(len(res['panos']) == 23)
+
+        similarity_message_w_steps_document_path = {
+            "messageType": "SIMILARITY",
+            "stepsDocumentPath": "file:///Users/alexkoz/projects/python/misc/sqs_workflow/sqs_workflow/test.json",
+            "tourId": "5fa1df49014bf357cf250d52",
+            "inferenceId": 100,
+            "panoId": "5fa1df55014bf357cf250d64",
+            "steps": ['ROOM_BOX', 'SIMILARITY'],
+            "panos": "pano1",
+            "executable_params": "--input_path /Users/alexkoz/projects/python/misc/sqs_workflow/sqs_workflow/tmp/input/ad7ede0d6d45f7dc4656763b87b81db2/order_1012550_floor_1.json.json --output_path /Users/alexkoz/projects/python/misc/sqs_workflow/sqs_workflow/tmp/output/"
+        }
+
+        res2 = self.similarity_processor.is_similarity_ready(S3Helper(), similarity_message_w_steps_document_path)
+        self.assertTrue(res2['panos'][0]['layout'])
+
+        # Checks that input file modified
+        input_path = similarity_message_w_steps_document_path['executable_params'].split(' ')[1]
+        with open(input_path) as f:
+            modified_json_contains = json.load(f)
+        self.assertTrue(modified_json_contains['panos'][0]['layout'])

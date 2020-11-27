@@ -1,6 +1,7 @@
 import logging
 import os
 import random
+import requests
 import shutil
 import subprocess
 import sys
@@ -195,9 +196,9 @@ class E2ETestSqsProcessor(TestCase):
         self.purge_queue(self.processor.return_queue_url)
         logging.info('Purged queues')
 
-        inference_id = random.randint(5, 10)
+        inference_id = 999777
         preprocessing_message = {
-            StringConstants.MESSAGE_TYPE_KEY: "DOOR_DETECTING",
+            StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.DoorDetecting.value,
             StringConstants.INFERENCE_ID_KEY: inference_id,
             StringConstants.FILE_URL_KEY: "https://docusketch-production-resources.s3.amazonaws.com/items/cy2461o342/5eb33f7cf42b580e7aaa60f2/Tour/original-images/4624adl9ir.JPG",
             "tourId": "0123",
@@ -211,5 +212,25 @@ class E2ETestSqsProcessor(TestCase):
             print(i, end='\r')
             time.sleep(1)
 
-        self.s3_helper.list_s3_objects('api/inference/')
+        self.assertTrue(len(self.s3_helper.list_s3_objects(f'api/inference/DOOR_DETECTION/{inference_id}/')) == 1)
+        print('done')
+
+    def test_e2e_create_path_and_save_on_s3(self):
+        logging.info('Test is starting')
+
+        s3_helper = self.s3_helper
+        s3_helper.s3_client.delete_object(Bucket=s3_helper.s3_bucket, Key='test/acl-test-1.txt')
+        s3_helper.s3_client.delete_object(Bucket=s3_helper.s3_bucket, Key='test/acl-test-2.txt')
+        logging.info('Messages are deleted on S3')
+
+        acl1 = s3_helper.save_string_object_on_s3('test/acl-test-1.txt', 'test-body', 'document-test', True)
+        acl2 = s3_helper.save_string_object_on_s3('test/acl-test-2.txt', 'test-body', 'document-test', False)
+
+        r1 = str(requests.get(acl1))
+        r2 = str(requests.get(acl2))
+
+        self.assertTrue(r1 == '<Response [200]>')
+        self.assertTrue(r2 == '<Response [403]>')
+
+        logging.info('Test is finished')
 
