@@ -4,6 +4,7 @@ import logging
 import os
 import subprocess
 import time
+import uuid
 
 import boto3
 
@@ -179,6 +180,7 @@ class SqsProcessor:
                                                          "similarity",
                                                          is_public=True)
                 message_object[StringConstants.DOCUMENT_PATH_KEY] = s3_url
+                logging.info(f'Finished similarity inference:{inference_id} s3 result:{s3_url}')
                 return json.dumps(message_object)
             else:
                 logging.info(f'Document is under processing inference:{inference_id}')
@@ -262,6 +264,7 @@ class SqsProcessor:
             logging.info(f'Saved door detecting:{processing_result} on s3')
 
         message_object['returnData'] = json.loads(processing_result)
+        del message_object[StringConstants.EXECUTABLE_PARAMS_KEY]
         logging.info(f"Finished processing and updated message:{message_object} save result on s3.")
         return json.dumps(message_object)
 
@@ -304,8 +307,14 @@ class SqsProcessor:
         url_file_name = None
         if StringConstants.DOCUMENT_PATH_KEY in message_object:
             url_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
+            logging.info(f"Document:{message_body}")
+        if StringConstants.IMAGE_PATH_KEY in message_object:
+            url_file_name = message_object[StringConstants.IMAGE_PATH_KEY]
+            message_object[StringConstants.PANO_URL_KEY] = url_file_name
+            logging.info(f"Image:{message_body}")
         if StringConstants.PANO_URL_KEY in message_object:
             url_file_name = message_object[StringConstants.PANO_URL_KEY]
+            logging.info(f"Pano:{message_body}")
         if not url_file_name and message_object[
             StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
             logging.info(f'Similarity does not have a document yet. Has to be assembled.')
@@ -328,6 +337,10 @@ class SqsProcessor:
             logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
 
         Utils.download_from_http(url_file_name, os.path.join(input_path, file_name))
+
+        if StringConstants.INFERENCE_ID_KEY not in message_object:
+            message_object[StringConstants.INFERENCE_ID_KEY] = str(uuid.uuid4())
+            logging.info(f'Create inference-id:{message_object[StringConstants.INFERENCE_ID_KEY]}')
 
         message_object[
             StringConstants.EXECUTABLE_PARAMS_KEY] = f' --input_path {os.path.join(input_path, file_name)} --output_path {output_path}'
