@@ -199,7 +199,7 @@ class E2ETestSqsProcessor(TestCase):
         preprocessing_message = {
             StringConstants.MESSAGE_TYPE_KEY: "DOOR_DETECTING",
             StringConstants.INFERENCE_ID_KEY: inference_id,
-            StringConstants.PANO_URL_KEY: "https://docusketch-production-resources.s3.amazonaws.com/items/cy2461o342/5eb33f7cf42b580e7aaa60f2/Tour/original-images/4624adl9ir.JPG",
+            StringConstants.FILE_URL_KEY: "https://docusketch-production-resources.s3.amazonaws.com/items/cy2461o342/5eb33f7cf42b580e7aaa60f2/Tour/original-images/4624adl9ir.JPG",
             "tourId": "0123",
             "panoId": "0123"
         }

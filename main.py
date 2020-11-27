@@ -21,6 +21,9 @@ def run_queue_processor(queue_name):
         logging.info(f'Pulled messages {len(list_of_messages)} s')
         while len(list_of_messages) > 0:
             for message in list_of_messages:
+                #todo swallow the exception
+                #todo send slack message if subprocess fails
+                #todo send error to return message
                 message_body = processor.prepare_for_processing(message.body)
                 message_body = processor.process_message_in_subprocess(message_body)
                 if message_body is not None:
@@ -38,7 +41,7 @@ if __name__ == '__main__':
     ducu_process = executor.submit(run_queue_processor, "-docusketch-ai")
     immo_process = executor.submit(run_queue_processor, "-immoviewer-ai")
     while not ducu_process.done() and not immo_process.done():
-        sleep(5)
+        sleep(10)
         logging.info("Keep waiting till all done")
 
 logging.info(f"Both queues are empty. Exit waiting for next iteration.")
