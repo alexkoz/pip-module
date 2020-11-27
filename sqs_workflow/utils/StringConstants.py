@@ -6,7 +6,8 @@ class StringConstants:
     DOCUMENT_PATH_KEY: str = "documentPath"
     IMAGE_PATH_KEY: str = "imagePath"
     STEPS_DOCUMENT_PATH_KEY: str = "stepsDocumentPath"
-    PANO_URL_KEY: str = 'fileUrl'
+    FILE_URL_KEY: str = 'fileUrl'
+    PANO_URL_KEY: str = 'panoUrl'
     PANOS_KEY: str = 'panos'
     STEPS_KEY: str = 'steps'
     INFERENCE_ID_KEY: str = 'inferenceId'

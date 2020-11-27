@@ -36,7 +36,7 @@ class SimilarityProcessor:
                     s3_result_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                                                step,
                                                                str(message_object[StringConstants.INFERENCE_ID_KEY]),
-                                                               os.path.basename(panorama[StringConstants.PANO_URL_KEY]),
+                                                               os.path.basename(panorama[StringConstants.FILE_URL_KEY]),
                                                                StringConstants.RESULT_FILE_NAME)
 
                     if not s3_helper.is_object_exist(s3_result_key):
@@ -81,12 +81,12 @@ class SimilarityProcessor:
             s3_key_short = '/'.join(s3_key.split('/')[-3:])
             if s3_key_short in panos:
                 for pano in message_object[StringConstants.PANOS_KEY]:
-                    if os.path.basename(pano[StringConstants.PANO_URL_KEY]) == s3_key.split('/')[-2]:
+                    if os.path.basename(pano[StringConstants.FILE_URL_KEY]) == s3_key.split('/')[-2]:
                         panos[s3_key_short]['layout'].extend(step_result)
                         logging.info(f'Key: {s3_key} is in list and merged: {panos[s3_key_short]}')
             else:
                 for pano in message_object[StringConstants.PANOS_KEY]:
-                    if os.path.basename(pano[StringConstants.PANO_URL_KEY]) == s3_key.split('/')[-2]:
+                    if os.path.basename(pano[StringConstants.FILE_URL_KEY]) == s3_key.split('/')[-2]:
                         panos[s3_key_short] = pano
                         panos[s3_key_short]['layout'] = step_result
                         logging.info(f'Key: {s3_key_short} is not in list. Result: {step_result}')
@@ -143,7 +143,7 @@ class SimilarityProcessor:
             for pano in document[StringConstants.PANOS_KEY]:
                 message = message_object.copy()
                 del message[StringConstants.DOCUMENT_PATH_KEY]
-                message[StringConstants.PANO_URL_KEY] = pano[StringConstants.PANO_URL_KEY]
+                message[StringConstants.FILE_URL_KEY] = pano[StringConstants.FILE_URL_KEY]
                 message[StringConstants.MESSAGE_TYPE_KEY] = step
                 list_messages.append(json.dumps(message))
 
