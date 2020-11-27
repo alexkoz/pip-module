@@ -224,7 +224,7 @@ class SqsProcessor:
                                           url_hash,
                                           image_id,
                                           str(processing_result))
-            logging.info(f'Saved door detecting:{processing_result} on s3')
+            logging.info(f'Saved rotated image:{processing_result} on s3')
         else:
             logging.info(f'Download from s3')
             self.s3_helper.download_file_object_from_s3(
