@@ -349,6 +349,7 @@ Message example after processing:
 ```
 
 ### Room Box
+Arranges corners in the room.
 
 Input message example before processing:
 ```json

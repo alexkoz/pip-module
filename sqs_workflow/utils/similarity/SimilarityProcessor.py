@@ -10,12 +10,17 @@ from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.Utils import Utils
 
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+
 
 class SimilarityProcessor:
 
     @staticmethod
     def is_similarity_ready(s3_helper: S3Helper, message_object):
+        """
 
+        :rtype: object
+        """
         if StringConstants.DOCUMENT_PATH_KEY in message_object:
             logging.info(f'Found similarity return True')
             document_object = json.loads(Utils.download_from_http(message_object[StringConstants.DOCUMENT_PATH_KEY]))
@@ -49,8 +54,6 @@ class SimilarityProcessor:
                 steps_document,
                 list_results_keys)
             logging.info(f'All {len(list_results_keys)} steps for similarity are done.')
-            # todo update document in input file
-            # todo test this bit here
             input_file = message_object[StringConstants.EXECUTABLE_PARAMS_KEY] \
                 .replace('--input_path', '') \
                 .split()[0].strip()
