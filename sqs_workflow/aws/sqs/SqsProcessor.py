@@ -224,7 +224,8 @@ class SqsProcessor:
                                           url_hash,
                                           image_id,
                                           str(processing_result))
-            logging.info(f'Saved door detecting:{processing_result} on s3')
+            processing_result = {'output': f'{processing_result}'}
+            logging.info(f'Saved rotated image:{processing_result} on s3')
         else:
             logging.info(f'Download from s3')
             self.s3_helper.download_file_object_from_s3(
@@ -305,7 +306,7 @@ class SqsProcessor:
         logging.info(f"Start preprocessing for message:{message_body}")
         message_object = json.loads(message_body)
         url_file_name = None
-        
+
         if StringConstants.DOCUMENT_PATH_KEY in message_object:
             url_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
             logging.info(f"Document:{message_body}")
