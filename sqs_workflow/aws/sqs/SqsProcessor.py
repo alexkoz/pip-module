@@ -132,7 +132,6 @@ class SqsProcessor:
         logging.info(f'Created S3 object key:{s3_path} url:{s3_url} content:{processing_result}')
         return s3_url
 
-    # todo test
     def create_output_file_on_s3(self, message_type: str,
                                  image_hash: str,
                                  image_id: str,

@@ -217,3 +217,22 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(json.loads(res_door_detection)[
                             'executable_params'] == f' --input_path {input_path} --output_path {output_path}')
         self.assertTrue(os.path.isfile(input_path))
+
+    def test_create_output_file_on_s3(self):
+        self.clear_directory('api/inference/test-download-from-s3')
+        logging.info('Cleared S3 key folder on S3')
+
+        # Creates test "image" file
+        test_absolute_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow',
+                                          'sqs_workflow', 'tmp') + '/tempfile_image.JPG'
+        open(test_absolute_path, 'w').write('{}')
+        logging.info('Created temporary "image" file')
+
+        test_message_type = 'ROOM_BOX'
+        test_image_hash = 'test-hash'
+        image_id = '001'
+        image_absolute_path = test_absolute_path
+
+        self.processor.create_output_file_on_s3(test_message_type, test_image_hash, image_id, image_absolute_path)
+
+        self.assertTrue(self.s3_helper.is_object_exist('api/inference/ROOM_BOX/test-hash/001'))

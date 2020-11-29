@@ -22,7 +22,6 @@ from sqs_workflow.tests.test_sqsProcessor import TestSqsProcessor
 
 
 class E2ETestSqsProcessor(TestCase):
-
     similarity_processor = SimilarityProcessor()
     processor = SqsProcessor("-immoviewer-ai")
     s3_helper = S3Helper()
@@ -112,7 +111,8 @@ class E2ETestSqsProcessor(TestCase):
         self.purge_queue(self.processor.return_queue_url)
         logging.info('Purged queues')
 
-        inference_id = random.randint(5, 10)
+        # inference_id = random.randint(5, 10)
+        inference_id = '27-11-001'
         preprocessing_message = {
             StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Preprocessing.value,
             "orderId": "5da5d5164cedfd0050363a2e",
@@ -127,7 +127,8 @@ class E2ETestSqsProcessor(TestCase):
         logging.info('Preprocessing_message sent to queue')
 
         # Sleep 5 min
-        time.sleep(3)  # 300 sec
+        time.sleep(65)  # 300 sec
+        print('AFTER SLEEP')
 
         # todo check that similarity message is returned
         resp_return = self.processor.sqs_client.get_queue_attributes(QueueUrl=self.processor.queue_url,
@@ -137,6 +138,7 @@ class E2ETestSqsProcessor(TestCase):
         door_detection_messages = []
 
         while similarity_message is None:
+            time.sleep(5)
 
             # Pulls messages from queue
             messages_in_return_queue = self.processor.pull_messages_from_return_queue(1)
@@ -163,8 +165,8 @@ class E2ETestSqsProcessor(TestCase):
         with open(file_path) as f:
             json_message_object = json.load(f)
 
-        list_json_messages = self.similarity_processor.start_pre_processing(json_similarity_message,
-                                                                            dirname(file_path))
+        list_json_messages = self.similarity_processor.start_pre_processing(json_similarity_message)
+        # dirname(file_path))
 
         # Asserts similarity processed
         self.assertTrue(
@@ -176,16 +178,17 @@ class E2ETestSqsProcessor(TestCase):
                 self.assertTrue(len(message_object[StringConstants.STEPS_KEY]) == 2)
                 self.assertTrue(StringConstants.DOCUMENT_PATH_KEY not in message_object)
             else:
-                self.assertTrue(message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.DoorDetecting.value
-                                or message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.RoomBox.value)
+                self.assertTrue(
+                    message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.DoorDetecting.value
+                    or message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.RoomBox.value)
 
         self.assertTrue(len(list_json_messages) == len(room_box_messages))
         self.assertTrue(len(list_json_messages) == len(door_detection_messages))
 
-            # todo check message type
-            # todo if similarity -- check for similar
-            # todo if not similarity -- append message to list w/ same type
-            # todo delete message from return queue
+        # todo check message type
+        # todo if similarity -- check for similar
+        # todo if not similarity -- append message to list w/ same type
+        # todo delete message from return queue
 
         # todo assert similarity processed
         # todo len room_box_messages == num of panos
@@ -233,4 +236,3 @@ class E2ETestSqsProcessor(TestCase):
         self.assertTrue(r2 == '<Response [403]>')
 
         logging.info('Test is finished')
-
