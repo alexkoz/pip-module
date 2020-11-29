@@ -185,8 +185,8 @@ class SqsProcessor:
                 logging.info(f'Document is under processing inference:{inference_id}')
                 return None
 
-        image_id = os.path.basename(message_object[StringConstants.PANO_URL_KEY])
-        image_full_url = message_object[StringConstants.PANO_URL_KEY]
+        image_id = os.path.basename(message_object[StringConstants.FILE_URL_KEY])
+        image_full_url = message_object[StringConstants.FILE_URL_KEY]
         url_hash = hashlib.md5(image_full_url.encode('utf-8')).hexdigest()
 
         if message_type == ProcessingTypesEnum.RMatrix.value:
@@ -223,7 +223,8 @@ class SqsProcessor:
                                           url_hash,
                                           image_id,
                                           str(processing_result))
-            logging.info(f'Saved door detecting:{processing_result} on s3')
+            processing_result = {'output': f'{processing_result}'}
+            logging.info(f'Saved rotated image:{processing_result} on s3')
         else:
             logging.info(f'Download from s3')
             self.s3_helper.download_file_object_from_s3(
@@ -304,16 +305,25 @@ class SqsProcessor:
         logging.info(f"Start preprocessing for message:{message_body}")
         message_object = json.loads(message_body)
         url_file_name = None
+
         if StringConstants.DOCUMENT_PATH_KEY in message_object:
             url_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
             logging.info(f"Document:{message_body}")
+
         if StringConstants.IMAGE_PATH_KEY in message_object:
             url_file_name = message_object[StringConstants.IMAGE_PATH_KEY]
-            message_object[StringConstants.PANO_URL_KEY] = url_file_name
+            message_object[StringConstants.FILE_URL_KEY] = url_file_name
             logging.info(f"Image:{message_body}")
+
         if StringConstants.PANO_URL_KEY in message_object:
             url_file_name = message_object[StringConstants.PANO_URL_KEY]
+            message_object[StringConstants.FILE_URL_KEY] = url_file_name
             logging.info(f"Pano:{message_body}")
+
+        if StringConstants.FILE_URL_KEY in message_object:
+            url_file_name = message_object[StringConstants.FILE_URL_KEY]
+            logging.info(f"File:{message_body}")
+
         if not url_file_name and message_object[
             StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
             logging.info(f'Similarity does not have a document yet. Has to be assembled.')
