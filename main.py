@@ -18,7 +18,7 @@ def run_queue_processor(queue_name):
         Utils.check_environment()
         processor = SqsProcessor(queue_name)
         list_of_messages = processor.pull_messages(1)
-        logging.info(f'Pulled messages {len(list_of_messages)} s')
+        logging.info(f'Pulled messages {len(list_of_messages)} s from queue:{queue_name}')
         while len(list_of_messages) > 0:
             for message in list_of_messages:
                 #todo swallow the exception
@@ -29,7 +29,7 @@ def run_queue_processor(queue_name):
                 if message_body is not None:
                     logging.info(f"Setting message body:{message_body}")
                     processor.complete_processing_message(message, message_body)
-            logging.info(f"Start pulling messages")
+            logging.info(f"Keep pulling messages queue:{queue_name}")
             list_of_messages = processor.pull_messages(1)
     except Exception as e:
         logging.critical(e, exc_info=True)  # log exception info at CRITICAL log level

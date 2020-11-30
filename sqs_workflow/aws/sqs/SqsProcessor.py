@@ -90,22 +90,6 @@ class SqsProcessor:
         logging.info(f"Pulled {len(list_of_messages)} from a queue:{self.queue_url}")
         return list_of_messages
 
-    def pull_messages_from_return_queue(self, number_of_messages: int) -> list:
-        attempts = 0
-        list_of_messages = self.receive_messages_from_queue(number_of_messages, self.return_queue_url)
-        while attempts < 7 and len(list_of_messages) < number_of_messages:
-            messages_received = self.receive_messages_from_queue(1, self.return_queue_url)
-            if len(messages_received) > 0:
-                list_of_messages += messages_received
-                logging.info(f'Len list of messages:{len(list_of_messages)}')
-            else:
-                attempts += 1
-                time.sleep(1)
-            logging.info(f'attempts:{attempts} left')
-        if attempts == 7:
-            logging.info(f'Out of attempts')
-        return list_of_messages
-
     def complete_processing_message(self, message, message_body: str):
         logging.info(f'Start completing processing message:{message}')
         self.send_message_to_queue(message_body, self.return_queue_url)
@@ -225,6 +209,13 @@ class SqsProcessor:
                                           str(processing_result))
             processing_result = {'output': f'{processing_result}'}
             logging.info(f'Saved rotated image:{processing_result} on s3')
+            os.replace(os.path.join(self.output_processing_directory,
+                                    url_hash,
+                                    image_id),
+                       os.path.join(self.input_processing_directory,
+                                    url_hash,
+                                    image_id))
+            logging.info(f'Moved rotated file to input')
         else:
             logging.info(f'Download from s3')
             self.s3_helper.download_file_object_from_s3(
@@ -233,7 +224,9 @@ class SqsProcessor:
                                            url_hash,
                                            "",
                                            image_id),
-                os.path.join(self.output_processing_directory, image_id))
+                os.path.join(self.input_processing_directory,
+                             url_hash,
+                             image_id))
 
         if message_type == ProcessingTypesEnum.RoomBox.value:
             logging.info('Start processing room box')
