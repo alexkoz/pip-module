@@ -324,7 +324,7 @@ class SqsProcessor:
             return message_body
 
         file_name = os.path.basename(url_file_name)
-        url_hash = hashlib.md5(file_name.encode('utf-8')).hexdigest()
+        url_hash = hashlib.md5(url_file_name.encode('utf-8')).hexdigest()
         logging.info(f"Download url:{url_file_name} file:{file_name} hash:{url_hash}")
         input_path = os.path.join(self.input_processing_directory, url_hash)
         output_path = os.path.join(self.output_processing_directory, url_hash)
