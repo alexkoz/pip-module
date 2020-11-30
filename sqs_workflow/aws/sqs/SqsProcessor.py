@@ -330,8 +330,8 @@ class SqsProcessor:
         output_path = os.path.join(self.output_processing_directory, url_hash)
 
         try:
-            shutil.rmtree(input_path)
-            shutil.rmtree(output_path)
+            shutil.rmtree(input_path, ignore_errors=True)
+            shutil.rmtree(output_path, ignore_errors=True)
             os.makedirs(input_path)
             os.makedirs(output_path)
             logging.info(f'Created directories input:{input_path}, output:{output_path}')
