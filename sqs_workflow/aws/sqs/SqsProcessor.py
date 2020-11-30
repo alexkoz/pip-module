@@ -5,6 +5,7 @@ import os
 import subprocess
 import time
 import uuid
+import shutil
 
 import boto3
 
@@ -190,12 +191,12 @@ class SqsProcessor:
                                                 image_full_url)
 
         # todo check rotated image
-        rotated_result = self.s3_helper.is_object_exist(
-            Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
-                                       ProcessingTypesEnum.Rotate.value,
-                                       url_hash,
-                                       "",
-                                       image_id))
+        rotated_s3_result = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
+                                                       ProcessingTypesEnum.Rotate.value,
+                                                       url_hash,
+                                                       "",
+                                                       image_id)
+        rotated_result = self.s3_helper.is_object_exist(rotated_s3_result)
 
         if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
             logging.info('Start processing rotating')
@@ -217,13 +218,9 @@ class SqsProcessor:
                                     image_id))
             logging.info(f'Moved rotated file to input')
         else:
-            logging.info(f'Download from s3')
+            logging.info(f'Download from s3 key:{rotated_s3_result}')
             self.s3_helper.download_file_object_from_s3(
-                Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
-                                           ProcessingTypesEnum.Rotate.value,
-                                           url_hash,
-                                           "",
-                                           image_id),
+                rotated_s3_result,
                 os.path.join(self.input_processing_directory,
                              url_hash,
                              image_id))
@@ -332,15 +329,18 @@ class SqsProcessor:
         input_path = os.path.join(self.input_processing_directory, url_hash)
         output_path = os.path.join(self.output_processing_directory, url_hash)
 
-        if os.path.exists(input_path) is False:
-            try:
-                os.makedirs(input_path)
-                os.makedirs(output_path)
-                logging.info(f'Created directories input:{input_path}, output:{output_path}')
-            except OSError:
-                logging.error(f"Creation of the directory input:{input_path} or output:{output_path}  failed")
-                raise
-            logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
+        try:
+            shutil.rmtree(input_path)
+            shutil.rmtree(output_path)
+            os.makedirs(input_path)
+            os.makedirs(output_path)
+            logging.info(f'Created directories input:{input_path}, output:{output_path}')
+        except OSError:
+            logging.error(f"Creation of the directory input:{input_path} or output:{output_path}  failed")
+            raise
+        logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
+
+        assert os.path.exists(input_path) and os.path.exists(output_path)
 
         Utils.download_from_http(url_file_name, os.path.join(input_path, file_name))
 
