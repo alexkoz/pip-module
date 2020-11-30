@@ -12,4 +12,6 @@ class StringConstants:
     STEPS_KEY: str = 'steps'
     INFERENCE_ID_KEY: str = 'inferenceId'
     EXECUTABLE_PARAMS_KEY: str = 'executable_params'
+    TOUR_ID_KEY: str = 'tourId'
+    PANO_ID_KEY: str = 'panoId'
 

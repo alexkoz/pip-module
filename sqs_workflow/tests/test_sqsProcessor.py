@@ -35,6 +35,7 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(len(self.processor.queue.queue_messages) == 5)
 
     def test_delete_message(self):
+        self.processor.queue = QueueMock()
         test_message_1 = '{"message": "test-1"}'
         test_message_2 = '{"message": "test-2"}'
         test_message_3 = '{"message": "test-3"}'
@@ -127,7 +128,8 @@ class TestSqsProcessor(TestCase):
         self.assertEqual(ok_counter, 5)  # because of dummy_Similarity returns layout array, not just 'ok'
         self.assertEqual(fail_counter, 5)
 
-    def clear_directory(self, path_to_folder_in_bucket: str):
+    @staticmethod
+    def clear_directory(path_to_folder_in_bucket: str):
         sync_command = f"aws s3 --profile {os.environ['AWS_PROFILE']} rm s3://{os.environ['S3_BUCKET']}/{path_to_folder_in_bucket} --recursive"
         logging.info(f'sync command: {sync_command}')
         stream = os.popen(sync_command)
@@ -170,12 +172,15 @@ class TestSqsProcessor(TestCase):
 
         res_similarity = self.processor.prepare_for_processing(test_message_similarity)
         input_path = os.path.join(self.processor.input_processing_directory,
-                                  'ad7ede0d6d45f7dc4656763b87b81db2') + '/order_1012550_floor_1.json.json'
-        output_path = os.path.join(self.processor.output_processing_directory, 'ad7ede0d6d45f7dc4656763b87b81db2')
+                                  'fccc6d02b113260b57db5569e8f9c897') + '/order_1012550_floor_1.json.json'
+        output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
 
         self.assertTrue(json.loads(res_similarity)[
                             'executable_params'] == f' --input_path {input_path} --output_path {output_path}')
         self.assertTrue(os.path.isfile(input_path))
+
+        # " --input_path /Users/alexkoz/projects/python/misc/sqs_workflow/sqs_workflow/tmp/input/fccc6d02b113260b57db5569e8f9c897/order_1012550_floor_1.json.json --output_path /Users/alexkoz/projects/python/misc/sqs_workflow/sqs_workflow/tmp/output/fccc6d02b113260b57db5569e8f9c897"
+        #                /Users/alexkoz/projects/python/misc/sqs_workflow/sqs_workflow/tmp/input/ad7ede0d6d45f7dc4656763b87b81db2/order_1012550_floor_1.json.json'
 
     def test_prepare_for_processing_roombox(self):
         self.clear_local_directory(self.processor.input_processing_directory)
@@ -190,9 +195,9 @@ class TestSqsProcessor(TestCase):
 
         res_room_box = self.processor.prepare_for_processing(test_message_room_box)
         input_path = os.path.join(self.processor.input_processing_directory,
-                                  'e52d12ec195bea3977909c8ae585e5b6') + '/n0l066b0r4.JPG'
+                                  '5a7ad1cae0be45937aa2101d2b643e62') + '/n0l066b0r4.JPG'
         output_path = os.path.join(self.processor.output_processing_directory,
-                                   'e52d12ec195bea3977909c8ae585e5b6')
+                                   '5a7ad1cae0be45937aa2101d2b643e62')
 
         self.assertTrue(
             json.loads(res_room_box)['executable_params'] == f' --input_path {input_path} --output_path {output_path}')
@@ -211,9 +216,28 @@ class TestSqsProcessor(TestCase):
 
         res_door_detection = self.processor.prepare_for_processing(test_message_room_box)
         input_path = os.path.join(self.processor.input_processing_directory,
-                                  'e52d12ec195bea3977909c8ae585e5b6') + '/n0l066b0r4.JPG'
-        output_path = os.path.join(self.processor.output_processing_directory, 'e52d12ec195bea3977909c8ae585e5b6')
+                                  '5a7ad1cae0be45937aa2101d2b643e62') + '/n0l066b0r4.JPG'
+        output_path = os.path.join(self.processor.output_processing_directory, '5a7ad1cae0be45937aa2101d2b643e62')
 
         self.assertTrue(json.loads(res_door_detection)[
                             'executable_params'] == f' --input_path {input_path} --output_path {output_path}')
         self.assertTrue(os.path.isfile(input_path))
+
+    def test_create_output_file_on_s3(self):
+        self.clear_directory('api/inference/test-download-from-s3')
+        logging.info('Cleared S3 key folder on S3')
+
+        # Creates test "image" file
+        test_absolute_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow',
+                                          'sqs_workflow', 'tmp') + '/tempfile_image.JPG'
+        open(test_absolute_path, 'w').write('{}')
+        logging.info('Created temporary "image" file')
+
+        test_message_type = 'ROOM_BOX'
+        test_image_hash = 'test-hash'
+        image_id = '001'
+        image_absolute_path = test_absolute_path
+
+        self.processor.create_output_file_on_s3(test_message_type, test_image_hash, image_id, image_absolute_path)
+
+        self.assertTrue(self.s3_helper.is_object_exist('api/inference/ROOM_BOX/test-hash/001'))

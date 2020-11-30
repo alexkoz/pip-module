@@ -38,7 +38,6 @@ floor_object = json.loads(floor_string)
 sqs_client = boto3.resource('sqs', region_name=os.environ['REGION_NAME'])
 queue = sqs_client.Queue(os.environ['APP_BRANCH'])
 
-# todo send major message first
 purge_queue(os.environ['APP_BRANCH'])
 
 similarity_test_message = {

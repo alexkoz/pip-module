@@ -5,6 +5,7 @@ import os
 import subprocess
 import time
 import uuid
+import shutil
 
 import boto3
 
@@ -90,22 +91,6 @@ class SqsProcessor:
         logging.info(f"Pulled {len(list_of_messages)} from a queue:{self.queue_url}")
         return list_of_messages
 
-    def pull_messages_from_return_queue(self, number_of_messages: int) -> list:
-        attempts = 0
-        list_of_messages = self.receive_messages_from_queue(number_of_messages, self.return_queue_url)
-        while attempts < 7 and len(list_of_messages) < number_of_messages:
-            messages_received = self.receive_messages_from_queue(1, self.return_queue_url)
-            if len(messages_received) > 0:
-                list_of_messages += messages_received
-                logging.info(f'Len list of messages:{len(list_of_messages)}')
-            else:
-                attempts += 1
-                time.sleep(1)
-            logging.info(f'attempts:{attempts} left')
-        if attempts == 7:
-            logging.info(f'Out of attempts')
-        return list_of_messages
-
     def complete_processing_message(self, message, message_body: str):
         logging.info(f'Start completing processing message:{message}')
         self.send_message_to_queue(message_body, self.return_queue_url)
@@ -132,7 +117,6 @@ class SqsProcessor:
         logging.info(f'Created S3 object key:{s3_path} url:{s3_url} content:{processing_result}')
         return s3_url
 
-    # todo test
     def create_output_file_on_s3(self, message_type: str,
                                  image_hash: str,
                                  image_id: str,
@@ -207,12 +191,12 @@ class SqsProcessor:
                                                 image_full_url)
 
         # todo check rotated image
-        rotated_result = self.s3_helper.is_object_exist(
-            Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
-                                       ProcessingTypesEnum.Rotate.value,
-                                       url_hash,
-                                       "",
-                                       image_id))
+        rotated_s3_result = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
+                                                       ProcessingTypesEnum.Rotate.value,
+                                                       url_hash,
+                                                       "",
+                                                       image_id)
+        rotated_result = self.s3_helper.is_object_exist(rotated_s3_result)
 
         if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
             logging.info('Start processing rotating')
@@ -226,15 +210,20 @@ class SqsProcessor:
                                           str(processing_result))
             processing_result = {'output': f'{processing_result}'}
             logging.info(f'Saved rotated image:{processing_result} on s3')
+            os.replace(os.path.join(self.output_processing_directory,
+                                    url_hash,
+                                    image_id),
+                       os.path.join(self.input_processing_directory,
+                                    url_hash,
+                                    image_id))
+            logging.info(f'Moved rotated file to input')
         else:
-            logging.info(f'Download from s3')
+            logging.info(f'Download from s3 key:{rotated_s3_result}')
             self.s3_helper.download_file_object_from_s3(
-                Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
-                                           ProcessingTypesEnum.Rotate.value,
-                                           url_hash,
-                                           "",
-                                           image_id),
-                os.path.join(self.output_processing_directory, image_id))
+                rotated_s3_result,
+                os.path.join(self.input_processing_directory,
+                             url_hash,
+                             image_id))
 
         if message_type == ProcessingTypesEnum.RoomBox.value:
             logging.info('Start processing room box')
@@ -283,68 +272,68 @@ class SqsProcessor:
         logging.info(f"Output:{output}")
         return output
 
+    # todo test
     def check_pry_on_s3(self, message_type: str, url_hash: str, image_id: str) -> str:
-        result_s3_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
-                                                   message_type,
-                                                   url_hash,
-                                                   image_id,
-                                                   StringConstants.RESULT_FILE_NAME)
-        result = self.s3_helper.is_object_exist(result_s3_key)
-        if result is True:
+        pry_s3_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
+                                                message_type,
+                                                url_hash,
+                                                image_id,
+                                                StringConstants.RESULT_FILE_NAME)
+
+        logging.info(f'Checking pry on s3 for key:{pry_s3_key}')
+        is_key_exist = self.s3_helper.is_object_exist(pry_s3_key)
+
+        if is_key_exist:
+            logging.info(f' Key:{pry_s3_key} exists getting body')
             s3 = boto3.resource('s3')
-            path_to_file = os.path.join(result_s3_key, StringConstants.RESULT_FILE_NAME)
-            result_object = s3.Object(self.s3_helper.s3_bucket, path_to_file)
+            result_object = s3.Object(self.s3_helper.s3_bucket, pry_s3_key)
             body = result_object.get()['Body'].read().decode('utf-8')
-            logging.info(f'result.json in {result_s3_key} exists')
+            logging.info(f' S3 key:{pry_s3_key} content:{body}')
             return body
         else:
-            logging.info(f'result.json in {result_s3_key} does not exist')
+            logging.info(f'result.json in {pry_s3_key} does not exist')
             return None  # return None when -> str ?
 
     def prepare_for_processing(self, message_body: str) -> str:
 
         logging.info(f"Start preprocessing for message:{message_body}")
         message_object = json.loads(message_body)
-        url_file_name = None
 
         if StringConstants.DOCUMENT_PATH_KEY in message_object:
-            url_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
+            message_object[StringConstants.FILE_URL_KEY] = message_object[StringConstants.DOCUMENT_PATH_KEY]
             logging.info(f"Document:{message_body}")
 
         if StringConstants.IMAGE_PATH_KEY in message_object:
-            url_file_name = message_object[StringConstants.IMAGE_PATH_KEY]
-            message_object[StringConstants.FILE_URL_KEY] = url_file_name
+            message_object[StringConstants.FILE_URL_KEY] = message_object[StringConstants.IMAGE_PATH_KEY]
             logging.info(f"Image:{message_body}")
 
         if StringConstants.PANO_URL_KEY in message_object:
-            url_file_name = message_object[StringConstants.PANO_URL_KEY]
-            message_object[StringConstants.FILE_URL_KEY] = url_file_name
+            message_object[StringConstants.FILE_URL_KEY] = message_object[StringConstants.PANO_URL_KEY]
             logging.info(f"Pano:{message_body}")
 
-        if StringConstants.FILE_URL_KEY in message_object:
-            url_file_name = message_object[StringConstants.FILE_URL_KEY]
-            logging.info(f"File:{message_body}")
+        if StringConstants.STEPS_DOCUMENT_PATH_KEY in message_object:
+            message_object[StringConstants.FILE_URL_KEY] = message_object[StringConstants.STEPS_DOCUMENT_PATH_KEY]
+            logging.info(f'Similarity does not have a document yet. Use steps document.')
 
-        if not url_file_name and message_object[
-            StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
-            logging.info(f'Similarity does not have a document yet. Has to be assembled.')
-            return message_body
-
+        url_file_name = message_object[StringConstants.FILE_URL_KEY]
         file_name = os.path.basename(url_file_name)
-        url_hash = hashlib.md5(file_name.encode('utf-8')).hexdigest()
+        url_hash = hashlib.md5(url_file_name.encode('utf-8')).hexdigest()
         logging.info(f"Download url:{url_file_name} file:{file_name} hash:{url_hash}")
         input_path = os.path.join(self.input_processing_directory, url_hash)
         output_path = os.path.join(self.output_processing_directory, url_hash)
 
-        if os.path.exists(input_path) is False:
-            try:
-                os.makedirs(input_path)
-                os.makedirs(output_path)
-                logging.info(f'Created directories input:{input_path}, output:{output_path}')
-            except OSError:
-                logging.error(f"Creation of the directory input:{input_path} or output:{output_path}  failed")
-                raise
-            logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
+        try:
+            shutil.rmtree(input_path, ignore_errors=True)
+            shutil.rmtree(output_path, ignore_errors=True)
+            os.makedirs(input_path)
+            os.makedirs(output_path)
+            logging.info(f'Created directories input:{input_path}, output:{output_path}')
+        except OSError:
+            logging.error(f"Creation of the directory input:{input_path} or output:{output_path}  failed")
+            raise
+        logging.info(f'Input:{input_path}, output:{output_path}, file:{file_name}, hash:{url_hash}')
+
+        assert os.path.exists(input_path) and os.path.exists(output_path)
 
         Utils.download_from_http(url_file_name, os.path.join(input_path, file_name))
 
