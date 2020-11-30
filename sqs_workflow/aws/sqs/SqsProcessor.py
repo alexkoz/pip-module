@@ -282,22 +282,24 @@ class SqsProcessor:
         logging.info(f"Output:{output}")
         return output
 
+    #todo test
     def check_pry_on_s3(self, message_type: str, url_hash: str, image_id: str) -> str:
-        result_s3_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
+        pry_s3_key = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                                    message_type,
                                                    url_hash,
                                                    image_id,
                                                    StringConstants.RESULT_FILE_NAME)
-        result = self.s3_helper.is_object_exist(result_s3_key)
-        if result is True:
+        logging.info(f'Checking pry on s3 for key:{pry_s3_key}')
+        is_key_exist = self.s3_helper.is_object_exist(pry_s3_key)
+
+        if is_key_exist:
             s3 = boto3.resource('s3')
-            path_to_file = os.path.join(result_s3_key, StringConstants.RESULT_FILE_NAME)
-            result_object = s3.Object(self.s3_helper.s3_bucket, path_to_file)
+            result_object = s3.Object(self.s3_helper.s3_bucket, pry_s3_key)
             body = result_object.get()['Body'].read().decode('utf-8')
-            logging.info(f'result.json in {result_s3_key} exists')
+            logging.info(f'result.json in {pry_s3_key} exists')
             return body
         else:
-            logging.info(f'result.json in {result_s3_key} does not exist')
+            logging.info(f'result.json in {pry_s3_key} does not exist')
             return None  # return None when -> str ?
 
     def prepare_for_processing(self, message_body: str) -> str:
