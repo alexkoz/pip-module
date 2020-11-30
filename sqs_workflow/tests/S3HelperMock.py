@@ -12,11 +12,15 @@ class S3HelperMock(S3Helper):
     def is_object_exist(self, s3_key: str) -> bool:
         logging.info(f'Start checking object: {s3_key}')
         response = {
-            "Contents": [{"Key": "api/inference/ROOMBOX/1111/di7z4k5425.JPG/result.json"}]
+            "Contents": [{"Key1": "api/inference/ROOM_BOX/100/di7z4k5425.JPG/result.json",
+                          "Key2": "api/inference/DOOR_DETECTION/100/di7z4k5425.JPG/result.json",
+                          "Key3": "api/inference/ROOM_BOX/100/f63ubad57u.JPG/result.json",
+                          "Key4": "api/inference/DOOR_DETECTION/100/f63ubad57u.JPG/result.json"
+                          }]
         }
         if 'Contents' in response:
             for obj in response['Contents']:
-                if s3_key == obj['Key']:
+                if s3_key in obj.values():
                     return True
         return False
 
