@@ -37,8 +37,9 @@ echo "$(date) Start cleaning up"
 bash /home/ubuntu/projects/grails/ui-horizon-net/aids/tomcat/prepare-for-deployment.sh
 echo "$(date) Finished cleaning up"
 
-update_application "/home/ubuntu/projects/python/layout-validation/"
+update_application "/home/ubuntu/projects/python/layout-validation"
 update_application "/home/ubuntu/projects/python/ai-research"
+update_application "/home/ubuntu/projects/python/ai-object-recognition"
 
 image_name="ai-$APP_BRANCH-$(date '+%Y-%m-%d-%H-%M')"
 aws --profile clipnow ec2 create-image --instance-id $(ec2metadata --instance-id) \
