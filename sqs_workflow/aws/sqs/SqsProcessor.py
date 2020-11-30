@@ -298,31 +298,24 @@ class SqsProcessor:
 
         logging.info(f"Start preprocessing for message:{message_body}")
         message_object = json.loads(message_body)
-        url_file_name = None
 
         if StringConstants.DOCUMENT_PATH_KEY in message_object:
-            url_file_name = message_object[StringConstants.DOCUMENT_PATH_KEY]
+            message_object[StringConstants.FILE_URL_KEY] = message_object[StringConstants.DOCUMENT_PATH_KEY]
             logging.info(f"Document:{message_body}")
 
         if StringConstants.IMAGE_PATH_KEY in message_object:
-            url_file_name = message_object[StringConstants.IMAGE_PATH_KEY]
-            message_object[StringConstants.FILE_URL_KEY] = url_file_name
+            message_object[StringConstants.FILE_URL_KEY] = message_object[StringConstants.IMAGE_PATH_KEY]
             logging.info(f"Image:{message_body}")
 
         if StringConstants.PANO_URL_KEY in message_object:
-            url_file_name = message_object[StringConstants.PANO_URL_KEY]
-            message_object[StringConstants.FILE_URL_KEY] = url_file_name
+            message_object[StringConstants.FILE_URL_KEY] = message_object[StringConstants.PANO_URL_KEY]
             logging.info(f"Pano:{message_body}")
 
-        if StringConstants.FILE_URL_KEY in message_object:
-            url_file_name = message_object[StringConstants.FILE_URL_KEY]
-            logging.info(f"File:{message_body}")
+        if StringConstants.STEPS_DOCUMENT_PATH_KEY in message_object:
+            message_object[StringConstants.FILE_URL_KEY] = message_object[StringConstants.STEPS_DOCUMENT_PATH_KEY]
+            logging.info(f'Similarity does not have a document yet. Use steps document.')
 
-        if not url_file_name and message_object[
-            StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
-            logging.info(f'Similarity does not have a document yet. Has to be assembled.')
-            return message_body
-
+        url_file_name = message_object[StringConstants.FILE_URL_KEY]
         file_name = os.path.basename(url_file_name)
         url_hash = hashlib.md5(url_file_name.encode('utf-8')).hexdigest()
         logging.info(f"Download url:{url_file_name} file:{file_name} hash:{url_hash}")
