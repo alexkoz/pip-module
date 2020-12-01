@@ -217,6 +217,7 @@ class SqsProcessor:
                                     url_hash,
                                     image_id))
             logging.info(f'Moved rotated file to input')
+            processing_result = []
         else:
             logging.info(f'Download from s3 key:{rotated_s3_result}')
             self.s3_helper.download_file_object_from_s3(
