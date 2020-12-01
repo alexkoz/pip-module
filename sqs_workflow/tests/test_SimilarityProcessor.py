@@ -24,10 +24,11 @@ class TestSimilarityProcessor(TestCase):
         layout_object = self.similarity_processor.create_layout_object(ProcessingTypesEnum.RoomBox.value,
                                                                        room_box_result)
         layout_object = json.loads(layout_object)
-        self.assertTrue(layout_object[0]['x'] == 141.9157197530611)
+        list_of_corners = layout_object['layout']
+        self.assertTrue(list_of_corners[0]['x'] == 141.9157197530611)
 
-        self.assertTrue(layout_object[0]['y'] == -29.632091827736627)
-        self.assertTrue(layout_object[0]['type'] == 'corner')
+        self.assertTrue(list_of_corners[0]['y'] == -29.632091827736627)
+        self.assertTrue(list_of_corners[0]['type'] == 'corner')
         # todo test door detecting object
 
     def test_assemble_results_into_document(self):

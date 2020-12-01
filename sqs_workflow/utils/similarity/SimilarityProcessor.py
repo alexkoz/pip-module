@@ -56,7 +56,7 @@ class SimilarityProcessor:
 
         return document_object
 
-    #todo test
+    # todo test
     @staticmethod
     def process_result_files(document_object, message_object):
 
@@ -83,18 +83,18 @@ class SimilarityProcessor:
                 step_result = json.loads(s3_helper.read_s3_object(s3_key))
             else:
                 logging.info(f'Step json result is empty')
-                step_result = []
+                step_result = {'layout': []}
             s3_key_short = '/'.join(s3_key.split('/')[-3:])
             if s3_key_short in panos:
                 for pano in message_object[StringConstants.PANOS_KEY]:
                     if os.path.basename(pano[StringConstants.FILE_URL_KEY]) == s3_key.split('/')[-2]:
-                        panos[s3_key_short]['layout'].extend(step_result)
+                        panos[s3_key_short]['layout'].extend(step_result['layout'])
                         logging.info(f'Key: {s3_key} is in list and merged: {panos[s3_key_short]}')
             else:
                 for pano in message_object[StringConstants.PANOS_KEY]:
                     if os.path.basename(pano[StringConstants.FILE_URL_KEY]) == s3_key.split('/')[-2]:
                         panos[s3_key_short] = pano
-                        panos[s3_key_short]['layout'] = step_result
+                        panos[s3_key_short]['layout'] = step_result['layout']
                         logging.info(f'Key: {s3_key_short} is not in list. Result: {step_result}')
 
         message_object[StringConstants.PANOS_KEY] = list(panos.values())
@@ -120,18 +120,7 @@ class SimilarityProcessor:
         if step == ProcessingTypesEnum.DoorDetecting.value:
             pass
 
-        return json.dumps(layout_object)
-
-    @staticmethod
-    def generate_message(pano_info, steps):
-        # result_messages = []
-        result_message = {}
-        for step in steps:
-            for key in pano_info.keys():
-                result_message[StringConstants.MESSAGE_TYPE_KEY] = step
-                result_message[key] = pano_info.get(key)
-                # result_messages.append(result_message)
-        return result_message
+        return json.dumps({'layout': layout_object})
 
     @staticmethod
     def start_pre_processing(message_object) -> List[str]:
