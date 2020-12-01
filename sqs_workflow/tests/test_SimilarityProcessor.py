@@ -38,13 +38,17 @@ class TestSimilarityProcessor(TestCase):
                 {"createdDate": "16.07.2020 02:26:13",
                  "fileUrl": "http://domen.com/img1.JPG"},
                 {"createdDate": "18.07.2020 02:43:15",
-                 "fileUrl": "http://domen.com/img2.JPG"}
+                 "fileUrl": "http://domen.com/img2.JPG"},
+                {"createdDate": "18.07.2020 02:43:15",
+                 "fileUrl": "http://domen.com/empty.JPG"}
             ]
         }
         list_result = ['api/inference/ROOM_BOX/1111/img1.JPG/result.json',
                        'api/inference/ROOM_BOX/1111/img2.JPG/result.json',
+                       'api/inference/ROOM_BOX/1111/empty.JPG/result.json',
                        'api/inference/DOOR_DETECTION/1111/img1.JPG/result.json',
-                       'api/inference/DOOR_DETECTION/1111/img2.JPG/result.json']
+                       'api/inference/DOOR_DETECTION/1111/img2.JPG/result.json',
+                       'api/inference/DOOR_DETECTION/1111/empty.JPG/result.json']
         new_message_object = SimilarityProcessor.assemble_results_into_document(s3_helper_mock, message_object,
                                                                                 list_result)
         self.assertEqual(new_message_object['panos'][0]['fileUrl'], "http://domen.com/img1.JPG")
