@@ -5,7 +5,7 @@ function update_application() {
   echo "$(date) Start checking out $1"
   cd $1 || exit 125
   sudo chown ubuntu. .git/* -R
-  echo "$(date) Change ownership $1.git/"
+  echo "$(date) Change ownership $1/.git/"
   git checkout "$APP_BRANCH"
   git pull --rebase
   pull_output=$(git pull --rebase)

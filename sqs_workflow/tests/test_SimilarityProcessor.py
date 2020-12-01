@@ -6,6 +6,7 @@ import logging
 from unittest import TestCase
 from pathlib import Path
 
+from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.S3HelperMock import S3HelperMock
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum

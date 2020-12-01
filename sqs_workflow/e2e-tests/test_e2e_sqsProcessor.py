@@ -107,7 +107,7 @@ class E2ETestSqsProcessor(TestCase):
                 s3_step_results = self.s3_helper.list_s3_objects(os.path.join(StringConstants.COMMON_PREFIX,
                                                                               step,
                                                                               inference_id))
-                number_of_processed_steps_results = number_of_processed_steps_results + s3_step_results
+                number_of_processed_steps_results = number_of_processed_steps_results + len(s3_step_results)
             logging.info(f"Found {number_of_processed_steps_results} results so far")
         logging.info("All steps are processed. Now waiting till similarity finishes.")
 
