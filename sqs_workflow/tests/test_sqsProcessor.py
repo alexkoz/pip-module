@@ -151,7 +151,7 @@ class TestSqsProcessor(TestCase):
                                                   processing_result,
                                                   image_id,
                                                   image_url)
-        s3_key = os.path.join('api', 'inference', 'test-message-type', ',test-inference-id', 'test-image-id',
+        s3_key = os.path.join('api', 'inference', 'test-message-type', 'test-inference-id', 'test-image-id',
                               'result.json')
         # todo check tags
         self.assertTrue(s3_helper.is_object_exist(s3_key))
@@ -176,15 +176,12 @@ class TestSqsProcessor(TestCase):
 
         res_similarity = self.processor.prepare_for_processing(test_message_similarity)
         input_path = os.path.join(self.processor.input_processing_directory,
-                                  'fccc6d02b113260b57db5569e8f9c897') + '/order_1012550_floor_1.json.json'
+                                  'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
         output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
 
         self.assertTrue(json.loads(res_similarity)[
                             'executable_params'] == f' --input_path {input_path} --output_path {output_path}')
         self.assertTrue(os.path.isfile(input_path))
-
-        # " --input_path /Users/alexkoz/projects/python/misc/sqs_workflow/sqs_workflow/tmp/input/fccc6d02b113260b57db5569e8f9c897/order_1012550_floor_1.json.json --output_path /Users/alexkoz/projects/python/misc/sqs_workflow/sqs_workflow/tmp/output/fccc6d02b113260b57db5569e8f9c897"
-        #                /Users/alexkoz/projects/python/misc/sqs_workflow/sqs_workflow/tmp/input/ad7ede0d6d45f7dc4656763b87b81db2/order_1012550_floor_1.json.json'
 
     def test_prepare_for_processing_roombox(self):
         self.clear_local_directory(self.processor.input_processing_directory)
@@ -199,7 +196,7 @@ class TestSqsProcessor(TestCase):
 
         res_room_box = self.processor.prepare_for_processing(test_message_room_box)
         input_path = os.path.join(self.processor.input_processing_directory,
-                                  '5a7ad1cae0be45937aa2101d2b643e62') + '/n0l066b0r4.JPG'
+                                  '5a7ad1cae0be45937aa2101d2b643e62', 'n0l066b0r4.JPG')
         output_path = os.path.join(self.processor.output_processing_directory,
                                    '5a7ad1cae0be45937aa2101d2b643e62')
 
@@ -217,7 +214,6 @@ class TestSqsProcessor(TestCase):
                                "panoId": "5fa1df55014bf357cf250d64", \
                                "steps": ["DOOR_DETECTION"], \
                                "inferenceId": "222"}'
-        tested = "f'{test_message_room_box}'"
 
         res_door_detection = self.processor.prepare_for_processing(test_message_room_box)
         input_path = os.path.join(self.processor.input_processing_directory,
@@ -237,7 +233,7 @@ class TestSqsProcessor(TestCase):
         open(test_absolute_path, 'w').write('{}')
         logging.info('Created temporary "image" file')
 
-        test_message_type = 'ROOM_BOX'
+        test_message_type = ProcessingTypesEnum.RoomBox.value
         test_image_hash = 'test-hash'
         image_id = '001'
         image_absolute_path = test_absolute_path

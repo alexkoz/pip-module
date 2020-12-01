@@ -4,6 +4,7 @@ import hashlib
 import logging
 
 from unittest import TestCase
+from pathlib import Path
 
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.S3HelperMock import S3HelperMock
@@ -38,13 +39,17 @@ class TestSimilarityProcessor(TestCase):
                 {"createdDate": "16.07.2020 02:26:13",
                  "fileUrl": "http://domen.com/img1.JPG"},
                 {"createdDate": "18.07.2020 02:43:15",
-                 "fileUrl": "http://domen.com/img2.JPG"}
+                 "fileUrl": "http://domen.com/img2.JPG"},
+                {"createdDate": "18.07.2020 02:43:15",
+                 "fileUrl": "http://domen.com/empty.JPG"}
             ]
         }
         list_result = [os.path.join('api', 'inference', 'ROOM_BOX', '1111', 'img1.JPG','result.json'),
                        os.path.join('api', 'inference', 'ROOM_BOX', '1111', 'img2.JPG', 'result.json'),
+                       os.path.join('api', 'inference', 'ROOM_BOX', '1111', 'empty.JPG', 'result.json'),
                        os.path.join('api', 'inference', 'DOOR_DETECTION', '1111', 'img1.JPG', 'result.json'),
-                       os.path.join('api', 'inference', 'DOOR_DETECTION', '1111', 'img2.JPG', 'result.json')]
+                       os.path.join('api', 'inference', 'DOOR_DETECTION', '1111', 'img2.JPG', 'result.json'),
+                       os.path.join('api', 'inference', 'DOOR_DETECTION', '1111', 'empty.JPG', 'result.json')]
 
         new_message_object = SimilarityProcessor.assemble_results_into_document(s3_helper_mock, message_object,
                                                                                 list_result)
@@ -106,7 +111,7 @@ class TestSimilarityProcessor(TestCase):
         similarity_message_w_steps_document_path = {
 
             StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Similarity.value,
-            StringConstants.STEPS_DOCUMENT_PATH_KEY: f"file:///Users/alexkoz/projects/python/misc/sqs_workflow/sqs_workflow/tmp/two_panos.json",
+            StringConstants.STEPS_DOCUMENT_PATH_KEY: f"file://{str(Path.home())}/purge/two_panos.json",
             StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
             StringConstants.INFERENCE_ID_KEY: 100,
             StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",

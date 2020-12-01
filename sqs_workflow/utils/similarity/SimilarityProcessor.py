@@ -77,7 +77,13 @@ class SimilarityProcessor:
         panos = {}
         for s3_key in list_results_keys:
             logging.info(f'Start processing key:{s3_key}')
-            step_result = json.loads(s3_helper.read_s3_object(s3_key))
+            result_string = s3_helper.read_s3_object(s3_key)
+            if result_string:
+                logging.info(f'Step json result:{result_string}')
+                step_result = json.loads(s3_helper.read_s3_object(s3_key))
+            else:
+                logging.info(f'Step json result is empty')
+                step_result = []
             s3_key_short = '/'.join(s3_key.split('/')[-3:])
             if s3_key_short in panos:
                 for pano in message_object[StringConstants.PANOS_KEY]:

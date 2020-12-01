@@ -1,24 +1,17 @@
+import json
 import logging
 import os
-import random
-import requests
-import shutil
-import subprocess
-import sys
 import time
-import json
-import boto3
-
-from pathlib import Path
 from unittest import TestCase
-from os.path import dirname
+import datetime
+import boto3
+import requests
 
-from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
+from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
-from sqs_workflow.tests.test_sqsProcessor import TestSqsProcessor
 
 
 class E2ETestSqsProcessor(TestCase):
@@ -41,35 +34,6 @@ class E2ETestSqsProcessor(TestCase):
         if attemps == 3:
             logging.info('out of attemps')
         return list_of_messages
-
-    def test_read_write_messages(self):
-        processor = SqsProcessor()
-
-        self.purge_queue(self.processor.queue_url)
-        req_receive = processor.receive_messages_from_queue(5)
-        self.assertTrue(len(req_receive) == 0)
-
-        for i in range(10):
-            processor.send_message_to_queue(
-                '{ \"inferenceId\":\"similarity-test\",  \"messageType\":\"similarity\", \"orderId\":' + str(i) + '}',
-                self.processor.queue_url)
-
-        req_receive = self.pull_messages(processor, 3)
-        self.assertTrue(len(req_receive) == 3)
-
-        for message in req_receive:
-            processor.complete_processing_message(message)
-        logging.info(f'len req_receive after delete = ', len(req_receive))
-
-        req_receive = self.pull_messages(processor, 10)
-        logging.info(f'len req_receive = ', len(req_receive))
-
-        self.assertTrue(len(req_receive) == 7)
-        logging.info('get attr values: ===================')
-
-        for message in req_receive:
-            req_get_attr = processor.get_attr_value(message, 'messageType')
-            self.assertEqual(req_get_attr, 'similarity')
 
     def clear_directory(self, path_to_folder_in_bucket: str):
         sync_command = f"aws s3 --profile {os.environ['AWS_PROFILE']} rm s3://{os.environ['S3_BUCKET']}/{path_to_folder_in_bucket} --recursive"
@@ -110,25 +74,42 @@ class E2ETestSqsProcessor(TestCase):
         self.purge_queue(self.processor.queue_url)
         self.purge_queue(self.processor.return_queue_url)
         logging.info('Purged queues')
+        document_url = "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json"
+        document_object = requests.get(document_url).json()
 
-        # inference_id = random.randint(5, 10)
-        inference_id = '27-11-001'
+        inference_id = f'e2e-test-{datetime.datetime.now()}'.replace(' ', '').replace(':', '')
         preprocessing_message = {
             StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Preprocessing.value,
             "orderId": "5da5d5164cedfd0050363a2e",
             "floor": 1,
             "tourId": "1342386",
             StringConstants.INFERENCE_ID_KEY: inference_id,
-            StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+            StringConstants.DOCUMENT_PATH_KEY: document_url,
             StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value]
         }
         # Sends message to queue
-        self.processor.send_message_to_queue(json.dumps(preprocessing_message), self.processor.queue_url)
-        logging.info('Preprocessing_message sent to queue')
+        send_preprocessing_message_result = self.processor.send_message_to_queue(
+            json.dumps(preprocessing_message),
+            self.processor.queue_url)
+        logging.info(f'Preprocessing_message:{send_preprocessing_message_result["MessageId"]} sent to queue')
 
         # Sleep 5 min
         time.sleep(65)  # 300 sec
         print('AFTER SLEEP')
+        number_of_processed_steps_results = 0
+        # todo check on s3 while all is ready
+        expected_number_of_results = len(preprocessing_message[StringConstants.STEPS_KEY]) * len(
+            document_object[StringConstants.PANOS_KEY])
+        while number_of_processed_steps_results < expected_number_of_results:
+            time.sleep(60)
+            number_of_processed_steps_results = 0
+            for step in preprocessing_message[StringConstants.STEPS_KEY]:
+                s3_step_results = self.s3_helper.list_s3_objects(os.path.join(StringConstants.COMMON_PREFIX,
+                                                                              step,
+                                                                              inference_id))
+                number_of_processed_steps_results = number_of_processed_steps_results + s3_step_results
+            logging.info(f"Found {number_of_processed_steps_results} results so far")
+        logging.info("All steps are processed. Now waiting till similarity finishes.")
 
         # todo check that similarity message is returned
         resp_return = self.processor.sqs_client.get_queue_attributes(QueueUrl=self.processor.queue_url,

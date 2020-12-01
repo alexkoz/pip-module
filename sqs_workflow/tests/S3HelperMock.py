@@ -31,4 +31,7 @@ class S3HelperMock(S3Helper):
         if ProcessingTypesEnum.RoomBox.value in s3_key:
             return roombox_result
         elif ProcessingTypesEnum.DoorDetecting.value in s3_key:
-            return door_detection_result
+            if 'empty' not in s3_key:
+                return door_detection_result
+            else:
+                return ""
