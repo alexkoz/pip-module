@@ -56,7 +56,7 @@ class SimilarityProcessor:
 
         return document_object
 
-    #todo test
+    # todo test
     @staticmethod
     def process_result_files(document_object, message_object):
 
@@ -71,30 +71,36 @@ class SimilarityProcessor:
             local_input_file.close()
 
     @staticmethod
-    def assemble_results_into_document(s3_helper: S3Helper, message_object, list_results_keys):
+    def assemble_results_into_document(s3_helper: S3Helper, document_object, list_results_keys):
 
-        logging.info(f'Start assembling results into document message:{message_object}')
+        logging.info(f'Start assembling results into document message:{document_object}')
         panos = {}
         for s3_key in list_results_keys:
             logging.info(f'Start processing key:{s3_key}')
-            step_result = json.loads(s3_helper.read_s3_object(s3_key))
+            result_string = s3_helper.read_s3_object(s3_key)
+            if result_string:
+                logging.info(f'Step json result:{result_string}')
+                step_result = json.loads(s3_helper.read_s3_object(s3_key))
+            else:
+                logging.info(f'Step json result is empty')
+                step_result = {'layout': []}
             s3_key_short = '/'.join(s3_key.split('/')[-3:])
             if s3_key_short in panos:
-                for pano in message_object[StringConstants.PANOS_KEY]:
+                for pano in document_object[StringConstants.PANOS_KEY]:
                     if os.path.basename(pano[StringConstants.FILE_URL_KEY]) == s3_key.split('/')[-2]:
-                        panos[s3_key_short]['layout'].extend(step_result)
+                        panos[s3_key_short]['layout'].extend(step_result['layout'])
                         logging.info(f'Key: {s3_key} is in list and merged: {panos[s3_key_short]}')
             else:
-                for pano in message_object[StringConstants.PANOS_KEY]:
+                for pano in document_object[StringConstants.PANOS_KEY]:
                     if os.path.basename(pano[StringConstants.FILE_URL_KEY]) == s3_key.split('/')[-2]:
                         panos[s3_key_short] = pano
-                        panos[s3_key_short]['layout'] = step_result
+                        panos[s3_key_short]['layout'] = step_result['layout']
                         logging.info(f'Key: {s3_key_short} is not in list. Result: {step_result}')
 
-        message_object[StringConstants.PANOS_KEY] = list(panos.values())
-        logging.info(f'Returning message with {len(message_object[StringConstants.PANOS_KEY])} panos')
-        logging.info(f'Assembled message:{message_object}')
-        return message_object
+        document_object[StringConstants.PANOS_KEY] = list(panos.values())
+        logging.info(f'Returning message with {len(document_object[StringConstants.PANOS_KEY])} panos')
+        logging.info(f'Assembled message:{document_object}')
+        return document_object
 
     @staticmethod
     def create_layout_object(step: str, result: str) -> str:
@@ -114,18 +120,7 @@ class SimilarityProcessor:
         if step == ProcessingTypesEnum.DoorDetecting.value:
             pass
 
-        return json.dumps(layout_object)
-
-    @staticmethod
-    def generate_message(pano_info, steps):
-        # result_messages = []
-        result_message = {}
-        for step in steps:
-            for key in pano_info.keys():
-                result_message[StringConstants.MESSAGE_TYPE_KEY] = step
-                result_message[key] = pano_info.get(key)
-                # result_messages.append(result_message)
-        return result_message
+        return json.dumps({'layout': layout_object})
 
     @staticmethod
     def start_pre_processing(message_object) -> List[str]:

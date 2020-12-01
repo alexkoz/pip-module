@@ -5,7 +5,7 @@ function update_application() {
   echo "$(date) Start checking out $1"
   cd $1 || exit 125
   sudo chown ubuntu. .git/* -R
-  echo "$(date) Change ownership $1.git/"
+  echo "$(date) Change ownership $1/.git/"
   git checkout "$APP_BRANCH"
   git pull --rebase
   pull_output=$(git pull --rebase)
@@ -28,10 +28,11 @@ echo "$(date) %%%%%%%%%%%%%%%%%%%%%% Start syncing. %%%%%%%%%%%%%%%%%%%%%%"
 
 echo "$(date) Current branch:$APP_BRANCH"
 
-update_application "/home/ubuntu/projects/python/misc/sqs_workflow/"
+update_application "/home/ubuntu/projects/python/misc/sqs_workflow"
 
-update_application "/home/ubuntu/projects/python/layout-validation/"
+update_application "/home/ubuntu/projects/python/layout-validation"
 update_application "/home/ubuntu/projects/python/ai-research"
+update_application "/home/ubuntu/projects/python/ai-object-recognition"
 
 ec2_data=$(ec2metadata --public-ipv4 --instance-id --ami-id)
 echo "$(date '+%Y-%m-%d %H:%M:%S') Send slack notification for $ec2_data"

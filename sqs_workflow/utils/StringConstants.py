@@ -14,4 +14,6 @@ class StringConstants:
     EXECUTABLE_PARAMS_KEY: str = 'executable_params'
     TOUR_ID_KEY: str = 'tourId'
     PANO_ID_KEY: str = 'panoId'
+    ORDER_ID_KEY: str = 'orderId'
+    FLOOR_ID_KEY: str = 'floor'
 
