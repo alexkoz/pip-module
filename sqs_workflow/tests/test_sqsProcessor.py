@@ -167,12 +167,14 @@ class TestSqsProcessor(TestCase):
         self.clear_local_directory(self.processor.input_processing_directory)
         self.clear_local_directory(self.processor.output_processing_directory)
 
-        test_message_similarity = '{"messageType": "SIMILARITY",\
-                           "tourId": "5fa1df49014bf357cf250d52",\
-                           "panoId": "5fa1df55014bf357cf250d64", \
-                           "documentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json", \
-                           "steps": ["SIMILARITY"], \
-                           "inferenceId": "1111"}'
+        test_message_similarity = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Similarity.value,
+                                   StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                                   StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                                   StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+                                   StringConstants.STEPS_KEY: [ProcessingTypesEnum.Similarity.value],
+                                   StringConstants.INFERENCE_ID_KEY: "1111"}
+
+        test_message_similarity = json.dumps(test_message_similarity)
 
         res_similarity = self.processor.prepare_for_processing(test_message_similarity)
         input_path = os.path.join(self.processor.input_processing_directory,
@@ -187,12 +189,14 @@ class TestSqsProcessor(TestCase):
         self.clear_local_directory(self.processor.input_processing_directory)
         self.clear_local_directory(self.processor.output_processing_directory)
 
-        test_message_room_box = '{"messageType": "ROOM_BOX",\
-                           "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG",\
-                           "tourId": "5fa1df49014bf357cf250d52",\
-                           "panoId": "5fa1df55014bf357cf250d64", \
-                           "steps": ["ROOM_BOX"], \
-                           "inferenceId": "222"}'
+        test_message_room_box = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.RoomBox.value,
+                                 StringConstants.FILE_URL_KEY: "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG",
+                                 StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                                 StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                                 StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value],
+                                 StringConstants.INFERENCE_ID_KEY: "222"}
+
+        test_message_room_box = json.dumps(test_message_room_box)
 
         res_room_box = self.processor.prepare_for_processing(test_message_room_box)
         input_path = os.path.join(self.processor.input_processing_directory,
@@ -208,12 +212,14 @@ class TestSqsProcessor(TestCase):
         self.clear_local_directory(self.processor.input_processing_directory)
         self.clear_local_directory(self.processor.output_processing_directory)
 
-        test_message_room_box = '{"messageType": "DOOR_DETECTION",\
-                               "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG",\
-                               "tourId": "5fa1df49014bf357cf250d52",\
-                               "panoId": "5fa1df55014bf357cf250d64", \
-                               "steps": ["DOOR_DETECTION"], \
-                               "inferenceId": "222"}'
+        test_message_room_box = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.DoorDetecting.value,
+                                 StringConstants.FILE_URL_KEY: "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG",
+                                 StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                                 StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                                 StringConstants.STEPS_KEY: [ProcessingTypesEnum.DoorDetecting.value],
+                                 StringConstants.INFERENCE_ID_KEY: "222"}
+
+        test_message_room_box = json.dumps(test_message_room_box)
 
         res_door_detection = self.processor.prepare_for_processing(test_message_room_box)
         input_path = os.path.join(self.processor.input_processing_directory,
@@ -229,7 +235,8 @@ class TestSqsProcessor(TestCase):
         logging.info('Cleared S3 key folder on S3')
 
         # Creates test "image" file
-        test_absolute_path = os.path.join(str(Path.home()), 'purge', 'tempfile_image.JPG')
+        test_absolute_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow',
+                                          'sqs_workflow', 'test_assets', 'tempfile_image.JPG')
         open(test_absolute_path, 'w').write('{}')
         logging.info('Created temporary "image" file')
 

@@ -1,0 +1,26 @@
+{
+  "floor": 1,
+  "fpUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/map-images/1-floor-5ucnzloa3i.jpg",
+  "panos": [
+    {
+      "createdDate": "01.06.2020 14:56:41",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/di7z4k5425.JPG",
+      "name": "Main Entry",
+      "panoId": "5ed4ecf9eac0e75ce1884a0e",
+      "pitch": -0.46,
+      "roll": 0.05,
+      "yaw": 1.77
+    },
+    {
+      "createdDate": "01.06.2020 14:56:41",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/f63ubad57u.JPG",
+      "name": "Kitchen",
+      "panoId": "5ed4ecf9e9ecff21cfd718c0",
+      "pitch": -0.55,
+      "roll": -0.21,
+      "yaw": -2.58
+    }
+  ],
+  "tourId": "1334373",
+  "tourLink": "https://app.docusketch.com/admin/tour/5ed4ecf7e9ecff21cfd718b7?accessKey=5e8b&p.device=Desktop&orderId=5ed4edefe9ecff21cfd718d1&dollhousePreview=1"
+}

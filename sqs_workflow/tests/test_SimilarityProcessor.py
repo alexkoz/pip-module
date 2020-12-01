@@ -33,9 +33,9 @@ class TestSimilarityProcessor(TestCase):
     def test_assemble_results_into_document(self):
         s3_helper_mock = S3HelperMock([])
         message_object = {
-            "floor": 1,
+            StringConstants.FLOOR_ID_KEY: 1,
             "fpUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/76fu441i6j/5f0f90925e8a061aff256c76/Tour/map-images/1-floor-5i2cvu550f.jpg",
-            "panos": [
+            StringConstants.PANOS_KEY: [
                 {"createdDate": "16.07.2020 02:26:13",
                  "fileUrl": "http://domen.com/img1.JPG"},
                 {"createdDate": "18.07.2020 02:43:15",
@@ -44,12 +44,16 @@ class TestSimilarityProcessor(TestCase):
                  "fileUrl": "http://domen.com/empty.JPG"}
             ]
         }
-        list_result = [os.path.join('api', 'inference', 'ROOM_BOX', '1111', 'img1.JPG','result.json'),
-                       os.path.join('api', 'inference', 'ROOM_BOX', '1111', 'img2.JPG', 'result.json'),
-                       os.path.join('api', 'inference', 'ROOM_BOX', '1111', 'empty.JPG', 'result.json'),
-                       os.path.join('api', 'inference', 'DOOR_DETECTION', '1111', 'img1.JPG', 'result.json'),
-                       os.path.join('api', 'inference', 'DOOR_DETECTION', '1111', 'img2.JPG', 'result.json'),
-                       os.path.join('api', 'inference', 'DOOR_DETECTION', '1111', 'empty.JPG', 'result.json')]
+        list_result = [
+            os.path.join('api', 'inference', ProcessingTypesEnum.RoomBox.value, '1111', 'img1.JPG', 'result.json'),
+            os.path.join('api', 'inference', ProcessingTypesEnum.RoomBox.value, '1111', 'img2.JPG', 'result.json'),
+            os.path.join('api', 'inference', ProcessingTypesEnum.RoomBox.value, '1111', 'empty.JPG', 'result.json'),
+            os.path.join('api', 'inference', ProcessingTypesEnum.DoorDetecting.value, '1111', 'img1.JPG',
+                         'result.json'),
+            os.path.join('api', 'inference', ProcessingTypesEnum.DoorDetecting.value, '1111', 'img2.JPG',
+                         'result.json'),
+            os.path.join('api', 'inference', ProcessingTypesEnum.DoorDetecting.value, '1111', 'empty.JPG',
+                         'result.json')]
 
         new_message_object = SimilarityProcessor.assemble_results_into_document(s3_helper_mock, message_object,
                                                                                 list_result)
@@ -89,8 +93,9 @@ class TestSimilarityProcessor(TestCase):
                 self.assertTrue(len(message_object[StringConstants.STEPS_KEY]) == 2)
                 self.assertTrue(StringConstants.DOCUMENT_PATH_KEY not in message_object)
             else:
-                self.assertTrue(message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.DoorDetecting.value
-                                or message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.RoomBox.value)
+                self.assertTrue(
+                    message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.DoorDetecting.value
+                    or message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.RoomBox.value)
 
     def test_is_similarity_ready(self):
         similarity_message_w_document_path = {
@@ -101,7 +106,7 @@ class TestSimilarityProcessor(TestCase):
         }
 
         res = self.similarity_processor.is_similarity_ready(S3HelperMock([]), similarity_message_w_document_path)
-        self.assertTrue(len(res['panos']) == 23)
+        self.assertTrue(len(res[StringConstants.PANOS_KEY]) == 23)
 
         hash_document_path = hashlib.md5(
             similarity_message_w_document_path.get(StringConstants.DOCUMENT_PATH_KEY).encode('utf-8')).hexdigest()
@@ -111,7 +116,7 @@ class TestSimilarityProcessor(TestCase):
         similarity_message_w_steps_document_path = {
 
             StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Similarity.value,
-            StringConstants.STEPS_DOCUMENT_PATH_KEY: f"file://{str(Path.home())}/purge/two_panos.json",
+            StringConstants.STEPS_DOCUMENT_PATH_KEY: f"file://{str(Path.home())}/projects/python/misc/sqs_workflow/sqs_workflow/test_assets/two_panos.json",
             StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
             StringConstants.INFERENCE_ID_KEY: 100,
             StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
@@ -121,10 +126,10 @@ class TestSimilarityProcessor(TestCase):
         }
 
         res2 = self.similarity_processor.is_similarity_ready(S3HelperMock([]), similarity_message_w_steps_document_path)
-        self.assertTrue(res2['panos'][0]['layout'])
+        self.assertTrue(res2[StringConstants.PANOS_KEY][0]['layout'])
 
         # Checks that input file modified
-        input_path = similarity_message_w_steps_document_path['executable_params'].split(' ')[1]
+        input_path = similarity_message_w_steps_document_path[StringConstants.EXECUTABLE_PARAMS_KEY].split(' ')[1]
         with open(input_path) as f:
             modified_json_contains = json.load(f)
-        self.assertTrue(modified_json_contains['panos'][0]['layout'])
+        self.assertTrue(modified_json_contains[StringConstants.PANOS_KEY][0]['layout'])

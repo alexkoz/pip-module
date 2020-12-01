@@ -15,7 +15,8 @@ class TestS3Helper(TestCase):
         TestSqsProcessor.clear_directory(os.path.join('api', 'inference', 'test-save-on-s3'))
         logging.info('Cleared S3 key folder on S3')
 
-        test_absolute_path = os.path.join(str(Path.home()), 'purge', 'tempfile.json')
+        test_absolute_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow',
+                                          'sqs_workflow', 'test_assets', 'tempfile.json')
         open(test_absolute_path, 'w').write('{}')
         logging.info('Created temporary json file for uploading to S3')
 
@@ -29,7 +30,8 @@ class TestS3Helper(TestCase):
         TestSqsProcessor.clear_directory(os.path.join('api', 'inference', 'test-download-from-s3'))
         logging.info('Cleared S3 key folder on S3')
 
-        test_absolute_path = os.path.join(str(Path.home()), 'purge', 'tempfile_download.json')
+        test_absolute_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow',
+                                          'sqs_workflow', 'test_assets', 'tempfile_download.json')
         open(test_absolute_path, 'w').write('{}')
         logging.info('Created temporary json file for uploading to S3')
 
