@@ -41,10 +41,11 @@ class TestSimilarityProcessor(TestCase):
                  "fileUrl": "http://domen.com/img2.JPG"}
             ]
         }
-        list_result = ['api/inference/ROOM_BOX/1111/img1.JPG/result.json',
-                       'api/inference/ROOM_BOX/1111/img2.JPG/result.json',
-                       'api/inference/DOOR_DETECTION/1111/img1.JPG/result.json',
-                       'api/inference/DOOR_DETECTION/1111/img2.JPG/result.json']
+        list_result = [os.path.join('api', 'inference', 'ROOM_BOX', '1111', 'img1.JPG','result.json'),
+                       os.path.join('api', 'inference', 'ROOM_BOX', '1111', 'img2.JPG', 'result.json'),
+                       os.path.join('api', 'inference', 'DOOR_DETECTION', '1111', 'img1.JPG', 'result.json'),
+                       os.path.join('api', 'inference', 'DOOR_DETECTION', '1111', 'img2.JPG', 'result.json')]
+
         new_message_object = SimilarityProcessor.assemble_results_into_document(s3_helper_mock, message_object,
                                                                                 list_result)
         self.assertEqual(new_message_object['panos'][0]['fileUrl'], "http://domen.com/img1.JPG")
@@ -57,13 +58,13 @@ class TestSimilarityProcessor(TestCase):
         TestSqsProcessor.clear_local_directory(sqs_processor.output_processing_directory)
 
         preprocessing_message = {
-            "messageType": ProcessingTypesEnum.Preprocessing.value,
-            "orderId": "5da5d5164cedfd0050363a2e",
-            "inferenceId": 1111,
-            "floor": 1,
-            "tourId": "1342386",
-            "documentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
-            "steps": [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value]
+            StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Preprocessing.value,
+            StringConstants.ORDER_ID_KEY: "5da5d5164cedfd0050363a2e",
+            StringConstants.INFERENCE_ID_KEY: 1111,
+            StringConstants.FLOOR_ID_KEY: 1,
+            StringConstants.TOUR_ID_KEY: "1342386",
+            StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+            StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value]
         }
         json_message_object = sqs_processor.prepare_for_processing(json.dumps(preprocessing_message))
         similarity_message = json.loads(json_message_object)
@@ -79,12 +80,12 @@ class TestSimilarityProcessor(TestCase):
                 json_message_object[StringConstants.PANOS_KEY]) + 1))
         for json_message in list_json_messages:
             message_object = json.loads(json_message)
-            if message_object['messageType'] == ProcessingTypesEnum.Similarity.value:
+            if message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
                 self.assertTrue(len(message_object[StringConstants.STEPS_KEY]) == 2)
                 self.assertTrue(StringConstants.DOCUMENT_PATH_KEY not in message_object)
             else:
-                self.assertTrue(message_object['messageType'] == ProcessingTypesEnum.DoorDetecting.value
-                                or message_object['messageType'] == ProcessingTypesEnum.RoomBox.value)
+                self.assertTrue(message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.DoorDetecting.value
+                                or message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.RoomBox.value)
 
     def test_is_similarity_ready(self):
         similarity_message_w_document_path = {
@@ -98,14 +99,14 @@ class TestSimilarityProcessor(TestCase):
         self.assertTrue(len(res['panos']) == 23)
 
         hash_document_path = hashlib.md5(
-            similarity_message_w_document_path.get("documentPath").encode('utf-8')).hexdigest()
+            similarity_message_w_document_path.get(StringConstants.DOCUMENT_PATH_KEY).encode('utf-8')).hexdigest()
         filename = 'filename.json'
         absolute_input_path = os.path.join(os.environ['INPUT_DIRECTORY'], hash_document_path, filename)
 
         similarity_message_w_steps_document_path = {
 
             StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Similarity.value,
-            StringConstants.STEPS_DOCUMENT_PATH_KEY: "file:///Users/alexkoz/projects/python/misc/sqs_workflow/sqs_workflow/tmp/two_panos.json",
+            StringConstants.STEPS_DOCUMENT_PATH_KEY: f"file:///Users/alexkoz/projects/python/misc/sqs_workflow/sqs_workflow/tmp/two_panos.json",
             StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
             StringConstants.INFERENCE_ID_KEY: 100,
             StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",

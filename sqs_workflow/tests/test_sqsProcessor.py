@@ -12,6 +12,7 @@ from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 from sqs_workflow.tests.QueueMock import QueueMock
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.Utils import Utils
+from sqs_workflow.utils.StringConstants import StringConstants
 
 
 class TestSqsProcessor(TestCase):
@@ -48,13 +49,15 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(len(self.processor.queue.queue_messages) == 2)
 
     def test_create_result_s3_key(self):
+        should_be_created_path = os.path.join('path_to_s3', 'test_inference_type', 'test_inference_id', 'test_image_id',
+                                              'filename')
         self.assertEqual(
             Utils.create_result_s3_key('path_to_s3',
                                        'test_inference_type',
                                        'test_inference_id',
                                        'test_image_id',
                                        'filename'),
-            'path_to_s3/test_inference_type/test_inference_id/test_image_id/filename')
+            should_be_created_path)
 
     def test_process_message_in_subprocess(self):
         message1 = '{"messageType": "SIMILARITY",\
@@ -83,16 +86,16 @@ class TestSqsProcessor(TestCase):
                                    'sqs_workflow',
                                    'aids')
 
-        room_box_python = common_path + '/dummy_roombox.py'
-        room_box_python_fail = common_path + '/dummy_roombox_fail.py'
-        similarity_python = common_path + '/dummy_similarity.py'
-        similarity_python_fail = common_path + '/dummy_similarity_fail.py'
-        rmatrix_python = common_path + '/dummy_rmatrix.py'
-        rmatrix_python_fail = common_path + '/dummy_rmatrix_fail.py'
-        door_detecting_python = common_path + '/dummy_dd.py'
-        door_detecting_python_fail = common_path + '/dummy_dd_fail.py'
-        rotate_python = common_path + '/dummy_rotate.py'
-        rotate_python_fail = common_path + '/dummy_rotate_fail.py'
+        room_box_python = os.path.join(common_path, 'dummy_roombox.py')
+        room_box_python_fail = os.path.join(common_path, 'dummy_roombox_fail.py')
+        similarity_python = os.path.join(common_path, 'dummy_similarity.py')
+        similarity_python_fail = os.path.join(common_path, 'dummy_similarity_fail.py')
+        rmatrix_python = os.path.join(common_path, 'dummy_rmatrix.py')
+        rmatrix_python_fail = os.path.join(common_path, 'dummy_rmatrix_fail.py')
+        door_detecting_python = os.path.join(common_path, 'dummy_dd.py')
+        door_detecting_python_fail = os.path.join(common_path, 'dummy_dd_fail.py')
+        rotate_python = os.path.join(common_path, 'dummy_rotate.py')
+        rotate_python_fail = os.path.join(common_path, 'dummy_rotate_fail.py')
 
         test_executables = {
             room_box_python: ProcessingTypesEnum.RoomBox.value,  #
@@ -110,10 +113,10 @@ class TestSqsProcessor(TestCase):
         fail_counter = 0
 
         for script, processing_type in test_executables.items():
-            message = {"messageType": processing_type,
-                       "panoUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
-                       "tourId": "5fa1df49014bf357cf250d52",
-                       "panoId": "5fa1df55014bf357cf250d64"}
+            message = {StringConstants.MESSAGE_TYPE_KEY: processing_type,
+                       StringConstants.PANO_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                       StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                       StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64"}
             message_str = str(message)
             logging.info(f'script: {script}')
             logging.info(f'message: {message_str}')
@@ -148,7 +151,8 @@ class TestSqsProcessor(TestCase):
                                                   processing_result,
                                                   image_id,
                                                   image_url)
-        s3_key = 'api/inference/test-message-type/test-inference-id/test-image-id/result.json'
+        s3_key = os.path.join('api', 'inference', 'test-message-type', ',test-inference-id', 'test-image-id',
+                              'result.json')
         # todo check tags
         self.assertTrue(s3_helper.is_object_exist(s3_key))
 
@@ -213,10 +217,11 @@ class TestSqsProcessor(TestCase):
                                "panoId": "5fa1df55014bf357cf250d64", \
                                "steps": ["DOOR_DETECTION"], \
                                "inferenceId": "222"}'
+        tested = "f'{test_message_room_box}'"
 
         res_door_detection = self.processor.prepare_for_processing(test_message_room_box)
         input_path = os.path.join(self.processor.input_processing_directory,
-                                  '5a7ad1cae0be45937aa2101d2b643e62') + '/n0l066b0r4.JPG'
+                                  '5a7ad1cae0be45937aa2101d2b643e62', 'n0l066b0r4.JPG')
         output_path = os.path.join(self.processor.output_processing_directory, '5a7ad1cae0be45937aa2101d2b643e62')
 
         self.assertTrue(json.loads(res_door_detection)[
@@ -224,12 +229,11 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(os.path.isfile(input_path))
 
     def test_create_output_file_on_s3(self):
-        self.clear_directory('api/inference/test-download-from-s3')
+        self.clear_directory(os.path.join('api', 'inference', 'test-download-from-s3'))
         logging.info('Cleared S3 key folder on S3')
 
         # Creates test "image" file
-        test_absolute_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow',
-                                          'sqs_workflow', 'tmp') + '/tempfile_image.JPG'
+        test_absolute_path = os.path.join(str(Path.home()), 'purge', 'tempfile_image.JPG')
         open(test_absolute_path, 'w').write('{}')
         logging.info('Created temporary "image" file')
 
@@ -240,4 +244,5 @@ class TestSqsProcessor(TestCase):
 
         self.processor.create_output_file_on_s3(test_message_type, test_image_hash, image_id, image_absolute_path)
 
-        self.assertTrue(self.s3_helper.is_object_exist('api/inference/ROOM_BOX/test-hash/001'))
+        self.assertTrue(
+            self.s3_helper.is_object_exist(os.path.join('api', 'inference', 'ROOM_BOX', 'test-hash', '001')))
