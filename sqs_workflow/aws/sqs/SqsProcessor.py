@@ -217,6 +217,7 @@ class SqsProcessor:
                                     url_hash,
                                     image_id))
             logging.info(f'Moved rotated file to input')
+            processing_result = []
         else:
             logging.info(f'Download from s3 key:{rotated_s3_result}')
             self.s3_helper.download_file_object_from_s3(
@@ -253,7 +254,7 @@ class SqsProcessor:
                                             image_full_url)
             logging.info(f'Saved door detecting:{processing_result} on s3')
 
-        message_object['returnData'] = json.loads(processing_result)
+        message_object['returnData'] = json.loads(processing_result or "[]")
         del message_object[StringConstants.EXECUTABLE_PARAMS_KEY]
         logging.info(f"Finished processing and updated message:{message_object} save result on s3.")
         return json.dumps(message_object)
