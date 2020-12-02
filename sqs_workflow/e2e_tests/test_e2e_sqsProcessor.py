@@ -12,6 +12,7 @@ from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
+from sqs_workflow.e2e_tests.utils import E2EUtils
 
 
 class E2ETestSqsProcessor(TestCase):
@@ -34,19 +35,6 @@ class E2ETestSqsProcessor(TestCase):
         if attemps == 3:
             logging.info('out of attemps')
         return list_of_messages
-
-    def clear_directory(self, path_to_folder_in_bucket: str):
-        sync_command = f"aws s3 --profile {os.environ['AWS_PROFILE']} rm s3://{os.environ['S3_BUCKET']}/{path_to_folder_in_bucket} --recursive"
-        logging.info(f'sync command: {sync_command}')
-        stream = os.popen(sync_command)
-        output = stream.read()
-        logging.info(f'output: {output}')
-
-    def purge_queue(self, queue_url):
-        sqs_client = boto3.client('sqs', region_name='eu-central-1')
-        req_purge = sqs_client.purge_queue(QueueUrl=queue_url)
-        logging.info(f'Queue is purged')
-        return req_purge
 
     def pull_messages_return_queue(self, max_num_of_messages):
         # pulled_message = self.processor.pull_messages(1)
@@ -71,8 +59,8 @@ class E2ETestSqsProcessor(TestCase):
         return list_of_messages
 
     def test_e2e(self):
-        self.purge_queue(self.processor.queue_url)
-        self.purge_queue(self.processor.return_queue_url)
+        E2EUtils.purge_queue(self.processor.queue_url)
+        E2EUtils.purge_queue(self.processor.return_queue_url)
         logging.info('Purged queues')
         document_url = "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json"
         document_object = requests.get(document_url).json()
@@ -176,8 +164,8 @@ class E2ETestSqsProcessor(TestCase):
         # todo len door_detection_mesages == num of panos
 
     def test_e2e_door_detection(self):
-        self.purge_queue(self.processor.queue_url)
-        self.purge_queue(self.processor.return_queue_url)
+        E2EUtils.purge_queue(self.processor.queue_url)
+        E2EUtils.purge_queue(self.processor.return_queue_url)
         logging.info('Purged queues')
 
         inference_id = 999777
@@ -192,7 +180,7 @@ class E2ETestSqsProcessor(TestCase):
         self.processor.send_message_to_queue(json.dumps(preprocessing_message), self.processor.queue_url)
         logging.info('Preprocessing_message sent to queue')
 
-        for i in range(300, 0, -1):
+        for i in range(120, 0, -1):
             print(i, end='\r')
             time.sleep(1)
 
