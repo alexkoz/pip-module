@@ -48,6 +48,13 @@ class E2ETestSqsProcessor(TestCase):
         logging.info(f'Queue is purged')
         return req_purge
 
+    def test_all(self):
+
+        message_body = '{"messageType": "SIMILARITY", "orderId": "5da5d5164cedfd0050363a2e", "floor": 1, "tourId": "1342386", "inferenceId": "inf_id_01", "steps": ["ROOM_BOX", "DOOR_DETECTION"], "fileUrl": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json", "executable_params": " --input_path /home/ubuntu/purge/sqs_processing/input/fccc6d02b113260b57db5569e8f9c897/order_1012550_floor_1.json.json --output_path /home/ubuntu/purge/sqs_processing/output/fccc6d02b113260b57db5569e8f9c897", "stepsDocumentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json"}'
+
+        message_body = self.processor.prepare_for_processing(message_body)
+        message_body = self.processor.process_message_in_subprocess(message_body)
+
     def pull_messages_return_queue(self, max_num_of_messages):
         # pulled_message = self.processor.pull_messages(1)
         logging.info('Pulled message')
@@ -71,10 +78,10 @@ class E2ETestSqsProcessor(TestCase):
         return list_of_messages
 
     def test_e2e(self):
-        self.purge_queue(self.processor.queue_url)
-        self.purge_queue(self.processor.return_queue_url)
+        # self.purge_queue(self.processor.queue_url)
+        # self.purge_queue(self.processor.return_queue_url)
         logging.info('Purged queues')
-        document_url = "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json"
+        document_url = "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/similarity/test_w_5_panos_without_layout.json"
         document_object = requests.get(document_url).json()
 
         inference_id = f'e2e-test-{datetime.datetime.now()}'.replace(' ', '').replace(':', '')
@@ -114,66 +121,14 @@ class E2ETestSqsProcessor(TestCase):
         # todo check that similarity message is returned
         resp_return = self.processor.sqs_client.get_queue_attributes(QueueUrl=self.processor.queue_url,
                                                                      AttributeNames=['All'])
-        similarity_message = None
-        room_box_messages = []
-        door_detection_messages = []
-
-        while similarity_message is None:
-            time.sleep(5)
-
-            # Pulls messages from queue
-            messages_in_return_queue = self.processor.pull_messages_from_return_queue(1)
-            for message in messages_in_return_queue:
-                if message[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
-                    similarity_message = message
-                    message.delete()
-                    self.assertTrue(len(message[StringConstants.PANOS_KEY] == 4))
-                elif message[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.RoomBox.value:
-                    room_box_messages.append(message)
-                    message.delete()
-                elif message[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.DoorDetecting.value:
-                    door_detection_messages.append(message)
-                    message.delete()
-                else:
-                    assert 'Incorrect message type'
-
-        # Preprocessing and processing messages
-        json_message_object = self.processor.prepare_for_processing(json.dumps(similarity_message))
-        json_similarity_message = json.loads(json_message_object)
-        file_path = similarity_message[StringConstants.EXECUTABLE_PARAMS_KEY].replace('--input_path', '') \
-            .split()[0].strip()
-
-        with open(file_path) as f:
-            json_message_object = json.load(f)
-
-        list_json_messages = self.similarity_processor.start_pre_processing(json_similarity_message)
-        # dirname(file_path))
-
-        # Asserts similarity processed
-        self.assertTrue(
-            len(list_json_messages) == (len(preprocessing_message[StringConstants.STEPS_KEY]) * len(
-                json_message_object[StringConstants.PANOS_KEY]) + 1))
-        for json_message in list_json_messages:
-            message_object = json.loads(json_message)
-            if message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
-                self.assertTrue(len(message_object[StringConstants.STEPS_KEY]) == 2)
-                self.assertTrue(StringConstants.DOCUMENT_PATH_KEY not in message_object)
-            else:
-                self.assertTrue(
-                    message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.DoorDetecting.value
-                    or message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.RoomBox.value)
-
-        self.assertTrue(len(list_json_messages) == len(room_box_messages))
-        self.assertTrue(len(list_json_messages) == len(door_detection_messages))
-
-        # todo check message type
-        # todo if similarity -- check for similar
-        # todo if not similarity -- append message to list w/ same type
-        # todo delete message from return queue
-
-        # todo assert similarity processed
-        # todo len room_box_messages == num of panos
-        # todo len door_detection_mesages == num of panos
+        # todo wait till similarity is ready
+        # todo while check s3 similarity result.
+        # todo /api/inference/SIMILARITY/inferenceId/similarity/result.json
+        similarity_step_results = self.s3_helper.list_s3_objects(os.path.join(StringConstants.COMMON_PREFIX,
+                                                                              ProcessingTypesEnum.Similarity.value,
+                                                                              inference_id))
+        # todo download result when ready
+        # todo parse json. 
 
     def test_e2e_door_detection(self):
         self.purge_queue(self.processor.queue_url)
