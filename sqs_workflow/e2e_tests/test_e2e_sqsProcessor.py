@@ -12,6 +12,7 @@ from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
+from sqs_workflow.e2e_tests.utils import E2EUtils
 
 
 class E2ETestSqsProcessor(TestCase):
@@ -48,13 +49,6 @@ class E2ETestSqsProcessor(TestCase):
         logging.info(f'Queue is purged')
         return req_purge
 
-    def test_all(self):
-
-        message_body = '{"messageType": "SIMILARITY", "orderId": "5da5d5164cedfd0050363a2e", "floor": 1, "tourId": "1342386", "inferenceId": "inf_id_01", "steps": ["ROOM_BOX", "DOOR_DETECTION"], "fileUrl": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json", "executable_params": " --input_path /home/ubuntu/purge/sqs_processing/input/fccc6d02b113260b57db5569e8f9c897/order_1012550_floor_1.json.json --output_path /home/ubuntu/purge/sqs_processing/output/fccc6d02b113260b57db5569e8f9c897", "stepsDocumentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json"}'
-
-        message_body = self.processor.prepare_for_processing(message_body)
-        message_body = self.processor.process_message_in_subprocess(message_body)
-
     def pull_messages_return_queue(self, max_num_of_messages):
         # pulled_message = self.processor.pull_messages(1)
         logging.info('Pulled message')
@@ -78,8 +72,8 @@ class E2ETestSqsProcessor(TestCase):
         return list_of_messages
 
     def test_e2e(self):
-        # self.purge_queue(self.processor.queue_url)
-        # self.purge_queue(self.processor.return_queue_url)
+        # E2EUtils.purge_queue(self.processor.queue_url)
+        # E2EUtils.purge_queue(self.processor.return_queue_url)
         logging.info('Purged queues')
         document_url = "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/similarity/test_w_5_panos_without_layout.json"
         document_object = requests.get(document_url).json()
@@ -128,11 +122,11 @@ class E2ETestSqsProcessor(TestCase):
                                                                               ProcessingTypesEnum.Similarity.value,
                                                                               inference_id))
         # todo download result when ready
-        # todo parse json. 
+        # todo parse json.
 
     def test_e2e_door_detection(self):
-        self.purge_queue(self.processor.queue_url)
-        self.purge_queue(self.processor.return_queue_url)
+        # E2EUtils.purge_queue(self.processor.queue_url)
+        # E2EUtils.purge_queue(self.processor.return_queue_url)
         logging.info('Purged queues')
 
         inference_id = 999777
@@ -147,7 +141,7 @@ class E2ETestSqsProcessor(TestCase):
         self.processor.send_message_to_queue(json.dumps(preprocessing_message), self.processor.queue_url)
         logging.info('Preprocessing_message sent to queue')
 
-        for i in range(300, 0, -1):
+        for i in range(120, 0, -1):
             print(i, end='\r')
             time.sleep(1)
 
