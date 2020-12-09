@@ -7,6 +7,7 @@ import datetime
 import boto3
 import requests
 
+from pathlib import Path
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
@@ -115,14 +116,24 @@ class E2ETestSqsProcessor(TestCase):
         # todo check that similarity message is returned
         resp_return = self.processor.sqs_client.get_queue_attributes(QueueUrl=self.processor.queue_url,
                                                                      AttributeNames=['All'])
-        # todo wait till similarity is ready
-        # todo while check s3 similarity result.
-        # todo /api/inference/SIMILARITY/inferenceId/similarity/result.json
         similarity_step_results = self.s3_helper.list_s3_objects(os.path.join(StringConstants.COMMON_PREFIX,
                                                                               ProcessingTypesEnum.Similarity.value,
                                                                               inference_id))
-        # todo download result when ready
-        # todo parse json.
+
+        s3_key = os.path.join(StringConstants.COMMON_PREFIX, ProcessingTypesEnum.Similarity.value, inference_id,
+                              'similarity', StringConstants.RESULT_FILE_NAME)
+
+        path_to_download = os.path.join(str(Path.home()), 'projects', 'python', 'misc',
+                                        'sqs_workflow', 'sqs_workflow', 'tmp', 'result.json')
+
+        while self.s3_helper.is_object_exist(s3_key) is False:
+            print(f'no similarity on s3, {time.ctime()}')
+            time.sleep(60)
+        self.s3_helper.download_file_object_from_s3(s3_key, path_to_download)
+
+        with open(path_to_download) as json_file:
+            data = json.load(json_file)
+        self.assertTrue(data['panos'][0]['hotspot'])
 
     def test_e2e_door_detection(self):
         # E2EUtils.purge_queue(self.processor.queue_url)
