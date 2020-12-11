@@ -30,7 +30,14 @@ class TestSimilarityProcessor(TestCase):
 
         self.assertTrue(list_of_corners[0]['y'] == -29.632091827736627)
         self.assertTrue(list_of_corners[0]['type'] == 'corner')
-        # todo test door detecting object
+
+    def test_create_empty_layout_object(self):
+        room_box_result = '{"z0": "0", "z1": "0", "uv": []}'
+        layout_object = self.similarity_processor.create_layout_object(ProcessingTypesEnum.RoomBox.value,
+                                                                       room_box_result)
+        layout_object = json.loads(layout_object)
+        list_of_corners = layout_object['layout']
+        self.assertTrue(list_of_corners == [])
 
     def test_assemble_results_into_document(self):
         s3_helper_mock = S3HelperMock([])
