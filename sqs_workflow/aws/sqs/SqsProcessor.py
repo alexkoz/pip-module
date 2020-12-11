@@ -176,8 +176,8 @@ class SqsProcessor:
 
         r_matrix_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value, url_hash, image_id)
 
-        if message_type == ProcessingTypesEnum.RMatrix.value and r_matrix_result is None:
-            logging.info(f'No r_matrix on s3 run r_matrix')
+        if message_type == ProcessingTypesEnum.RMatrix.value and not r_matrix_result:
+            logging.info(f'No r_matrix for file:{url_hash} image:{image_id} on s3 run r_matrix')
             processing_result = self.run_process(self.rmatrix_executable,
                                                  self.rmatrix_script,
                                                  message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
@@ -202,6 +202,7 @@ class SqsProcessor:
 
         if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
             logging.info('Start processing rotating')
+            assert r_matrix_result
             processing_result = self.run_process(self.rotate_executable,
                                                  self.rotate_script,
                                                  message_object[
