@@ -2,10 +2,10 @@ import hashlib
 import json
 import logging
 import os
+import shutil
 import subprocess
 import time
 import uuid
-import shutil
 
 import boto3
 
@@ -174,35 +174,38 @@ class SqsProcessor:
         image_full_url = message_object[StringConstants.FILE_URL_KEY]
         url_hash = hashlib.md5(image_full_url.encode('utf-8')).hexdigest()
 
-        if message_type == ProcessingTypesEnum.RMatrix.value:
+        r_matrix_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value, url_hash, image_id)
 
-            processing_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value,
-                                                     url_hash,
-                                                     image_id)
-            if processing_result is None:
-                logging.info('Processing result is None')
-                processing_result = self.run_process(self.rmatrix_executable,
-                                                     self.rmatrix_script,
-                                                     message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-                self.create_path_and_save_on_s3(ProcessingTypesEnum.RMatrix.value,
-                                                url_hash,
-                                                processing_result,
-                                                image_id,
-                                                image_full_url)
+        if message_type == ProcessingTypesEnum.RMatrix.value and r_matrix_result is None:
+            logging.info(f'No r_matrix on s3 run r_matrix')
+            processing_result = self.run_process(self.rmatrix_executable,
+                                                 self.rmatrix_script,
+                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+            self.create_path_and_save_on_s3(ProcessingTypesEnum.RMatrix.value,
+                                            url_hash,
+                                            processing_result,
+                                            image_id,
+                                            image_full_url)
+            r_matrix_result = processing_result
+            logging.info(f'R_matrix:{r_matrix_result}')
+        else:
+            logging.info(f'R_matrix:{r_matrix_result} is taken from s3. Define as processing result.')
+            processing_result = r_matrix_result
 
-        # todo check rotated image
         rotated_s3_result = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                                        ProcessingTypesEnum.Rotate.value,
                                                        url_hash,
                                                        "",
                                                        image_id)
         rotated_result = self.s3_helper.is_object_exist(rotated_s3_result)
+        logging.info(f'Rotated image is {rotated_result} on s3')
 
         if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
             logging.info('Start processing rotating')
             processing_result = self.run_process(self.rotate_executable,
                                                  self.rotate_script,
-                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+                                                 message_object[
+                                                     StringConstants.EXECUTABLE_PARAMS_KEY] + f" --r_matrix {r_matrix_result}")
             logging.info(f'Result rotating:{processing_result}')
             self.create_output_file_on_s3(ProcessingTypesEnum.Rotate.value,
                                           url_hash,
