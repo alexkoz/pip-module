@@ -108,7 +108,8 @@ class SimilarityProcessor:
         if step == ProcessingTypesEnum.RoomBox.value:
             result_object = json.loads(result)
             room_box = np.array(result_object['uv']).astype(np.float)
-            if room_box:
+            logging.info(f" Room_box np result:{room_box}")
+            if len(room_box) > 0:
                 room_box = (room_box - [0.5, 0.5]) * [360, 180]
                 print(room_box)
                 for point in room_box:
