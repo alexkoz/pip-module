@@ -3,6 +3,7 @@ import logging
 import os
 import shutil
 import sys
+import copy
 from pathlib import Path
 from unittest import TestCase
 
@@ -20,6 +21,7 @@ class TestSqsProcessor(TestCase):
     test_list = []
     queue_mock_messages = []
     processor = SqsProcessor("-immoviewer-ai")
+    processor_copy = copy.copy(processor)
     s3_helper = S3Helper()
     processor.queue = QueueMock()
     processor.return_queue = QueueMock()
@@ -61,56 +63,75 @@ class TestSqsProcessor(TestCase):
                                        'filename'),
             should_be_created_path)
 
-    def test_process_message_in_subprocess(self):
-        input_path = os.path.join(self.processor.input_processing_directory,
+    def test_run_process(self):
+        self.processor.run_process = self.processor_copy.run_process
+
+        roombox_executable = os.environ[f'{ProcessingTypesEnum.RoomBox.value}_EXECUTABLE']
+        roombox_script = os.environ[f'{ProcessingTypesEnum.RoomBox.value}_SCRIPT']
+
+        roombox_result = "[layout:[z0:0, z1:0, uv:[[0.874929459690343, 0.0499472701727508], [0.6246948329880218, 0.836521256741644], [0.6246948553348896, 0.04983696464707826], [0.8752748643537904, 0.8359191738972793], [0.3744601886079243, 0.04994725051497806], [0.12493895615154749, 0.8353210349449639], [0.12493893386684474, 0.05005729692317301], [0.37411478400664344, 0.83591919355491]]]], 25l187v00b_rotated.JPG:[:], models.json:[:], 25l187v00b_allpoints.png:[:], inference:[inference_id:7394979587235]]"
+
+        self.assertEqual(self.processor.run_process(roombox_executable,
+                                                    roombox_script,
+                                                    StringConstants.EXECUTABLE_PARAMS_KEY), roombox_result)
+
+    @staticmethod
+    def is_similarity_ready_document(s3_helper, message_object):
+        input_path = os.path.join(SqsProcessor("-immoviewer-ai").input_processing_directory,
                                   'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
-        output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
-        #todo change to string constants
-        similarity_message = '{"messageType": "SIMILARITY",\
-                   "fileUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
-                   "tourId": "5fa1df49014bf357cf250d52",\
-                   "panoId": "5fa1df55014bf357cf250d64", \
-                   "stepsDocumentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json", \
-                   "steps": ["ROOM_BOX", "DOOR_DETECTING"], \
-                   "inferenceId": "1111"}'
-        #todo change to string constants
-        preprocessing_message = '{"messageType": "PREPROCESSING",\
-                            "fileUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
-                            "tourId": "5fa1df49014bf357cf250d52",\
-                            "panoId": "5fa1df55014bf357cf250d64", \
-                            "documentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json", \
-                            "steps": ["ROOM_BOX"], \
-                            "inferenceId": "3333", \
-                            "executable_params": "' f'--input_path {input_path} --output_path {output_path}' '"}'
+        output_path = os.path.join(SqsProcessor("-immoviewer-ai").output_processing_directory,
+                                   'fccc6d02b113260b57db5569e8f9c897')
 
-        self.assertIsNone(self.processor.process_message_in_subprocess(similarity_message))
-        result = json.loads(self.processor.process_message_in_subprocess(preprocessing_message))
+        similarity_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Similarity.value,
+                              StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                              StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                              StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                              StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+                              StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value,
+                                                          ProcessingTypesEnum.DoorDetecting.value],
+                              StringConstants.INFERENCE_ID_KEY: "1111",
+                              StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
+
+        similarity_message = json.dumps(similarity_message)
+        return similarity_message
 
     @staticmethod
-    def is_similarity_ready_true():
-        return True
-
-    @staticmethod
-    def is_similarity_ready_false():
-        return False
+    def is_similarity_ready_none(s3_helper, message_object):
+        return None
 
     def test_process_similarity_in_subprocess(self):
+        def run_process_mock(executable: str, script: str, executable_params: str):
+            return 'test_similarity_subprocess_output'
+
+        def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
+                                            image_full_url='document', is_public=False):
+            return 'test_s3_url_result'
+
+        self.processor.run_process = run_process_mock
+        self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
+
         input_path = os.path.join(self.processor.input_processing_directory,
                                   'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
         output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
-        #todo change to string constants
-        similarity_message = f'{"messageType": "{ProcessingTypesEnum.Similarity.value}",\
-                   "fileUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
-                   "tourId": "5fa1df49014bf357cf250d52",\
-                   "panoId": "5fa1df55014bf357cf250d64", \
-                   "stepsDocumentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json", \
-                   "steps": ["ROOM_BOX", "DOOR_DETECTING"], \
-                   "inferenceId": "1111"}'
 
-        SimilarityProcessor.is_similarity_read = self.is_similarity_ready_false
+        similarity_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Similarity.value,
+                              StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                              StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                              StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                              StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+                              StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value,
+                                                          ProcessingTypesEnum.DoorDetecting.value],
+                              StringConstants.INFERENCE_ID_KEY: "1111",
+                              StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
+
+        similarity_message = json.dumps(similarity_message)
+
+        SimilarityProcessor.is_similarity_ready = self.is_similarity_ready_none
         self.assertIsNone(self.processor.process_message_in_subprocess(similarity_message))
-        SimilarityProcessor.is_similarity_read = self.is_similarity_ready_true
-        self.assertIsNone(self.processor.process_message_in_subprocess(similarity_message))
+        SimilarityProcessor.is_similarity_ready = self.is_similarity_ready_document
+        self.assertTrue(json.loads(self.processor.process_message_in_subprocess(similarity_message))[
+                            'documentPath'] == 'test_s3_url_result')
+        logging.info('test_process_similarity_in_subprocess is finished')
 
     def send_message_to_queue_mock(self, message, queue_url):
         if self.queue_mock_messages is None:
@@ -118,18 +139,21 @@ class TestSqsProcessor(TestCase):
         self.queue_mock_messages.append(message)
 
     def test_run_preprocessing(self):
+        self.queue_mock_messages = None
         input_path = os.path.join(self.processor.input_processing_directory,
                                   'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
         output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
 
-        preprocessing_message = '{"messageType": "PREPROCESSING",\
-                                    "fileUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
-                                    "tourId": "5fa1df49014bf357cf250d52",\
-                                    "panoId": "5fa1df55014bf357cf250d64", \
-                                    "documentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json", \
-                                    "steps": ["ROOM_BOX"], \
-                                    "inferenceId": "3333", \
-                                    "executable_params": "' f'--input_path {input_path} --output_path {output_path}' '"}'
+        preprocessing_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Preprocessing.value,
+                                 StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                                 StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                                 StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                                 StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+                                 StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value],
+                                 StringConstants.INFERENCE_ID_KEY: "3333",
+                                 StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'
+                                 }
+        preprocessing_message = json.dumps(preprocessing_message)
 
         message_object = json.loads(preprocessing_message)
         inference_id = str(message_object[StringConstants.INFERENCE_ID_KEY])
@@ -137,6 +161,7 @@ class TestSqsProcessor(TestCase):
         self.processor.send_message_to_queue = self.send_message_to_queue_mock
 
         self.processor.run_preprocessing(inference_id, message_object)
+        print(len(self.queue_mock_messages))
         self.assertTrue(len(self.queue_mock_messages) == 24)
         self.assertTrue(json.loads(self.queue_mock_messages[23])['messageType'] == 'SIMILARITY')
         logging.info('test_run_preprocessing is finished')
@@ -315,12 +340,3 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(
             self.s3_helper.is_object_exist(os.path.join('api', 'inference', 'ROOM_BOX', 'test-hash', '001')))
 
-    def test_run_process(self):
-        roombox_executable = os.environ[f'{ProcessingTypesEnum.RoomBox.value}_EXECUTABLE']
-        roombox_script = os.environ[f'{ProcessingTypesEnum.RoomBox.value}_SCRIPT']
-
-        roombox_result = "[layout:[z0:0, z1:0, uv:[[0.874929459690343, 0.0499472701727508], [0.6246948329880218, 0.836521256741644], [0.6246948553348896, 0.04983696464707826], [0.8752748643537904, 0.8359191738972793], [0.3744601886079243, 0.04994725051497806], [0.12493895615154749, 0.8353210349449639], [0.12493893386684474, 0.05005729692317301], [0.37411478400664344, 0.83591919355491]]]], 25l187v00b_rotated.JPG:[:], models.json:[:], 25l187v00b_allpoints.png:[:], inference:[inference_id:7394979587235]]"
-
-        self.assertEqual(self.processor.run_process(roombox_executable,
-                                                    roombox_script,
-                                                    StringConstants.EXECUTABLE_PARAMS_KEY), roombox_result)
