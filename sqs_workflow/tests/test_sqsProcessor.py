@@ -13,6 +13,7 @@ from sqs_workflow.tests.QueueMock import QueueMock
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.Utils import Utils
 from sqs_workflow.utils.StringConstants import StringConstants
+from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
 
 
 class TestSqsProcessor(TestCase):
@@ -64,15 +65,15 @@ class TestSqsProcessor(TestCase):
         input_path = os.path.join(self.processor.input_processing_directory,
                                   'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
         output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
-
+        #todo change to string constants
         similarity_message = '{"messageType": "SIMILARITY",\
                    "fileUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
                    "tourId": "5fa1df49014bf357cf250d52",\
                    "panoId": "5fa1df55014bf357cf250d64", \
                    "stepsDocumentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json", \
-                   "steps": ["SIMILARITY"], \
+                   "steps": ["ROOM_BOX", "DOOR_DETECTING"], \
                    "inferenceId": "1111"}'
-
+        #todo change to string constants
         preprocessing_message = '{"messageType": "PREPROCESSING",\
                             "fileUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
                             "tourId": "5fa1df49014bf357cf250d52",\
@@ -85,8 +86,31 @@ class TestSqsProcessor(TestCase):
         self.assertIsNone(self.processor.process_message_in_subprocess(similarity_message))
         result = json.loads(self.processor.process_message_in_subprocess(preprocessing_message))
 
-        self.assertTrue(result['returnData']['preprocessing'] == 'ok')
-        logging.info('Test_process_message_in_subprocess is finished')
+    @staticmethod
+    def is_similarity_ready_true():
+        return True
+
+    @staticmethod
+    def is_similarity_ready_false():
+        return False
+
+    def test_process_similarity_in_subprocess(self):
+        input_path = os.path.join(self.processor.input_processing_directory,
+                                  'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
+        output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
+        #todo change to string constants
+        similarity_message = f'{"messageType": "{ProcessingTypesEnum.Similarity.value}",\
+                   "fileUrl": "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",\
+                   "tourId": "5fa1df49014bf357cf250d52",\
+                   "panoId": "5fa1df55014bf357cf250d64", \
+                   "stepsDocumentPath": "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json", \
+                   "steps": ["ROOM_BOX", "DOOR_DETECTING"], \
+                   "inferenceId": "1111"}'
+
+        SimilarityProcessor.is_similarity_read = self.is_similarity_ready_false
+        self.assertIsNone(self.processor.process_message_in_subprocess(similarity_message))
+        SimilarityProcessor.is_similarity_read = self.is_similarity_ready_true
+        self.assertIsNone(self.processor.process_message_in_subprocess(similarity_message))
 
     def send_message_to_queue_mock(self, message, queue_url):
         if self.queue_mock_messages is None:

@@ -127,7 +127,7 @@ class SqsProcessor:
         self.s3_helper.save_file_object_on_s3(s3_path, image_absolute_path)
         logging.info(f'Created S3 object key:{s3_path} file:{image_absolute_path}')
 
-    def run_preprocessing(self, inference_id, message_object):
+    def run_preprocessing(self, inference_id: str, message_object):
         logging.info(f'Start preprocessing similarity inference:{inference_id}')
         messages_for_sending = SimilarityProcessor.start_pre_processing(message_object)
         for send_message in messages_for_sending:
@@ -136,6 +136,26 @@ class SqsProcessor:
         message_object['returnData'] = {'preprocessing': 'ok'}
         logging.info(f"Finished processing and updated message:{message_object}.")
         return json.dumps(message_object)
+
+    def run_similarity(self, inference_id: str, message_object):
+        document_object = SimilarityProcessor.is_similarity_ready(
+            self.s3_helper,
+            message_object)
+        if document_object is not None:
+            processing_result = self.run_process(self.similarity_executable,
+                                                 self.similarity_script,
+                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+            s3_url = self.create_path_and_save_on_s3(ProcessingTypesEnum.Similarity.value,
+                                                     inference_id,
+                                                     processing_result,
+                                                     "similarity",
+                                                     is_public=True)
+            message_object[StringConstants.DOCUMENT_PATH_KEY] = s3_url
+            logging.info(f'Finished similarity inference:{inference_id} s3 result:{s3_url}')
+            return json.dumps(message_object)
+        else:
+            logging.info(f'Document is under processing inference:{inference_id}')
+            return None
 
     def process_message_in_subprocess(self, message_body: str) -> str:
         processing_result = None
@@ -151,24 +171,7 @@ class SqsProcessor:
 
         if message_type == ProcessingTypesEnum.Similarity.value:
             logging.info(f'Start processing similarity inference:{inference_id}')
-            document_object = SimilarityProcessor.is_similarity_ready(
-                self.s3_helper,
-                message_object)
-            if document_object is not None:
-                processing_result = self.run_process(self.similarity_executable,
-                                                     self.similarity_script,
-                                                     message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-                s3_url = self.create_path_and_save_on_s3(message_type,
-                                                         inference_id,
-                                                         processing_result,
-                                                         "similarity",
-                                                         is_public=True)
-                message_object[StringConstants.DOCUMENT_PATH_KEY] = s3_url
-                logging.info(f'Finished similarity inference:{inference_id} s3 result:{s3_url}')
-                return json.dumps(message_object)
-            else:
-                logging.info(f'Document is under processing inference:{inference_id}')
-                return None
+            return self.run_similarity(inference_id, message_object)
 
         image_id = os.path.basename(message_object[StringConstants.FILE_URL_KEY])
         image_full_url = message_object[StringConstants.FILE_URL_KEY]
@@ -246,7 +249,7 @@ class SqsProcessor:
                                             image_full_url)
             logging.info(f'Saved roombox:{processing_result} on s3')
 
-        elif message_type == ProcessingTypesEnum.DoorDetecting.value:
+        if message_type == ProcessingTypesEnum.DoorDetecting.value:
             logging.info('Start processing door detecting')
             processing_result = self.run_process(self.doordetecting_executable,
                                                  self.doordetecting_script,
