@@ -58,10 +58,6 @@ class SqsProcessor:
         self.rotate_script = os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT']
         logging.info(f'SQS processor initialized for profile:{queue_name}')
 
-    def get_attr_value(self, message, attribute_name):
-        attr_value = json.loads(message.body)[attribute_name]
-        return attr_value
-
     def send_message_to_queue(self, message_body: str, queue_url: str):
         response_send = self.sqs_client.send_message(QueueUrl=queue_url, MessageBody=message_body)
         logging.info(f'Sent message: {message_body} to queue: {queue_url}')
@@ -131,6 +127,16 @@ class SqsProcessor:
         self.s3_helper.save_file_object_on_s3(s3_path, image_absolute_path)
         logging.info(f'Created S3 object key:{s3_path} file:{image_absolute_path}')
 
+    def run_preprocessing(self, inference_id, message_object):
+        logging.info(f'Start preprocessing similarity inference:{inference_id}')
+        messages_for_sending = SimilarityProcessor.start_pre_processing(message_object)
+        for send_message in messages_for_sending:
+            self.send_message_to_queue(send_message, self.queue_url)
+
+        message_object['returnData'] = {'preprocessing': 'ok'}
+        logging.info(f"Finished processing and updated message:{message_object}.")
+        return json.dumps(message_object)
+
     def process_message_in_subprocess(self, message_body: str) -> str:
         processing_result = None
         message_object = json.loads(message_body)
@@ -140,14 +146,8 @@ class SqsProcessor:
         assert inference_id
 
         if message_type == ProcessingTypesEnum.Preprocessing.value:
-            logging.info(f'Start preprocessing similarity inference:{inference_id}')
-            messages_for_sending = SimilarityProcessor.start_pre_processing(message_object)
-            for send_message in messages_for_sending:
-                self.send_message_to_queue(send_message, self.queue_url)
-
-            message_object['returnData'] = {'preprocessing': 'ok'}
-            logging.info(f"Finished processing and updated message:{message_object}.")
-            return json.dumps(message_object)
+            logging.info(f"Start preprocessing message: {message_object}.")
+            return self.run_preprocessing(inference_id, message_object)
 
         if message_type == ProcessingTypesEnum.Similarity.value:
             logging.info(f'Start processing similarity inference:{inference_id}')
