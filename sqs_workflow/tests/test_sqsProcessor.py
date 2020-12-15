@@ -133,6 +133,38 @@ class TestSqsProcessor(TestCase):
                             'documentPath'] == 'test_s3_url_result')
         logging.info('test_process_similarity_in_subprocess is finished')
 
+    def test_process_rmatrix_in_subprocess(self):
+        def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
+                                            image_full_url='document', is_public=False):
+            return 'test_s3_url_result'
+
+        def create_output_file_on_s3_mock(ProcessingTypesEnum, url_hash, image_id, processing_result):
+            return 'test_output_file_to_s3'
+
+        self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
+        self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
+
+        input_path = os.path.join(self.processor.input_processing_directory,
+                                  'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
+        output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
+
+        rmatrix_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.RMatrix.value,
+                              StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                              StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                              StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                              StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+                              StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value,
+                                                          ProcessingTypesEnum.DoorDetecting.value],
+                              StringConstants.INFERENCE_ID_KEY: "1111",
+                              StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
+
+        rmatrix_message = json.dumps(rmatrix_message)
+
+        r = self.processor.process_message_in_subprocess(rmatrix_message)
+
+        logging.info('test_process_similarity_in_subprocess is finished')
+
+
     def send_message_to_queue_mock(self, message, queue_url):
         if self.queue_mock_messages is None:
             self.queue_mock_messages = []
@@ -165,6 +197,38 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(len(self.queue_mock_messages) == 24)
         self.assertTrue(json.loads(self.queue_mock_messages[23])['messageType'] == 'SIMILARITY')
         logging.info('test_run_preprocessing is finished')
+
+    def test_run_rmatrix(self):
+        def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
+                                            image_full_url='document', is_public=False):
+            return 'test_s3_url_result'
+
+        self.queue_mock_messages = None
+        self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
+
+        input_path = os.path.join(self.processor.input_processing_directory,
+                                  'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
+        output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
+
+        rmatrix_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.RMatrix.value,
+                           StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                           StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                           StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                           StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+                           StringConstants.STEPS_KEY: [ProcessingTypesEnum.RMatrix.value],
+                           StringConstants.INFERENCE_ID_KEY: "3333",
+                           StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'
+                           }
+        rmatrix_message = json.dumps(rmatrix_message)
+        message_object = json.loads(rmatrix_message)
+
+        mock_rmatrix_output = '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],' \
+                              '[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],' \
+                              '[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]'
+
+        self.assertTrue(
+            self.processor.run_rmatrix(message_object, 'url_hash', 'image_id', 'image_full_url') == mock_rmatrix_output)
+        logging.info('test_run_rmatrix is finished')
 
     def test_fail_in_subprocess(self):
 
@@ -339,4 +403,3 @@ class TestSqsProcessor(TestCase):
 
         self.assertTrue(
             self.s3_helper.is_object_exist(os.path.join('api', 'inference', 'ROOM_BOX', 'test-hash', '001')))
-

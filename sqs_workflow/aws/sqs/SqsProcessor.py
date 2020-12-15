@@ -157,6 +157,17 @@ class SqsProcessor:
             logging.info(f'Document is under processing inference:{inference_id}')
             return None
 
+    def run_rmatrix(self, message_object, url_hash, image_id, image_full_url):
+        processing_result = self.run_process(self.rmatrix_executable,
+                                             self.rmatrix_script,
+                                             message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+        self.create_path_and_save_on_s3(ProcessingTypesEnum.RMatrix.value,
+                                        url_hash,
+                                        processing_result,
+                                        image_id,
+                                        image_full_url)
+        return processing_result
+
     def process_message_in_subprocess(self, message_body: str) -> str:
         processing_result = None
         message_object = json.loads(message_body)
@@ -181,15 +192,9 @@ class SqsProcessor:
 
         if message_type == ProcessingTypesEnum.RMatrix.value and not r_matrix_result:
             logging.info(f'No r_matrix for file:{url_hash} image:{image_id} on s3 run r_matrix')
-            processing_result = self.run_process(self.rmatrix_executable,
-                                                 self.rmatrix_script,
-                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-            self.create_path_and_save_on_s3(ProcessingTypesEnum.RMatrix.value,
-                                            url_hash,
-                                            processing_result,
-                                            image_id,
-                                            image_full_url)
-            r_matrix_result = processing_result
+
+            r_matrix_result = self.run_rmatrix(message_object, url_hash, image_id, image_full_url)
+
             logging.info(f'R_matrix:{r_matrix_result}')
         else:
             logging.info(f'R_matrix:{r_matrix_result} is taken from s3. Define as processing result.')
