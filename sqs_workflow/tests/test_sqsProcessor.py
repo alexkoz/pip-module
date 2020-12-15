@@ -31,7 +31,8 @@ class TestSqsProcessor(TestCase):
         os.environ['INPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'input')
         os.environ['OUTPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'output')
 
-        #todo clear  os.path.join(self.common_path, 'tmp', 'output') " output
+        self.clear_local_directories()
+
         self.processor = SqsProcessor("-immoviewer-ai")
         self.processor_copy = copy.copy(self.processor)
         self.s3_helper = S3Helper()
@@ -39,8 +40,7 @@ class TestSqsProcessor(TestCase):
         self.processor.return_queue = QueueMock()
 
     def tearDown(self) -> None:
-        # todo claen tmp
-        pass
+        self.clear_local_directories()
 
     def test_send_message(self):
         self.processor.queue = QueueMock()
@@ -165,41 +165,22 @@ class TestSqsProcessor(TestCase):
         self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
         self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
 
-        dir_input = os.path.join(str(Path.home()),
-                                 'projects',
-                                 'python',
-                                 'misc',
-                                 'sqs_workflow',
-                                 'sqs_workflow',
-                                 'test_assets',
+        dir_input = os.path.join(self.common_path,
+                                 'tmp',
                                  'input',
                                  '294ee74d8d88a37523c2e28e5c0e150c')
 
-        dir_output = os.path.join(str(Path.home()),
-                                  'projects',
-                                  'python',
-                                  'misc',
-                                  'sqs_workflow',
-                                  'sqs_workflow',
-                                  'test_assets',
+        dir_output = os.path.join(self.common_path,
+                                  'tmp',
                                   'output',
                                   '294ee74d8d88a37523c2e28e5c0e150c')
-        if not os.path.exists(dir_output):
-            os.mkdir(dir_output)
         if not os.path.exists(dir_input):
-            os.mkdir(dir_input)
+            os.makedirs(dir_input)
+        if not os.path.exists(dir_output):
+            os.makedirs(dir_output)
 
-        test_absolute_path = os.path.join(str(Path.home()),
-                                          'projects',
-                                          'python',
-                                          'misc',
-                                          'sqs_workflow',
-                                          'sqs_workflow',
-                                          'test_assets',
-                                          'output',
-                                          '294ee74d8d88a37523c2e28e5c0e150c',
+        test_absolute_path = os.path.join(dir_output,
                                           's7zu187383.JPG')
-
         open(test_absolute_path, 'w').write('{}')
         logging.info('Created temporary "image" file')
 
@@ -233,39 +214,21 @@ class TestSqsProcessor(TestCase):
         self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
         self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
 
-        dir_input = os.path.join(str(Path.home()),
-                                 'projects',
-                                 'python',
-                                 'misc',
-                                 'sqs_workflow',
-                                 'sqs_workflow',
-                                 'test_assets',
+        dir_input = os.path.join(self.common_path,
+                                 'tmp',
                                  'input',
                                  '294ee74d8d88a37523c2e28e5c0e150c')
 
-        dir_output = os.path.join(str(Path.home()),
-                                  'projects',
-                                  'python',
-                                  'misc',
-                                  'sqs_workflow',
-                                  'sqs_workflow',
-                                  'test_assets',
+        dir_output = os.path.join(self.common_path,
+                                  'tmp',
                                   'output',
                                   '294ee74d8d88a37523c2e28e5c0e150c')
-        if not os.path.exists(dir_output):
-            os.mkdir(dir_output)
         if not os.path.exists(dir_input):
-            os.mkdir(dir_input)
+            os.makedirs(dir_input)
+        if not os.path.exists(dir_output):
+            os.makedirs(dir_output)
 
-        test_absolute_path = os.path.join(str(Path.home()),
-                                          'projects',
-                                          'python',
-                                          'misc',
-                                          'sqs_workflow',
-                                          'sqs_workflow',
-                                          'test_assets',
-                                          'output',
-                                          '294ee74d8d88a37523c2e28e5c0e150c',
+        test_absolute_path = os.path.join(dir_output,
                                           's7zu187383.JPG')
 
         open(test_absolute_path, 'w').write('{}')
@@ -307,16 +270,16 @@ class TestSqsProcessor(TestCase):
         self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
         self.s3_helper.download_file_object_from_s3 = download_file_object_from_s3_mock
         self.s3_helper.download_fileobj = download_fileobj_mock
+
         dir_input = os.path.join(self.processor.input_processing_directory,
                                  '294ee74d8d88a37523c2e28e5c0e150c')
-
-
         dir_output = os.path.join(self.processor.output_processing_directory,
                                   '294ee74d8d88a37523c2e28e5c0e150c')
-        if not os.path.exists(dir_output):
-            os.mkdir(dir_output)
+
         if not os.path.exists(dir_input):
-            os.mkdir(dir_input)
+            os.makedirs(dir_input)
+        if not os.path.exists(dir_output):
+            os.makedirs(dir_output)
 
         test_absolute_path = os.path.join(dir_output,
                                           's7zu187383.JPG')
@@ -350,9 +313,17 @@ class TestSqsProcessor(TestCase):
 
     def test_run_preprocessing(self):
         self.queue_mock_messages = None
+
+        # Copy json from test_assets folder to 'tmp' folder as "downloaded"
+        origin_directory = os.path.join(self.common_path, 'test_assets', 'fccc6d02b113260b57db5569e8f9c897')
+        dest_directory = os.path.join(self.common_path, 'tmp', 'input', 'fccc6d02b113260b57db5569e8f9c897')
+
         input_path = os.path.join(self.processor.input_processing_directory,
                                   'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
         output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
+
+        shutil.copytree(origin_directory, dest_directory)
+        os.makedirs(os.path.join(self.common_path, 'tmp', 'output'))
 
         preprocessing_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Preprocessing.value,
                                  StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
@@ -371,7 +342,7 @@ class TestSqsProcessor(TestCase):
         self.processor.send_message_to_queue = self.send_message_to_queue_mock
 
         self.processor.run_preprocessing(inference_id, message_object)
-        print(len(self.queue_mock_messages))
+
         self.assertTrue(len(self.queue_mock_messages) == 24)
         self.assertTrue(json.loads(self.queue_mock_messages[23])['messageType'] == 'SIMILARITY')
         logging.info('test_run_preprocessing is finished')
@@ -413,23 +384,20 @@ class TestSqsProcessor(TestCase):
             return 'test_output_file_to_s3'
 
         dir_input = os.path.join(self.common_path,
-                                 'test_assets',
+                                 'tmp',
                                  'input',
                                  '294ee74d8d88a37523c2e28e5c0e150c')
 
         dir_output = os.path.join(self.common_path,
-                                  'test_assets',
+                                  'tmp',
                                   'output',
                                   '294ee74d8d88a37523c2e28e5c0e150c')
-        if not os.path.exists(dir_output):
-            os.mkdir(dir_output)
         if not os.path.exists(dir_input):
-            os.mkdir(dir_input)
+            os.makedirs(dir_input)
+        if not os.path.exists(dir_output):
+            os.makedirs(dir_output)
 
-        test_absolute_path = os.path.join(self.common_path,
-                                          'test_assets',
-                                          'output',
-                                          '294ee74d8d88a37523c2e28e5c0e150c',
+        test_absolute_path = os.path.join(dir_output,
                                           's7zu187383.JPG')
 
         open(test_absolute_path, 'w').write('{}')
@@ -561,15 +529,13 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(s3_helper.is_object_exist(s3_key))
 
     @staticmethod
-    def clear_local_directory(path_in_project):
+    def clear_local_directories():
         if os.path.isdir(os.environ['INPUT_DIRECTORY']):
             shutil.rmtree(os.environ['INPUT_DIRECTORY'])
             shutil.rmtree(os.environ['OUTPUT_DIRECTORY'])
             logging.info('Deleted all files from i/o directories')
 
     def test_prepare_for_processing_similarity(self):
-        self.clear_local_directory(self.processor.input_processing_directory)
-        self.clear_local_directory(self.processor.output_processing_directory)
 
         test_message_similarity = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Similarity.value,
                                    StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
@@ -590,8 +556,6 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(os.path.isfile(input_path))
 
     def test_prepare_for_processing_roombox(self):
-        self.clear_local_directory(self.processor.input_processing_directory)
-        self.clear_local_directory(self.processor.output_processing_directory)
 
         test_message_room_box = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.RoomBox.value,
                                  StringConstants.FILE_URL_KEY: "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG",
@@ -613,8 +577,6 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(os.path.isfile(input_path))
 
     def test_prepare_for_processing_door_detection(self):
-        self.clear_local_directory(self.processor.input_processing_directory)
-        self.clear_local_directory(self.processor.output_processing_directory)
 
         test_message_room_box = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.DoorDetecting.value,
                                  StringConstants.FILE_URL_KEY: "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG",

@@ -21,8 +21,6 @@ class SqsProcessor:
     alert_service = AlertService()
     s3_helper = S3Helper()
 
-
-
     def __init__(self, queue_name):
         self.input_processing_directory = os.environ['INPUT_DIRECTORY']
         self.output_processing_directory = os.environ['OUTPUT_DIRECTORY']
