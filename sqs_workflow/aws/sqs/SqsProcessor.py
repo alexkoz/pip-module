@@ -168,6 +168,43 @@ class SqsProcessor:
                                         image_full_url)
         return processing_result
 
+    def run_rotate(self, message_object, url_hash, image_id, r_matrix_result):
+        processing_result = self.run_process(self.rotate_executable,
+                                             self.rotate_script,
+                                             message_object[
+                                                 StringConstants.EXECUTABLE_PARAMS_KEY] + f" --r_matrix {r_matrix_result}")
+        logging.info(f'Result rotating:{processing_result}')
+        self.create_output_file_on_s3(ProcessingTypesEnum.Rotate.value,
+                                      url_hash,
+                                      image_id,
+                                      str(processing_result))
+        processing_result = {'output': f'{processing_result}'}
+        logging.info(f'Saved rotated image:{processing_result} on s3')
+        os.replace(os.path.join(self.output_processing_directory,
+                                url_hash,
+                                image_id),
+                   os.path.join(self.input_processing_directory,
+                                url_hash,
+                                image_id))
+        logging.info(f'Moved rotated file to input')
+        # processing_result = []
+        return processing_result
+
+    def run_roombox(self, message_object, message_type, inference_id, image_id, image_full_url):
+        processing_result = self.run_process(self.roombox_executable,
+                                             self.roombox_script,
+                                             message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+        logging.info(f'Executed roombox:{processing_result}')
+        processing_result = SimilarityProcessor.create_layout_object(ProcessingTypesEnum.RoomBox.value,
+                                                                     processing_result)
+        logging.info(f'Executed roombox:{processing_result}')
+        self.create_path_and_save_on_s3(message_type,
+                                        inference_id,
+                                        processing_result,
+                                        image_id,
+                                        image_full_url)
+        logging.info(f'Saved roombox:{processing_result} on s3')
+
     def process_message_in_subprocess(self, message_body: str) -> str:
         processing_result = None
         message_object = json.loads(message_body)
@@ -208,28 +245,13 @@ class SqsProcessor:
         rotated_result = self.s3_helper.is_object_exist(rotated_s3_result)
         logging.info(f'Rotated image is {rotated_result} on s3')
 
-        if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
+        #  ???  in if -> AND instead OR
+        if message_type == ProcessingTypesEnum.Rotate.value:
             logging.info('Start processing rotating')
-            assert r_matrix_result
-            processing_result = self.run_process(self.rotate_executable,
-                                                 self.rotate_script,
-                                                 message_object[
-                                                     StringConstants.EXECUTABLE_PARAMS_KEY] + f" --r_matrix {r_matrix_result}")
-            logging.info(f'Result rotating:{processing_result}')
-            self.create_output_file_on_s3(ProcessingTypesEnum.Rotate.value,
-                                          url_hash,
-                                          image_id,
-                                          str(processing_result))
-            processing_result = {'output': f'{processing_result}'}
-            logging.info(f'Saved rotated image:{processing_result} on s3')
-            os.replace(os.path.join(self.output_processing_directory,
-                                    url_hash,
-                                    image_id),
-                       os.path.join(self.input_processing_directory,
-                                    url_hash,
-                                    image_id))
-            logging.info(f'Moved rotated file to input')
-            processing_result = []
+            rotated_result = self.run_rotate(message_object, url_hash, image_id, r_matrix_result)
+            if rotated_result is None:
+                assert r_matrix_result
+
         else:
             logging.info(f'Download from s3 key:{rotated_s3_result}')
             self.s3_helper.download_file_object_from_s3(
@@ -240,19 +262,7 @@ class SqsProcessor:
 
         if message_type == ProcessingTypesEnum.RoomBox.value:
             logging.info('Start processing room box')
-            processing_result = self.run_process(self.roombox_executable,
-                                                 self.roombox_script,
-                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-            logging.info(f'Executed roombox:{processing_result}')
-            processing_result = SimilarityProcessor.create_layout_object(ProcessingTypesEnum.RoomBox.value,
-                                                                         processing_result)
-            logging.info(f'Executed roombox:{processing_result}')
-            self.create_path_and_save_on_s3(message_type,
-                                            inference_id,
-                                            processing_result,
-                                            image_id,
-                                            image_full_url)
-            logging.info(f'Saved roombox:{processing_result} on s3')
+            self.run_roombox(message_object, message_type, inference_id, image_id, image_full_url)
 
         if message_type == ProcessingTypesEnum.DoorDetecting.value:
             logging.info('Start processing door detecting')

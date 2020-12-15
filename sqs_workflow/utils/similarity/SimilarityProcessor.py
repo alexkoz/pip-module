@@ -111,7 +111,6 @@ class SimilarityProcessor:
             logging.info(f" Room_box np result:{room_box}")
             if len(room_box) > 0:
                 room_box = (room_box - [0.5, 0.5]) * [360, 180]
-                print(room_box)
                 for point in room_box:
                     layout_object.append({
                         "x": point[0],

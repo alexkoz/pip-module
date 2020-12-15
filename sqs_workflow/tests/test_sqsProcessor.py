@@ -3,6 +3,7 @@ import logging
 import os
 import shutil
 import sys
+import copy
 from pathlib import Path
 from unittest import TestCase
 
@@ -20,6 +21,7 @@ class TestSqsProcessor(TestCase):
     test_list = []
     queue_mock_messages = []
     processor = SqsProcessor("-immoviewer-ai")
+    processor_copy = copy.copy(processor)
     s3_helper = S3Helper()
     processor.queue = QueueMock()
     processor.return_queue = QueueMock()
@@ -69,11 +71,14 @@ class TestSqsProcessor(TestCase):
             should_be_created_path)
 
     def test_run_process(self):
+        self.queue_mock_messages = None
+        self.processor.run_process = self.processor_copy.run_process
 
         roombox_executable = sys.executable
         roombox_script = os.path.join(self.common_path, 'dummy_roombox.py')
 
-        roombox_result = "[layout:[z0:0, z1:0, uv:[[0.874929459690343, 0.0499472701727508], [0.6246948329880218, 0.836521256741644], [0.6246948553348896, 0.04983696464707826], [0.8752748643537904, 0.8359191738972793], [0.3744601886079243, 0.04994725051497806], [0.12493895615154749, 0.8353210349449639], [0.12493893386684474, 0.05005729692317301], [0.37411478400664344, 0.83591919355491]]]], 25l187v00b_rotated.JPG:[:], models.json:[:], 25l187v00b_allpoints.png:[:], inference:[inference_id:7394979587235]]"
+        roombox_result = '{"z0": 0, "z1": 0, "uv": [[0.874929459690343, 0.0499472701727508], [0.6246948329880218, 0.836521256741644], [0.6246948553348896, 0.04983696464707826], [0.8752748643537904, 0.8359191738972793], [0.3744601886079243, 0.04994725051497806], [0.12493895615154749, 0.8353210349449639], [0.12493893386684474, 0.05005729692317301], [0.37411478400664344, 0.83591919355491]]}'
+
 
         self.assertEqual(self.processor.run_process(roombox_executable,
                                                     roombox_script,
@@ -152,24 +157,203 @@ class TestSqsProcessor(TestCase):
         self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
         self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
 
+        dir_input = os.path.join(str(Path.home()),
+                                 'projects',
+                                 'python',
+                                 'misc',
+                                 'sqs_workflow',
+                                 'sqs_workflow',
+                                 'test_assets',
+                                 'input',
+                                 '294ee74d8d88a37523c2e28e5c0e150c')
+
+        dir_output = os.path.join(str(Path.home()),
+                                  'projects',
+                                  'python',
+                                  'misc',
+                                  'sqs_workflow',
+                                  'sqs_workflow',
+                                  'test_assets',
+                                  'output',
+                                  '294ee74d8d88a37523c2e28e5c0e150c')
+        if not os.path.exists(dir_output):
+            os.mkdir(dir_output)
+        if not os.path.exists(dir_input):
+            os.mkdir(dir_input)
+
+        test_absolute_path = os.path.join(str(Path.home()),
+                                          'projects',
+                                          'python',
+                                          'misc',
+                                          'sqs_workflow',
+                                          'sqs_workflow',
+                                          'test_assets',
+                                          'output',
+                                          '294ee74d8d88a37523c2e28e5c0e150c',
+                                          's7zu187383.JPG')
+
+        open(test_absolute_path, 'w').write('{}')
+        logging.info('Created temporary "image" file')
+
         input_path = os.path.join(self.processor.input_processing_directory,
                                   'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
         output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
 
         rmatrix_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.RMatrix.value,
-                              StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
-                              StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
-                              StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
-                              StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
-                              StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value,
-                                                          ProcessingTypesEnum.DoorDetecting.value],
-                              StringConstants.INFERENCE_ID_KEY: "1111",
-                              StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
-
+                           StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                           StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                           StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                           StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+                           StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value,
+                                                       ProcessingTypesEnum.DoorDetecting.value],
+                           StringConstants.INFERENCE_ID_KEY: "1111",
+                           StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
         rmatrix_message = json.dumps(rmatrix_message)
 
-        r = self.processor.process_message_in_subprocess(rmatrix_message)
+        self.assertTrue(
+            len(json.loads(self.processor.process_message_in_subprocess(rmatrix_message))['returnData']) == 0)
+        logging.info('test_process_rmatrix_in_subprocess is finished')
 
+    def test_process_rotate_in_subprocess(self):
+        def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
+                                            image_full_url='document', is_public=False):
+            return 'test_s3_url_result'
+
+        def create_output_file_on_s3_mock(ProcessingTypesEnum, url_hash, image_id, processing_result):
+            return 'test_output_file_to_s3'
+
+        self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
+        self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
+
+        dir_input = os.path.join(str(Path.home()),
+                                 'projects',
+                                 'python',
+                                 'misc',
+                                 'sqs_workflow',
+                                 'sqs_workflow',
+                                 'test_assets',
+                                 'input',
+                                 '294ee74d8d88a37523c2e28e5c0e150c')
+
+        dir_output = os.path.join(str(Path.home()),
+                                  'projects',
+                                  'python',
+                                  'misc',
+                                  'sqs_workflow',
+                                  'sqs_workflow',
+                                  'test_assets',
+                                  'output',
+                                  '294ee74d8d88a37523c2e28e5c0e150c')
+        if not os.path.exists(dir_output):
+            os.mkdir(dir_output)
+        if not os.path.exists(dir_input):
+            os.mkdir(dir_input)
+
+        test_absolute_path = os.path.join(str(Path.home()),
+                                          'projects',
+                                          'python',
+                                          'misc',
+                                          'sqs_workflow',
+                                          'sqs_workflow',
+                                          'test_assets',
+                                          'output',
+                                          '294ee74d8d88a37523c2e28e5c0e150c',
+                                          's7zu187383.JPG')
+
+        open(test_absolute_path, 'w').write('{}')
+        logging.info('Created temporary "image" file')
+
+        input_path = os.path.join(self.processor.input_processing_directory,
+                                  'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
+        output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
+
+        rotate_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Rotate.value,
+                          StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                          StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                          StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                          StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+                          StringConstants.STEPS_KEY: [ProcessingTypesEnum.Rotate.value],
+                          StringConstants.INFERENCE_ID_KEY: "1111",
+                          StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
+        rotate_message = json.dumps(rotate_message)
+
+        self.assertTrue(
+            len(json.loads(self.processor.process_message_in_subprocess(rotate_message))['returnData']) == 0)
+        logging.info('test_process_rotate_in_subprocess is finished')
+
+    def test_process_roombox_in_subprocess(self):
+        def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
+                                            image_full_url='document', is_public=False):
+            return 'test_s3_url_result'
+
+        def create_output_file_on_s3_mock(ProcessingTypesEnum, url_hash, image_id, processing_result):
+            return 'test_output_file_to_s3'
+
+        def download_file_object_from_s3_mock(rotated_s3_result, input_path, url_hash, image_id):
+            return 'rest'
+
+        def download_fileobj_mock():
+            return 'result'
+
+        self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
+        self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
+        self.s3_helper.download_file_object_from_s3 = download_file_object_from_s3_mock
+        self.s3_helper.download_fileobj = download_fileobj_mock
+
+        dir_input = os.path.join(str(Path.home()),
+                                 'projects',
+                                 'python',
+                                 'misc',
+                                 'sqs_workflow',
+                                 'sqs_workflow',
+                                 'test_assets',
+                                 'input',
+                                 '294ee74d8d88a37523c2e28e5c0e150c')
+
+        dir_output = os.path.join(str(Path.home()),
+                                  'projects',
+                                  'python',
+                                  'misc',
+                                  'sqs_workflow',
+                                  'sqs_workflow',
+                                  'test_assets',
+                                  'output',
+                                  '294ee74d8d88a37523c2e28e5c0e150c')
+        if not os.path.exists(dir_output):
+            os.mkdir(dir_output)
+        if not os.path.exists(dir_input):
+            os.mkdir(dir_input)
+
+        test_absolute_path = os.path.join(str(Path.home()),
+                                          'projects',
+                                          'python',
+                                          'misc',
+                                          'sqs_workflow',
+                                          'sqs_workflow',
+                                          'test_assets',
+                                          'output',
+                                          '294ee74d8d88a37523c2e28e5c0e150c',
+                                          's7zu187383.JPG')
+
+        open(test_absolute_path, 'w').write('{}')
+        logging.info('Created temporary "image" file')
+
+        input_path = os.path.join(self.processor.input_processing_directory,
+                                  'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
+        output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
+
+        roombox_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.RoomBox.value,
+                          StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                          StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                          StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                          StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+                          StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value],
+                          StringConstants.INFERENCE_ID_KEY: "1111",
+                          StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
+        roombox_message = json.dumps(roombox_message)
+
+        self.assertTrue(
+            len(json.loads(self.processor.process_message_in_subprocess(roombox_message))['returnData']) == 0)
         logging.info('test_process_similarity_in_subprocess is finished')
 
 
@@ -236,6 +420,100 @@ class TestSqsProcessor(TestCase):
 
         self.assertTrue(
             self.processor.run_rmatrix(message_object, 'url_hash', 'image_id', 'image_full_url') == mock_rmatrix_output)
+        logging.info('test_run_rmatrix is finished')
+
+    def test_run_rotate(self):
+        def create_output_file_on_s3_mock(ProcessingTypesEnum, url_hash, image_id, processing_result):
+            return 'test_output_file_to_s3'
+
+        dir_input = os.path.join(str(Path.home()),
+                                 'projects',
+                                 'python',
+                                 'misc',
+                                 'sqs_workflow',
+                                 'sqs_workflow',
+                                 'test_assets',
+                                 'input',
+                                 '294ee74d8d88a37523c2e28e5c0e150c')
+
+        dir_output = os.path.join(str(Path.home()),
+                                  'projects',
+                                  'python',
+                                  'misc',
+                                  'sqs_workflow',
+                                  'sqs_workflow',
+                                  'test_assets',
+                                  'output',
+                                  '294ee74d8d88a37523c2e28e5c0e150c')
+        if not os.path.exists(dir_output):
+            os.mkdir(dir_output)
+        if not os.path.exists(dir_input):
+            os.mkdir(dir_input)
+
+        test_absolute_path = os.path.join(str(Path.home()),
+                                          'projects',
+                                          'python',
+                                          'misc',
+                                          'sqs_workflow',
+                                          'sqs_workflow',
+                                          'test_assets',
+                                          'output',
+                                          '294ee74d8d88a37523c2e28e5c0e150c',
+                                          's7zu187383.JPG')
+
+        open(test_absolute_path, 'w').write('{}')
+        logging.info('Created temporary "image" file')
+
+        self.queue_mock_messages = None
+        self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
+
+        input_path = os.path.join(self.processor.input_processing_directory,
+                                  'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
+        output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
+
+        rotate_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Rotate.value,
+                          StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                          StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                          StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                          StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+                          StringConstants.STEPS_KEY: [ProcessingTypesEnum.Rotate.value],
+                          StringConstants.INFERENCE_ID_KEY: "3333",
+                          StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'
+                          }
+        rotate_message = json.dumps(rotate_message)
+        message_object = json.loads(rotate_message)
+
+        rotated_result = self.processor.run_rotate(message_object, '294ee74d8d88a37523c2e28e5c0e150c', 's7zu187383.JPG',
+                                                   'image_full_url')
+        self.assertTrue(rotated_result['output'] == 'ok')
+        logging.info('test_run_rotate is finished')
+
+    def test_run_roombox(self):
+        def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
+                                            image_full_url='document', is_public=False):
+            return 'test_s3_url_result'
+
+        self.queue_mock_messages = None
+        self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
+
+        input_path = os.path.join(self.processor.input_processing_directory,
+                                  'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
+        output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
+
+        roombox_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.RoomBox.value,
+                           StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                           StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                           StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                           StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+                           StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value],
+                           StringConstants.INFERENCE_ID_KEY: "3333",
+                           StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'
+                           }
+        roombox_message = json.dumps(roombox_message)
+        message_object = json.loads(roombox_message)
+
+        self.assertIsNone(
+            self.processor.run_roombox(message_object, 'message_type', 'inference_id', 'image_id', 'image_full_url'))
         logging.info('test_run_rmatrix is finished')
 
     def test_fail_in_subprocess(self):
@@ -388,9 +666,15 @@ class TestSqsProcessor(TestCase):
         logging.info('Cleared S3 key folder on S3')
 
         # Creates test "image" file
-        test_absolute_path = os.path.join(self.common_path,
+        test_absolute_path = os.path.join(str(Path.home()),
+                                          'projects',
+                                          'python',
+                                          'misc',
+                                          'sqs_workflow',
+                                          'sqs_workflow',
                                           'test_assets',
                                           'tempfile_image.JPG')
+
         open(test_absolute_path, 'w').write('{}')
         logging.info('Created temporary "image" file')
 
