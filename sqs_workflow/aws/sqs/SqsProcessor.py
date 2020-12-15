@@ -172,7 +172,7 @@ class SqsProcessor:
         processing_result = self.run_process(self.rotate_executable,
                                              self.rotate_script,
                                              message_object[
-                                                 StringConstants.EXECUTABLE_PARAMS_KEY] + f" --r_matrix {r_matrix_result}")
+                                                 StringConstants.EXECUTABLE_PARAMS_KEY] + f" --rotation_matrix {r_matrix_result}")
         logging.info(f'Result rotating:{processing_result}')
         self.create_output_file_on_s3(ProcessingTypesEnum.Rotate.value,
                                       url_hash,
@@ -187,7 +187,7 @@ class SqsProcessor:
                                 url_hash,
                                 image_id))
         logging.info(f'Moved rotated file to input')
-        # processing_result = []
+
         return processing_result
 
     def run_roombox(self, message_object, message_type, inference_id, image_id, image_full_url):
@@ -246,11 +246,9 @@ class SqsProcessor:
         logging.info(f'Rotated image is {rotated_result} on s3')
 
         #  ???  in if -> AND instead OR
-        if message_type == ProcessingTypesEnum.Rotate.value:
+        if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
             logging.info('Start processing rotating')
-            rotated_result = self.run_rotate(message_object, url_hash, image_id, r_matrix_result)
-            if rotated_result is None:
-                assert r_matrix_result
+            processing_result = self.run_rotate(message_object, url_hash, image_id, r_matrix_result)
 
         else:
             logging.info(f'Download from s3 key:{rotated_s3_result}')

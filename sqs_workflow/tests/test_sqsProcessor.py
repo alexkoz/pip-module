@@ -426,22 +426,12 @@ class TestSqsProcessor(TestCase):
         def create_output_file_on_s3_mock(ProcessingTypesEnum, url_hash, image_id, processing_result):
             return 'test_output_file_to_s3'
 
-        dir_input = os.path.join(str(Path.home()),
-                                 'projects',
-                                 'python',
-                                 'misc',
-                                 'sqs_workflow',
-                                 'sqs_workflow',
+        dir_input = os.path.join(self.common_path,
                                  'test_assets',
                                  'input',
                                  '294ee74d8d88a37523c2e28e5c0e150c')
 
-        dir_output = os.path.join(str(Path.home()),
-                                  'projects',
-                                  'python',
-                                  'misc',
-                                  'sqs_workflow',
-                                  'sqs_workflow',
+        dir_output = os.path.join(self.common_path,
                                   'test_assets',
                                   'output',
                                   '294ee74d8d88a37523c2e28e5c0e150c')
@@ -450,12 +440,7 @@ class TestSqsProcessor(TestCase):
         if not os.path.exists(dir_input):
             os.mkdir(dir_input)
 
-        test_absolute_path = os.path.join(str(Path.home()),
-                                          'projects',
-                                          'python',
-                                          'misc',
-                                          'sqs_workflow',
-                                          'sqs_workflow',
+        test_absolute_path = os.path.join(self.common_path,
                                           'test_assets',
                                           'output',
                                           '294ee74d8d88a37523c2e28e5c0e150c',
@@ -483,7 +468,9 @@ class TestSqsProcessor(TestCase):
         rotate_message = json.dumps(rotate_message)
         message_object = json.loads(rotate_message)
 
-        rotated_result = self.processor.run_rotate(message_object, '294ee74d8d88a37523c2e28e5c0e150c', 's7zu187383.JPG',
+        rotated_result = self.processor.run_rotate(message_object,
+                                                   '294ee74d8d88a37523c2e28e5c0e150c',
+                                                   's7zu187383.JPG',
                                                    'image_full_url')
         self.assertTrue(rotated_result['output'] == 'ok')
         logging.info('test_run_rotate is finished')
