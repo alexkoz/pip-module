@@ -270,7 +270,7 @@ class SqsProcessor:
         logging.info(f'Start processing executable:{executable} script:{script} params:{executable_params}')
         subprocess_result = subprocess.run(executable + " " + script + " " + executable_params,
                                            shell=True,
-                                           check=True,
+                                           check=False,
                                            stdout=subprocess.PIPE)
         if not subprocess_result.returncode == 0:
             message = f'Process has failed for process:{executable} script:{script} message:{executable_params}.'

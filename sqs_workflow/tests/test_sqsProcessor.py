@@ -3,7 +3,6 @@ import logging
 import os
 import shutil
 import sys
-import copy
 from pathlib import Path
 from unittest import TestCase
 
@@ -12,8 +11,8 @@ from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 from sqs_workflow.tests.QueueMock import QueueMock
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
-from sqs_workflow.utils.Utils import Utils
 from sqs_workflow.utils.StringConstants import StringConstants
+from sqs_workflow.utils.Utils import Utils
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
 
 
@@ -21,10 +20,16 @@ class TestSqsProcessor(TestCase):
     test_list = []
     queue_mock_messages = []
     processor = SqsProcessor("-immoviewer-ai")
-    processor_copy = copy.copy(processor)
     s3_helper = S3Helper()
     processor.queue = QueueMock()
     processor.return_queue = QueueMock()
+    common_path = os.path.join(str(Path.home()),
+                               'projects',
+                               'python',
+                               'misc',
+                               'sqs_workflow',
+                               'sqs_workflow',
+                               'aids')
 
     def test_send_message(self):
         self.processor.queue = QueueMock()
@@ -64,10 +69,9 @@ class TestSqsProcessor(TestCase):
             should_be_created_path)
 
     def test_run_process(self):
-        self.processor.run_process = self.processor_copy.run_process
 
-        roombox_executable = os.environ[f'{ProcessingTypesEnum.RoomBox.value}_EXECUTABLE']
-        roombox_script = os.environ[f'{ProcessingTypesEnum.RoomBox.value}_SCRIPT']
+        roombox_executable = sys.executable
+        roombox_script = os.path.join(self.common_path, 'dummy_roombox.py')
 
         roombox_result = "[layout:[z0:0, z1:0, uv:[[0.874929459690343, 0.0499472701727508], [0.6246948329880218, 0.836521256741644], [0.6246948553348896, 0.04983696464707826], [0.8752748643537904, 0.8359191738972793], [0.3744601886079243, 0.04994725051497806], [0.12493895615154749, 0.8353210349449639], [0.12493893386684474, 0.05005729692317301], [0.37411478400664344, 0.83591919355491]]]], 25l187v00b_rotated.JPG:[:], models.json:[:], 25l187v00b_allpoints.png:[:], inference:[inference_id:7394979587235]]"
 
@@ -103,8 +107,12 @@ class TestSqsProcessor(TestCase):
         def run_process_mock(executable: str, script: str, executable_params: str):
             return 'test_similarity_subprocess_output'
 
-        def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
-                                            image_full_url='document', is_public=False):
+        def create_path_and_save_on_s3_mock(message_type: str,
+                                            inference_id: str,
+                                            processing_result: str,
+                                            image_id: str,
+                                            image_full_url='document',
+                                            is_public=False):
             return 'test_s3_url_result'
 
         self.processor.run_process = run_process_mock
@@ -168,24 +176,18 @@ class TestSqsProcessor(TestCase):
 
     def test_fail_in_subprocess(self):
 
-        common_path = os.path.join(str(Path.home()),
-                                   'projects',
-                                   'python',
-                                   'misc',
-                                   'sqs_workflow',
-                                   'sqs_workflow',
-                                   'aids')
+        self.processor.alert_service = AlertServiceMock()
 
-        room_box_python = os.path.join(common_path, 'dummy_roombox.py')
-        room_box_python_fail = os.path.join(common_path, 'dummy_roombox_fail.py')
-        similarity_python = os.path.join(common_path, 'dummy_similarity.py')
-        similarity_python_fail = os.path.join(common_path, 'dummy_similarity_fail.py')
-        rmatrix_python = os.path.join(common_path, 'dummy_rmatrix.py')
-        rmatrix_python_fail = os.path.join(common_path, 'dummy_rmatrix_fail.py')
-        door_detecting_python = os.path.join(common_path, 'dummy_dd.py')
-        door_detecting_python_fail = os.path.join(common_path, 'dummy_dd_fail.py')
-        rotate_python = os.path.join(common_path, 'dummy_rotate.py')
-        rotate_python_fail = os.path.join(common_path, 'dummy_rotate_fail.py')
+        room_box_python = os.path.join(self.common_path, 'dummy_roombox.py')
+        room_box_python_fail = os.path.join(self.common_path, 'dummy_roombox_fail.py')
+        similarity_python = os.path.join(self.common_path, 'dummy_similarity.py')
+        similarity_python_fail = os.path.join(self.common_path, 'dummy_similarity_fail.py')
+        rmatrix_python = os.path.join(self.common_path, 'dummy_rmatrix.py')
+        rmatrix_python_fail = os.path.join(self.common_path, 'dummy_rmatrix_fail.py')
+        door_detecting_python = os.path.join(self.common_path, 'dummy_dd.py')
+        door_detecting_python_fail = os.path.join(self.common_path, 'dummy_dd_fail.py')
+        rotate_python = os.path.join(self.common_path, 'dummy_rotate.py')
+        rotate_python_fail = os.path.join(self.common_path, 'dummy_rotate_fail.py')
 
         test_executables = {
             room_box_python: ProcessingTypesEnum.RoomBox.value,  #
@@ -203,15 +205,12 @@ class TestSqsProcessor(TestCase):
         fail_counter = 0
 
         for script, processing_type in test_executables.items():
-            message = {StringConstants.MESSAGE_TYPE_KEY: processing_type,
-                       StringConstants.PANO_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
-                       StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
-                       StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64"}
-            message_str = str(message)
+
             logging.info(f'script: {script}')
-            logging.info(f'message: {message_str}')
-            self.processor.alert_service = AlertServiceMock()
-            process_result = self.processor.alert_service.run_process(sys.executable, script, message_str)
+
+            process_result = self.processor.run_process(sys.executable,
+                                                        script,
+                                                        "--input_path /input/img.jpg --output_path /output/path/")
             logging.info(f'process_result: {process_result}')
 
             if process_result == 'fail':
@@ -325,8 +324,9 @@ class TestSqsProcessor(TestCase):
         logging.info('Cleared S3 key folder on S3')
 
         # Creates test "image" file
-        test_absolute_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow',
-                                          'sqs_workflow', 'test_assets', 'tempfile_image.JPG')
+        test_absolute_path = os.path.join(self.common_path,
+                                          'test_assets',
+                                          'tempfile_image.JPG')
         open(test_absolute_path, 'w').write('{}')
         logging.info('Created temporary "image" file')
 
@@ -339,4 +339,3 @@ class TestSqsProcessor(TestCase):
 
         self.assertTrue(
             self.s3_helper.is_object_exist(os.path.join('api', 'inference', 'ROOM_BOX', 'test-hash', '001')))
-

@@ -1,18 +1,16 @@
-import json
-import os
 import hashlib
+import json
 import logging
-
-from unittest import TestCase
+import os
 from pathlib import Path
+from unittest import TestCase
 
-from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.S3HelperMock import S3HelperMock
+from sqs_workflow.tests.test_sqsProcessor import TestSqsProcessor
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
-from sqs_workflow.tests.test_sqsProcessor import TestSqsProcessor
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
