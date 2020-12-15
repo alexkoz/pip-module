@@ -30,6 +30,17 @@ class TestSqsProcessor(TestCase):
     def setUp(self):
         os.environ['INPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'input')
         os.environ['OUTPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'output')
+        aids = os.path.join(self.common_path, 'aids')
+        os.environ[f'{ProcessingTypesEnum.Similarity.value}_EXECUTABLE'] = sys.executable
+        os.environ[f'{ProcessingTypesEnum.Similarity.value}_SCRIPT'] = os.path.join(aids, 'dummy_similarity.py')
+        os.environ[f'{ProcessingTypesEnum.RoomBox.value}_EXECUTABLE'] = sys.executable
+        os.environ[f'{ProcessingTypesEnum.RoomBox.value}_SCRIPT'] = os.path.join(aids, 'dummy_roombox.py')
+        os.environ[f'{ProcessingTypesEnum.RMatrix.value}_EXECUTABLE'] = sys.executable
+        os.environ[f'{ProcessingTypesEnum.RMatrix.value}_SCRIPT'] = os.path.join(aids, 'dummy_rmatrix.py')
+        os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_EXECUTABLE'] = sys.executable
+        os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_SCRIPT'] = os.path.join(aids, 'dummy_dd.py')
+        os.environ[f'{ProcessingTypesEnum.Rotate.value}_EXECUTABLE'] = sys.executable
+        os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT'] = os.path.join(aids, 'dummy_rmatrix.py')
 
         self.clear_local_directories()
 
@@ -400,8 +411,10 @@ class TestSqsProcessor(TestCase):
         test_absolute_path = os.path.join(dir_output,
                                           's7zu187383.JPG')
 
-        open(test_absolute_path, 'w').write('{}')
-        logging.info('Created temporary "image" file')
+        with open(test_absolute_path, 'w') as image_file:
+            image_file.write('{}')
+            image_file.close()
+            logging.info('Created temporary "image" file')
 
         self.queue_mock_messages = None
         self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
@@ -426,7 +439,8 @@ class TestSqsProcessor(TestCase):
                                                    '294ee74d8d88a37523c2e28e5c0e150c',
                                                    's7zu187383.JPG',
                                                    'image_full_url')
-        self.assertTrue(rotated_result['output'] == 'ok')
+        self.assertTrue(rotated_result[
+                            'output'] == '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]')
         logging.info('test_run_rotate is finished')
 
     def test_run_roombox(self):
