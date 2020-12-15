@@ -210,8 +210,8 @@ class TestSqsProcessor(TestCase):
                            StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
         rmatrix_message = json.dumps(rmatrix_message)
 
-        self.assertTrue(
-            len(json.loads(self.processor.process_message_in_subprocess(rmatrix_message))['returnData']) == 0)
+        response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
+        self.assertTrue(response['returnData']['output'] == 'ok')
         logging.info('test_process_rmatrix_in_subprocess is finished')
 
     def test_process_rotate_in_subprocess(self):

@@ -274,7 +274,7 @@ class SqsProcessor:
                                             image_full_url)
             logging.info(f'Saved door detecting:{processing_result} on s3')
 
-        message_object['returnData'] = json.loads(processing_result or "[]")
+        message_object['returnData'] = json.loads(json.dumps(processing_result) or "[]")
         del message_object[StringConstants.EXECUTABLE_PARAMS_KEY]
         logging.info(f"Finished processing and updated message:{message_object} save result on s3.")
         return json.dumps(message_object)
