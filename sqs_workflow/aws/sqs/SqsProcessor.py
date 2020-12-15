@@ -174,21 +174,21 @@ class SqsProcessor:
         image_full_url = message_object[StringConstants.FILE_URL_KEY]
         url_hash = hashlib.md5(image_full_url.encode('utf-8')).hexdigest()
 
-        if message_type == ProcessingTypesEnum.RMatrix.value:
+        rotation_matrix = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value,
+                                               url_hash,
+                                               image_id)
 
-            processing_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value,
-                                                     url_hash,
-                                                     image_id)
-            if processing_result is None:
-                logging.info('Processing result is None')
-                processing_result = self.run_process(self.rmatrix_executable,
-                                                     self.rmatrix_script,
-                                                     message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-                self.create_path_and_save_on_s3(ProcessingTypesEnum.RMatrix.value,
-                                                url_hash,
-                                                processing_result,
-                                                image_id,
-                                                image_full_url)
+        if message_type == ProcessingTypesEnum.RMatrix.value or rotation_matrix is None:
+            logging.info('Processing result is None')
+            processing_result = self.run_process(self.rmatrix_executable,
+                                                 self.rmatrix_script,
+                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+            self.create_path_and_save_on_s3(ProcessingTypesEnum.RMatrix.value,
+                                            url_hash,
+                                            processing_result,
+                                            image_id,
+                                            image_full_url)
+            rotation_matrix = processing_result
 
         # todo check rotated image
         rotated_s3_result = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
@@ -196,18 +196,21 @@ class SqsProcessor:
                                                        url_hash,
                                                        "",
                                                        image_id)
-        rotated_result = self.s3_helper.is_object_exist(rotated_s3_result)
+        rotated_image = self.s3_helper.is_object_exist(rotated_s3_result)
 
-        if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
-            logging.info('Start processing rotating')
-            rotated_result = self.run_process(self.rotate_executable,
+        if message_type == ProcessingTypesEnum.Rotate.value or not rotated_image:
+
+            rotation_executable_params = message_object[
+                                             StringConstants.EXECUTABLE_PARAMS_KEY] + f' --rotation_matrix "{rotation_matrix}"'
+            logging.info(f'Start processing rotating with params:{rotation_executable_params}')
+            rotated_image = self.run_process(self.rotate_executable,
                                               self.rotate_script,
-                                              message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-            logging.info(f'Result rotating:{rotated_result}')
+                                              rotation_executable_params)
+            logging.info(f'Result rotating:{rotated_image}')
             self.create_output_file_on_s3(ProcessingTypesEnum.Rotate.value,
                                           url_hash,
                                           image_id,
-                                          str(rotated_result))
+                                          str(rotated_image))
 
             logging.info(f'Saved rotated image:{processing_result} on s3')
             os.replace(os.path.join(self.output_processing_directory,
