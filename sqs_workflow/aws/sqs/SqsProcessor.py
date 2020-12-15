@@ -2,10 +2,10 @@ import hashlib
 import json
 import logging
 import os
+import shutil
 import subprocess
 import time
 import uuid
-import shutil
 
 import boto3
 
@@ -132,7 +132,7 @@ class SqsProcessor:
         logging.info(f'Created S3 object key:{s3_path} file:{image_absolute_path}')
 
     def process_message_in_subprocess(self, message_body: str) -> str:
-        processing_result = None
+        processing_result = []
         message_object = json.loads(message_body)
         inference_id = str(message_object[StringConstants.INFERENCE_ID_KEY])
         message_type = str(message_object[StringConstants.MESSAGE_TYPE_KEY])
@@ -200,15 +200,15 @@ class SqsProcessor:
 
         if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
             logging.info('Start processing rotating')
-            processing_result = self.run_process(self.rotate_executable,
-                                                 self.rotate_script,
-                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-            logging.info(f'Result rotating:{processing_result}')
+            rotated_result = self.run_process(self.rotate_executable,
+                                              self.rotate_script,
+                                              message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+            logging.info(f'Result rotating:{rotated_result}')
             self.create_output_file_on_s3(ProcessingTypesEnum.Rotate.value,
                                           url_hash,
                                           image_id,
-                                          str(processing_result))
-            processing_result = {'output': f'{processing_result}'}
+                                          str(rotated_result))
+
             logging.info(f'Saved rotated image:{processing_result} on s3')
             os.replace(os.path.join(self.output_processing_directory,
                                     url_hash,
@@ -217,7 +217,6 @@ class SqsProcessor:
                                     url_hash,
                                     image_id))
             logging.info(f'Moved rotated file to input')
-            processing_result = []
         else:
             logging.info(f'Download from s3 key:{rotated_s3_result}')
             self.s3_helper.download_file_object_from_s3(
