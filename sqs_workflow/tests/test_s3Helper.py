@@ -1,7 +1,6 @@
 import logging
 import os
 from pathlib import Path
-
 from unittest import TestCase
 
 from sqs_workflow.aws.s3.S3Helper import S3Helper
@@ -9,7 +8,12 @@ from sqs_workflow.tests.test_sqsProcessor import TestSqsProcessor
 
 
 class TestS3Helper(TestCase):
-    s3_helper = S3Helper()
+
+    def setUp(self) -> None:
+        self.s3_helper = S3Helper()
+
+    def tearDown(self) -> None:
+        pass
 
     def test_save_file_object_on_s3(self):
         TestSqsProcessor.clear_directory(os.path.join('api', 'inference', 'test-save-on-s3'))

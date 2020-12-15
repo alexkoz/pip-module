@@ -21,11 +21,11 @@ class SqsProcessor:
     alert_service = AlertService()
     s3_helper = S3Helper()
 
-    input_processing_directory = os.environ['INPUT_DIRECTORY']
-    output_processing_directory = os.environ['OUTPUT_DIRECTORY']
+
 
     def __init__(self, queue_name):
-
+        self.input_processing_directory = os.environ['INPUT_DIRECTORY']
+        self.output_processing_directory = os.environ['OUTPUT_DIRECTORY']
         if "immo" in queue_name:
             logging.info(f'Activate immoviewer session')
 

@@ -1,9 +1,9 @@
+import copy
 import json
 import logging
 import os
 import shutil
 import sys
-import copy
 from pathlib import Path
 from unittest import TestCase
 
@@ -20,17 +20,27 @@ from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcesso
 class TestSqsProcessor(TestCase):
     test_list = []
     queue_mock_messages = []
-    processor = SqsProcessor("-immoviewer-ai")
-    processor_copy = copy.copy(processor)
-    s3_helper = S3Helper()
-    processor.queue = QueueMock()
-    processor.return_queue = QueueMock()
     common_path = os.path.join(str(Path.home()),
                                'projects',
                                'python',
                                'misc',
                                'sqs_workflow',
                                'sqs_workflow')
+
+    def setUp(self):
+        os.environ['INPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'input')
+        os.environ['OUTPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'output')
+
+        #todo clear  os.path.join(self.common_path, 'tmp', 'output') " output
+        self.processor = SqsProcessor("-immoviewer-ai")
+        self.processor_copy = copy.copy(self.processor)
+        self.s3_helper = S3Helper()
+        self.processor.queue = QueueMock()
+        self.processor.return_queue = QueueMock()
+
+    def tearDown(self) -> None:
+        # todo claen tmp
+        pass
 
     def test_send_message(self):
         self.processor.queue = QueueMock()
@@ -297,43 +307,23 @@ class TestSqsProcessor(TestCase):
         self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
         self.s3_helper.download_file_object_from_s3 = download_file_object_from_s3_mock
         self.s3_helper.download_fileobj = download_fileobj_mock
-
-        dir_input = os.path.join(str(Path.home()),
-                                 'projects',
-                                 'python',
-                                 'misc',
-                                 'sqs_workflow',
-                                 'sqs_workflow',
-                                 'test_assets',
-                                 'input',
+        dir_input = os.path.join(self.processor.input_processing_directory,
                                  '294ee74d8d88a37523c2e28e5c0e150c')
 
-        dir_output = os.path.join(str(Path.home()),
-                                  'projects',
-                                  'python',
-                                  'misc',
-                                  'sqs_workflow',
-                                  'sqs_workflow',
-                                  'test_assets',
-                                  'output',
+
+        dir_output = os.path.join(self.processor.output_processing_directory,
                                   '294ee74d8d88a37523c2e28e5c0e150c')
         if not os.path.exists(dir_output):
             os.mkdir(dir_output)
         if not os.path.exists(dir_input):
             os.mkdir(dir_input)
 
-        test_absolute_path = os.path.join(str(Path.home()),
-                                          'projects',
-                                          'python',
-                                          'misc',
-                                          'sqs_workflow',
-                                          'sqs_workflow',
-                                          'test_assets',
-                                          'output',
-                                          '294ee74d8d88a37523c2e28e5c0e150c',
+        test_absolute_path = os.path.join(dir_output,
                                           's7zu187383.JPG')
 
-        open(test_absolute_path, 'w').write('{}')
+        with open(test_absolute_path, 'w') as image_file:
+            image_file.write('{}')
+            image_file.close()
         logging.info('Created temporary "image" file')
 
         input_path = os.path.join(self.processor.input_processing_directory,
@@ -352,7 +342,6 @@ class TestSqsProcessor(TestCase):
 
         response = json.loads(self.processor.process_message_in_subprocess(roombox_message))
         self.assertTrue(response['returnData']['output'] == 'ok')
-        logging.info('test_process_similarity_in_subprocess is finished')
 
     def send_message_to_queue_mock(self, message, queue_url):
         if self.queue_mock_messages is None:
