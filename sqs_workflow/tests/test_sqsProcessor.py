@@ -30,8 +30,7 @@ class TestSqsProcessor(TestCase):
                                'python',
                                'misc',
                                'sqs_workflow',
-                               'sqs_workflow',
-                               'aids')
+                               'sqs_workflow')
 
     def test_send_message(self):
         self.processor.queue = QueueMock()
@@ -75,10 +74,9 @@ class TestSqsProcessor(TestCase):
         self.processor.run_process = self.processor_copy.run_process
 
         roombox_executable = sys.executable
-        roombox_script = os.path.join(self.common_path, 'dummy_roombox.py')
+        roombox_script = os.path.join(self.common_path, 'aids', 'dummy_roombox.py')
 
         roombox_result = '{"z0": 0, "z1": 0, "uv": [[0.874929459690343, 0.0499472701727508], [0.6246948329880218, 0.836521256741644], [0.6246948553348896, 0.04983696464707826], [0.8752748643537904, 0.8359191738972793], [0.3744601886079243, 0.04994725051497806], [0.12493895615154749, 0.8353210349449639], [0.12493893386684474, 0.05005729692317301], [0.37411478400664344, 0.83591919355491]]}'
-
 
         self.assertEqual(self.processor.run_process(roombox_executable,
                                                     roombox_script,
@@ -277,8 +275,8 @@ class TestSqsProcessor(TestCase):
                           StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
         rotate_message = json.dumps(rotate_message)
 
-        self.assertTrue(
-            len(json.loads(self.processor.process_message_in_subprocess(rotate_message))['returnData']) == 0)
+        response = json.loads(self.processor.process_message_in_subprocess(rotate_message))
+        self.assertTrue(response['returnData']['output'] == 'ok')
         logging.info('test_process_rotate_in_subprocess is finished')
 
     def test_process_roombox_in_subprocess(self):
@@ -343,19 +341,18 @@ class TestSqsProcessor(TestCase):
         output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
 
         roombox_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.RoomBox.value,
-                          StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
-                          StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
-                          StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
-                          StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
-                          StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value],
-                          StringConstants.INFERENCE_ID_KEY: "1111",
-                          StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
+                           StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                           StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                           StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                           StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+                           StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value],
+                           StringConstants.INFERENCE_ID_KEY: "1111",
+                           StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
         roombox_message = json.dumps(roombox_message)
 
-        self.assertTrue(
-            len(json.loads(self.processor.process_message_in_subprocess(roombox_message))['returnData']) == 0)
+        response = json.loads(self.processor.process_message_in_subprocess(roombox_message))
+        self.assertTrue(response['returnData']['output'] == 'ok')
         logging.info('test_process_similarity_in_subprocess is finished')
-
 
     def send_message_to_queue_mock(self, message, queue_url):
         if self.queue_mock_messages is None:
@@ -507,16 +504,16 @@ class TestSqsProcessor(TestCase):
 
         self.processor.alert_service = AlertServiceMock()
 
-        room_box_python = os.path.join(self.common_path, 'dummy_roombox.py')
-        room_box_python_fail = os.path.join(self.common_path, 'dummy_roombox_fail.py')
-        similarity_python = os.path.join(self.common_path, 'dummy_similarity.py')
-        similarity_python_fail = os.path.join(self.common_path, 'dummy_similarity_fail.py')
-        rmatrix_python = os.path.join(self.common_path, 'dummy_rmatrix.py')
-        rmatrix_python_fail = os.path.join(self.common_path, 'dummy_rmatrix_fail.py')
-        door_detecting_python = os.path.join(self.common_path, 'dummy_dd.py')
-        door_detecting_python_fail = os.path.join(self.common_path, 'dummy_dd_fail.py')
-        rotate_python = os.path.join(self.common_path, 'dummy_rotate.py')
-        rotate_python_fail = os.path.join(self.common_path, 'dummy_rotate_fail.py')
+        room_box_python = os.path.join(self.common_path, 'aids', 'dummy_roombox.py')
+        room_box_python_fail = os.path.join(self.common_path, 'aids', 'dummy_roombox_fail.py')
+        similarity_python = os.path.join(self.common_path, 'aids', 'dummy_similarity.py')
+        similarity_python_fail = os.path.join(self.common_path, 'aids', 'dummy_similarity_fail.py')
+        rmatrix_python = os.path.join(self.common_path, 'aids', 'dummy_rmatrix.py')
+        rmatrix_python_fail = os.path.join(self.common_path, 'aids', 'dummy_rmatrix_fail.py')
+        door_detecting_python = os.path.join(self.common_path, 'aids', 'dummy_dd.py')
+        door_detecting_python_fail = os.path.join(self.common_path, 'aids', 'dummy_dd_fail.py')
+        rotate_python = os.path.join(self.common_path, 'aids', 'dummy_rotate.py')
+        rotate_python_fail = os.path.join(self.common_path, 'aids', 'dummy_rotate_fail.py')
 
         test_executables = {
             room_box_python: ProcessingTypesEnum.RoomBox.value,  #
@@ -653,12 +650,7 @@ class TestSqsProcessor(TestCase):
         logging.info('Cleared S3 key folder on S3')
 
         # Creates test "image" file
-        test_absolute_path = os.path.join(str(Path.home()),
-                                          'projects',
-                                          'python',
-                                          'misc',
-                                          'sqs_workflow',
-                                          'sqs_workflow',
+        test_absolute_path = os.path.join(self.common_path,
                                           'test_assets',
                                           'tempfile_image.JPG')
 
