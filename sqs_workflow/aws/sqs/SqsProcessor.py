@@ -179,7 +179,7 @@ class SqsProcessor:
                                                image_id)
 
         if message_type == ProcessingTypesEnum.RMatrix.value or rotation_matrix is None:
-            logging.info('Processing result is None')
+            logging.info(f'Could not find a matrix for url:{url_hash} image:{image_id}')
             processing_result = self.run_process(self.rmatrix_executable,
                                                  self.rmatrix_script,
                                                  message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
@@ -189,6 +189,7 @@ class SqsProcessor:
                                             image_id,
                                             image_full_url)
             rotation_matrix = processing_result
+            logging.info(f'Got matrix result:{rotation_matrix} for url:{url_hash} image:{image_id}')
 
         # todo check rotated image
         rotated_s3_result = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
@@ -202,10 +203,10 @@ class SqsProcessor:
 
             rotation_executable_params = message_object[
                                              StringConstants.EXECUTABLE_PARAMS_KEY] + f' --rotation_matrix "{rotation_matrix}"'
-            logging.info(f'Start processing rotating with params:{rotation_executable_params}')
+            logging.info(f'Start rotating with params:{rotation_executable_params}')
             rotated_image = self.run_process(self.rotate_executable,
-                                              self.rotate_script,
-                                              rotation_executable_params)
+                                             self.rotate_script,
+                                             rotation_executable_params)
             logging.info(f'Result rotating:{rotated_image}')
             self.create_output_file_on_s3(ProcessingTypesEnum.Rotate.value,
                                           url_hash,
@@ -219,7 +220,7 @@ class SqsProcessor:
                        os.path.join(self.input_processing_directory,
                                     url_hash,
                                     image_id))
-            logging.info(f'Moved rotated file to input')
+            logging.info(f'Moved rotated file:{image_id} to input')
         else:
             logging.info(f'Download from s3 key:{rotated_s3_result}')
             self.s3_helper.download_file_object_from_s3(
