@@ -1,5 +1,6 @@
 import logging
 import os
+import urllib
 from sqs_workflow.utils.StringConstants import StringConstants
 
 import boto3
@@ -40,8 +41,10 @@ class S3Helper:
         )
         s3 = session.resource('s3')
         obj = s3.Object(self.s3_bucket, s3_key)
+        full_url_tag = urllib.parse.quote(f'{StringConstants.FILE_URL_KEY}={full_url_tag}'.encode())
+        logging.info(f'Full tag:{full_url_tag}')
         obj.put(Body=object_body,
-                Tagging=f'{StringConstants.FILE_URL_KEY}={full_url_tag}')
+                Tagging=full_url_tag)
         if is_public:
             object_acl = s3.ObjectAcl(self.s3_bucket, s3_key)
             object_acl.put(ACL='public-read')
