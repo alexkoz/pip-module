@@ -90,6 +90,8 @@ class TestSimilarityProcessor(TestCase):
         self.assertEqual(new_message_object['panos'][1]['layout'][8]['id'], 'door_108')
 
     def test_start_pre_processing(self):
+
+        SqsProcessor.define_sqs_queue_properties = TestSqsProcessor.define_sqs_queue_properties
         sqs_processor = SqsProcessor('-immoviewer-ai')
 
         preprocessing_message = {
@@ -98,7 +100,7 @@ class TestSimilarityProcessor(TestCase):
             StringConstants.INFERENCE_ID_KEY: 1111,
             StringConstants.FLOOR_ID_KEY: 1,
             StringConstants.TOUR_ID_KEY: "1342386",
-            StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+            StringConstants.DOCUMENT_PATH_KEY: f"{self.common_path}/test_assets/two_panos.json",
             StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value]
         }
         json_message_object = sqs_processor.prepare_for_processing(json.dumps(preprocessing_message))

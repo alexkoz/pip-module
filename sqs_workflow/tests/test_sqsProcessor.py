@@ -33,11 +33,16 @@ class TestSqsProcessor(TestCase):
 
     @staticmethod
     def download_from_http(url: str, absolute_file_path=None) -> str:
-        with open(absolute_file_path, 'w') as document_file:
-            document_file.write("{}")
-            document_file.close()
-        return "{}"
+        content = '{}'
+        if os.path.exists(url):
+            with open(url, 'r') as read_file:
+                content = read_file.read()
+                read_file.close()
 
+        with open(absolute_file_path, 'w') as document_file:
+            document_file.write(content)
+            document_file.close()
+        return content
 
     def setUp(self):
         os.environ['INPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'input')
@@ -195,6 +200,7 @@ class TestSqsProcessor(TestCase):
 
         def create_output_file_on_s3_mock(ProcessingTypesEnum, url_hash, image_id, processing_result):
             return 'test_output_file_to_s3'
+
         self.processor.s3_helper = S3HelperMock([])
         self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
         self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
@@ -247,6 +253,7 @@ class TestSqsProcessor(TestCase):
 
         def create_output_file_on_s3_mock(ProcessingTypesEnum, url_hash, image_id, processing_result):
             return 'test_output_file_to_s3'
+
         self.processor.s3_helper = S3HelperMock([])
         self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
         self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
@@ -554,7 +561,6 @@ class TestSqsProcessor(TestCase):
                 ok_counter += 1
         self.assertEqual(ok_counter, 5)  # because of dummy_Similarity returns layout array, not just 'ok'
         self.assertEqual(fail_counter, 5)
-
 
     def test_create_path_and_save_on_s3(self):
         s3_helper = S3HelperMock([])
