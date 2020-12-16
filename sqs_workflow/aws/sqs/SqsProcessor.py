@@ -177,6 +177,7 @@ class SqsProcessor:
                 return None
 
         image_id = os.path.basename(message_object[StringConstants.FILE_URL_KEY])
+        image_id = image_id[:image_id.find('?')]
         image_full_url = message_object[StringConstants.FILE_URL_KEY]
         url_hash = hashlib.md5(image_full_url.encode('utf-8')).hexdigest()
 
