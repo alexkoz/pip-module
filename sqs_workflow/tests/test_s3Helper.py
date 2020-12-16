@@ -34,7 +34,9 @@ class TestS3Helper(TestCase):
 
         test_absolute_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow',
                                           'sqs_workflow', 'test_assets', 'tempfile_download.json')
-        open(test_absolute_path, 'w').write('{}')
+        with open(test_absolute_path, 'w') as write_file:
+            write_file.write('{}')
+            write_file.close()
         logging.info('Created temporary json file for uploading to S3')
 
         test_s3_key = os.path.join('api', 'inference', 'test-dowload-from-s3', 'tempfile_download.json')
