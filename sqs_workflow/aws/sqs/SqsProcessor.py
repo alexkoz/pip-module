@@ -115,7 +115,13 @@ class SqsProcessor:
                                                          image_full_url,
                                                          is_public)
         logging.info(f'Created S3 object key:{s3_path} url:{s3_url} content:{processing_result}')
-        return s3_url
+        s3_object = {
+            "key": s3_path,
+            "bucket": self.s3_helper.s3_bucket,
+            "region": os.environ['S3_REGION'],
+            "url": s3_url
+        }
+        return s3_object
 
     def create_output_file_on_s3(self, message_type: str,
                                  image_hash: str,

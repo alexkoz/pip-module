@@ -4,6 +4,7 @@ class StringConstants:
     PRY_MATRIX_KEY: str = 'pry'
     MESSAGE_TYPE_KEY: str = 'messageType'
     DOCUMENT_PATH_KEY: str = "documentPath"
+    S3_KEY: str = "s3"
     IMAGE_PATH_KEY: str = "imagePath"
     STEPS_DOCUMENT_PATH_KEY: str = "stepsDocumentPath"
     FILE_URL_KEY: str = 'fileUrl'
