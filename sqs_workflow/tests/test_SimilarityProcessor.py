@@ -11,12 +11,33 @@ from sqs_workflow.tests.test_sqsProcessor import TestSqsProcessor
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
+from sqs_workflow.utils.Utils import Utils
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 
 class TestSimilarityProcessor(TestCase):
     similarity_processor = SimilarityProcessor()
+
+    common_path = os.path.join(str(Path.home()),
+                               'projects',
+                               'python',
+                               'misc',
+                               'sqs_workflow',
+                               'sqs_workflow')
+
+    def setUp(self):
+        os.environ['INPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'input')
+        os.environ['OUTPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'output')
+        os.environ['S3_BUCKET'] = "test_bucket"
+        os.environ['IMMO_ACCESS'] = "clipnow"
+        os.environ['IMMO_SECRET'] = "clipnow"
+        os.environ['IMMO_REGION_NAME'] = 'eu-west-1'
+        os.environ['DOCU_AWS_PROFILE'] = 'sqs'
+        os.environ['DOCU_ACCESS'] = 'sqs'
+        os.environ['DOCU_SECRET'] = 'sqs'
+        os.environ['S3_REGION'] = 'sqs'
+        Utils.download_from_http = TestSqsProcessor.download_from_http
 
     def test_create_layout_object(self):
         room_box_result = '{"z0": "0", "z1": "0", "uv": [[0.8942103326473919, 0.3353772676236854], [0.5747235927670448, 0.6223832045044406], [0.575059459160671, 0.37344853854460625], [0.8946108521103336, 0.6597705138137632], [0.4391388923396096, 0.3687213328274126], [0.08800329189223322, 0.6700959772611611], [0.08779664823660581, 0.3244858638081926], [0.4389803229974563, 0.6268292928215364]]}'
@@ -70,8 +91,6 @@ class TestSimilarityProcessor(TestCase):
 
     def test_start_pre_processing(self):
         sqs_processor = SqsProcessor('-immoviewer-ai')
-        TestSqsProcessor.clear_local_directory(sqs_processor.input_processing_directory)
-        TestSqsProcessor.clear_local_directory(sqs_processor.output_processing_directory)
 
         preprocessing_message = {
             StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Preprocessing.value,

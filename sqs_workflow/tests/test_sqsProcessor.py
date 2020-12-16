@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from unittest import TestCase
 
-from sqs_workflow.aws.s3.S3Helper import S3Helper
+from S3HelperMock import S3HelperMock
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 from sqs_workflow.tests.QueueMock import QueueMock
@@ -27,9 +27,23 @@ class TestSqsProcessor(TestCase):
                                'sqs_workflow',
                                'sqs_workflow')
 
+    @staticmethod
+    def define_sqs_queue_properties(sqs_client, sqs_resource, queue_name):
+        return "queue_url", "queue_return_url", {}, {}
+
+    @staticmethod
+    def download_from_http(url: str, absolute_file_path=None) -> str:
+        with open(absolute_file_path, 'w') as document_file:
+            document_file.write("{}")
+            document_file.close()
+        return "{}"
+
+
     def setUp(self):
         os.environ['INPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'input')
         os.environ['OUTPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'output')
+        os.environ['S3_BUCKET'] = 'TEST-BUCKET'
+        os.environ['S3_REGION'] = 'eu-west-1'
         aids = os.path.join(self.common_path, 'aids')
         os.environ[f'{ProcessingTypesEnum.Similarity.value}_EXECUTABLE'] = sys.executable
         os.environ[f'{ProcessingTypesEnum.Similarity.value}_SCRIPT'] = os.path.join(aids, 'dummy_similarity.py')
@@ -41,12 +55,21 @@ class TestSqsProcessor(TestCase):
         os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_SCRIPT'] = os.path.join(aids, 'dummy_dd.py')
         os.environ[f'{ProcessingTypesEnum.Rotate.value}_EXECUTABLE'] = sys.executable
         os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT'] = os.path.join(aids, 'dummy_rmatrix.py')
+        os.environ['IMMO_AWS_PROFILE'] = "clipnow"
+        os.environ['IMMO_ACCESS'] = "clipnow"
+        os.environ['IMMO_SECRET'] = "clipnow"
+        os.environ['IMMO_REGION_NAME'] = 'eu-west-1'
+        os.environ['DOCU_AWS_PROFILE'] = 'sqs'
+        os.environ['DOCU_ACCESS'] = 'sqs'
+        os.environ['DOCU_SECRET'] = 'sqs'
+        os.environ['DOCU_REGION_NAME'] = 'us-east-1'
+        os.environ['APP_BRANCH'] = "test"
+        Utils.download_from_http = TestSqsProcessor.download_from_http
 
         self.clear_local_directories()
-
+        SqsProcessor.define_sqs_queue_properties = TestSqsProcessor.define_sqs_queue_properties
         self.processor = SqsProcessor("-immoviewer-ai")
         self.processor_copy = copy.copy(self.processor)
-        self.s3_helper = S3Helper()
         self.processor.queue = QueueMock()
         self.processor.return_queue = QueueMock()
 
@@ -172,7 +195,7 @@ class TestSqsProcessor(TestCase):
 
         def create_output_file_on_s3_mock(ProcessingTypesEnum, url_hash, image_id, processing_result):
             return 'test_output_file_to_s3'
-
+        self.processor.s3_helper = S3HelperMock([])
         self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
         self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
 
@@ -192,7 +215,9 @@ class TestSqsProcessor(TestCase):
 
         test_absolute_path = os.path.join(dir_output,
                                           's7zu187383.JPG')
-        open(test_absolute_path, 'w').write('{}')
+        with open(test_absolute_path, 'w') as image_file:
+            image_file.write('{}')
+            image_file.close()
         logging.info('Created temporary "image" file')
 
         input_path = os.path.join(self.processor.input_processing_directory,
@@ -211,7 +236,8 @@ class TestSqsProcessor(TestCase):
         rmatrix_message = json.dumps(rmatrix_message)
 
         response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
-        self.assertTrue(response['returnData']['output'] == 'ok')
+        self.assertTrue(response['returnData'][
+                            'output'] == '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]')
         logging.info('test_process_rmatrix_in_subprocess is finished')
 
     def test_process_rotate_in_subprocess(self):
@@ -221,7 +247,7 @@ class TestSqsProcessor(TestCase):
 
         def create_output_file_on_s3_mock(ProcessingTypesEnum, url_hash, image_id, processing_result):
             return 'test_output_file_to_s3'
-
+        self.processor.s3_helper = S3HelperMock([])
         self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
         self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
 
@@ -242,7 +268,9 @@ class TestSqsProcessor(TestCase):
         test_absolute_path = os.path.join(dir_output,
                                           's7zu187383.JPG')
 
-        open(test_absolute_path, 'w').write('{}')
+        with open(test_absolute_path, 'w') as image_file:
+            image_file.write('{}')
+            image_file.close()
         logging.info('Created temporary "image" file')
 
         input_path = os.path.join(self.processor.input_processing_directory,
@@ -260,10 +288,12 @@ class TestSqsProcessor(TestCase):
         rotate_message = json.dumps(rotate_message)
 
         response = json.loads(self.processor.process_message_in_subprocess(rotate_message))
-        self.assertTrue(response['returnData']['output'] == 'ok')
+        self.assertTrue(response['returnData'][
+                            'output'] == '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]')
         logging.info('test_process_rotate_in_subprocess is finished')
 
     def test_process_roombox_in_subprocess(self):
+
         def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
                                             image_full_url='document', is_public=False):
             return 'test_s3_url_result'
@@ -277,6 +307,11 @@ class TestSqsProcessor(TestCase):
         def download_fileobj_mock():
             return 'result'
 
+        def check_pry_on_s3(message_type: str, url_hash: str, image_id: str):
+            return '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]'
+
+        self.s3_helper = S3HelperMock(['api/inference/ROTATE/294ee74d8d88a37523c2e28e5c0e150c/s7zu187383.JPG'])
+        self.processor.s3_helper = self.s3_helper
         self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
         self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
         self.s3_helper.download_file_object_from_s3 = download_file_object_from_s3_mock
@@ -314,8 +349,11 @@ class TestSqsProcessor(TestCase):
                            StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
         roombox_message = json.dumps(roombox_message)
 
+        self.processor.check_pry_on_s3 = check_pry_on_s3
+
         response = json.loads(self.processor.process_message_in_subprocess(roombox_message))
-        self.assertTrue(response['returnData']['output'] == 'ok')
+        self.assertTrue(response['returnData'][
+                            'output'] == '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]')
 
     def send_message_to_queue_mock(self, message, queue_url):
         if self.queue_mock_messages is None:
@@ -517,30 +555,27 @@ class TestSqsProcessor(TestCase):
         self.assertEqual(ok_counter, 5)  # because of dummy_Similarity returns layout array, not just 'ok'
         self.assertEqual(fail_counter, 5)
 
-    @staticmethod
-    def clear_directory(path_to_folder_in_bucket: str):
-        sync_command = f"aws s3 --profile {os.environ['AWS_PROFILE']} rm s3://{os.environ['S3_BUCKET']}/{path_to_folder_in_bucket} --recursive"
-        logging.info(f'sync command: {sync_command}')
-        stream = os.popen(sync_command)
-        output = stream.read()
-        logging.info(f'output: {output}')
 
     def test_create_path_and_save_on_s3(self):
-        s3_helper = self.s3_helper
+        s3_helper = S3HelperMock([])
         message_type = 'test-message-type'
         inference_id = 'test-inference-id'
         image_id = 'test-image-id'
         processing_result = 'test-processing-result-content'
         image_url = 'http://s3.com/path/image.jpg'
-        self.processor.create_path_and_save_on_s3(message_type,
-                                                  inference_id,
-                                                  processing_result,
-                                                  image_id,
-                                                  image_url)
+        self.processor.s3_helper = s3_helper
+        s3_url = self.processor.create_path_and_save_on_s3(message_type,
+                                                           inference_id,
+                                                           processing_result,
+                                                           image_id,
+                                                           image_url)
         s3_key = os.path.join('api', 'inference', 'test-message-type', 'test-inference-id', 'test-image-id',
                               'result.json')
         # todo check tags
-        self.assertTrue(s3_helper.is_object_exist(s3_key))
+        self.assertTrue(
+            'api/inference/test-message-type/test-inference-id/test-image-id/result.json' in s3_helper.existing_keys)
+        self.assertTrue(
+            s3_url == 'https://TEST-BUCKET.s3-eu-west-1.amazonaws.com/api/inference/test-message-type/test-inference-id/test-image-id/result.json')
 
     @staticmethod
     def clear_local_directories():
@@ -611,7 +646,7 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(os.path.isfile(input_path))
 
     def test_create_output_file_on_s3(self):
-        self.clear_directory(os.path.join('api', 'inference', 'test-download-from-s3'))
+
         logging.info('Cleared S3 key folder on S3')
 
         # Creates test "image" file
@@ -619,15 +654,21 @@ class TestSqsProcessor(TestCase):
                                           'test_assets',
                                           'tempfile_image.JPG')
 
-        open(test_absolute_path, 'w').write('{}')
+        with open(test_absolute_path, 'w') as image_file:
+            image_file.write('{}')
+            image_file.close()
         logging.info('Created temporary "image" file')
 
         test_message_type = ProcessingTypesEnum.RoomBox.value
         test_image_hash = 'test-hash'
         image_id = '001'
         image_absolute_path = test_absolute_path
+        self.processor.s3_helper = S3HelperMock([])
+        s3_path = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
+                                             test_message_type,
+                                             test_image_hash,
+                                             "",
+                                             image_id)
 
         self.processor.create_output_file_on_s3(test_message_type, test_image_hash, image_id, image_absolute_path)
-
-        self.assertTrue(
-            self.s3_helper.is_object_exist(os.path.join('api', 'inference', 'ROOM_BOX', 'test-hash', '001')))
+        self.assertTrue(s3_path in self.processor.s3_helper.existing_keys)

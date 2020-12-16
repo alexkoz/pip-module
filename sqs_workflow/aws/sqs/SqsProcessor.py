@@ -18,10 +18,10 @@ from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcesso
 
 
 class SqsProcessor:
-    alert_service = AlertService()
-    s3_helper = S3Helper()
 
     def __init__(self, queue_name):
+        self.alert_service = AlertService()
+        self.s3_helper = S3Helper()
         self.input_processing_directory = os.environ['INPUT_DIRECTORY']
         self.output_processing_directory = os.environ['OUTPUT_DIRECTORY']
         if "immo" in queue_name:
@@ -36,13 +36,8 @@ class SqsProcessor:
         self.sqs_client = self.session.client('sqs')
         self.sqs_resource = self.session.resource('sqs')
 
-        get_url_response = self.sqs_client.get_queue_url(QueueName=os.environ['APP_BRANCH'] + queue_name)
-        queue_url = get_url_response['QueueUrl']
-        self.queue_url = queue_url
-        self.return_queue_url = queue_url + "-return-queue"
-        logging.info(f'Pulled queues{queue_url}')
-        self.queue = self.sqs_resource.Queue(self.queue_url)
-        self.return_queue = self.sqs_resource.Queue(self.return_queue_url)
+        self.queue_url, self.return_queue_url, self.queue, self.return_queue = SqsProcessor.define_sqs_queue_properties(
+            self.sqs_client, self.sqs_resource, queue_name)
 
         self.similarity_executable = os.environ[f'{ProcessingTypesEnum.Similarity.value}_EXECUTABLE']
         self.similarity_script = os.environ[f'{ProcessingTypesEnum.Similarity.value}_SCRIPT']
@@ -55,6 +50,17 @@ class SqsProcessor:
         self.rotate_executable = os.environ[f'{ProcessingTypesEnum.Rotate.value}_EXECUTABLE']
         self.rotate_script = os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT']
         logging.info(f'SQS processor initialized for profile:{queue_name}')
+
+    @staticmethod
+    def define_sqs_queue_properties(sqs_client, sqs_resource, queue_name):
+        get_url_response = sqs_client.get_queue_url(QueueName=os.environ['APP_BRANCH'] + queue_name)
+        queue_url = get_url_response['QueueUrl']
+        queue_url = queue_url
+        return_queue_url = queue_url + "-return-queue"
+        logging.info(f'Pulled queues{queue_url}')
+        queue = sqs_resource.Queue(queue_url)
+        return_queue = sqs_resource.Queue(return_queue_url)
+        return queue_url, return_queue_url, queue, return_queue
 
     def send_message_to_queue(self, message_body: str, queue_url: str):
         response_send = self.sqs_client.send_message(QueueUrl=queue_url, MessageBody=message_body)

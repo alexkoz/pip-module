@@ -2,7 +2,7 @@ import logging
 
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
-
+import os
 
 class S3HelperMock(S3Helper):
 
@@ -35,3 +35,11 @@ class S3HelperMock(S3Helper):
                 return door_detection_result
             else:
                 return ""
+
+    def save_file_object_on_s3(self, s3_path: str, image_absolute_path: str):
+        self.existing_keys.append(s3_path)
+
+    def save_string_object_on_s3(self, s3_key: str, object_body: str, full_url_tag="document", is_public=False) -> str:
+        self.existing_keys.append(s3_key)
+        return f"https://{os.environ['S3_BUCKET']}.s3-{os.environ['S3_REGION']}.amazonaws.com/{s3_key}"
+
