@@ -176,11 +176,10 @@ class SqsProcessor:
                 logging.info(f'Document is under processing inference:{inference_id}')
                 return None
 
-        image_id = os.path.basename(message_object[StringConstants.FILE_URL_KEY])
-        image_id = image_id[:image_id.find('?')]
         image_full_url = message_object[StringConstants.FILE_URL_KEY]
+        image_id = os.path.basename(image_full_url)[:os.path.basename(image_full_url).find('?')]
         url_hash = hashlib.md5(image_full_url.encode('utf-8')).hexdigest()
-
+        logging.info(f" Hash:{url_hash}, id:{image_id}, url:{image_full_url}")
         if message_type == ProcessingTypesEnum.RMatrix.value:
 
             processing_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value,
