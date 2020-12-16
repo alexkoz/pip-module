@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from unittest import TestCase
 
-from S3HelperMock import S3HelperMock
+from sqs_workflow.tests.S3HelperMock import S3HelperMock
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 from sqs_workflow.tests.QueueMock import QueueMock
@@ -35,10 +35,11 @@ class TestSqsProcessor(TestCase):
     def download_from_http(url: str, absolute_file_path=None) -> str:
         content = '{}'
         if os.path.exists(url):
+            print('exists')
             with open(url, 'r') as read_file:
-                content = read_file.read()
-                read_file.close()
-
+                new_content = read_file.read()
+                # read_file.close()
+                return new_content
         with open(absolute_file_path, 'w') as document_file:
             document_file.write(content)
             document_file.close()
