@@ -2,10 +2,10 @@ import hashlib
 import json
 import logging
 import os
+import shutil
 import subprocess
 import time
 import uuid
-import shutil
 
 import boto3
 
@@ -18,14 +18,12 @@ from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcesso
 
 
 class SqsProcessor:
-    alert_service = AlertService()
-    s3_helper = S3Helper()
-
-    input_processing_directory = os.environ['INPUT_DIRECTORY']
-    output_processing_directory = os.environ['OUTPUT_DIRECTORY']
 
     def __init__(self, queue_name):
-
+        self.alert_service = AlertService()
+        self.s3_helper = S3Helper()
+        self.input_processing_directory = os.environ['INPUT_DIRECTORY']
+        self.output_processing_directory = os.environ['OUTPUT_DIRECTORY']
         if "immo" in queue_name:
             logging.info(f'Activate immoviewer session')
 
@@ -38,13 +36,8 @@ class SqsProcessor:
         self.sqs_client = self.session.client('sqs')
         self.sqs_resource = self.session.resource('sqs')
 
-        get_url_response = self.sqs_client.get_queue_url(QueueName=os.environ['APP_BRANCH'] + queue_name)
-        queue_url = get_url_response['QueueUrl']
-        self.queue_url = queue_url
-        self.return_queue_url = queue_url + "-return-queue"
-        logging.info(f'Pulled queues{queue_url}')
-        self.queue = self.sqs_resource.Queue(self.queue_url)
-        self.return_queue = self.sqs_resource.Queue(self.return_queue_url)
+        self.queue_url, self.return_queue_url, self.queue, self.return_queue = SqsProcessor.define_sqs_queue_properties(
+            self.sqs_client, self.sqs_resource, queue_name)
 
         self.similarity_executable = os.environ[f'{ProcessingTypesEnum.Similarity.value}_EXECUTABLE']
         self.similarity_script = os.environ[f'{ProcessingTypesEnum.Similarity.value}_SCRIPT']
@@ -58,9 +51,16 @@ class SqsProcessor:
         self.rotate_script = os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT']
         logging.info(f'SQS processor initialized for profile:{queue_name}')
 
-    def get_attr_value(self, message, attribute_name):
-        attr_value = json.loads(message.body)[attribute_name]
-        return attr_value
+    @staticmethod
+    def define_sqs_queue_properties(sqs_client, sqs_resource, queue_name):
+        get_url_response = sqs_client.get_queue_url(QueueName=os.environ['APP_BRANCH'] + queue_name)
+        queue_url = get_url_response['QueueUrl']
+        queue_url = queue_url
+        return_queue_url = queue_url + "-return-queue"
+        logging.info(f'Pulled queues{queue_url}')
+        queue = sqs_resource.Queue(queue_url)
+        return_queue = sqs_resource.Queue(return_queue_url)
+        return queue_url, return_queue_url, queue, return_queue
 
     def send_message_to_queue(self, message_body: str, queue_url: str):
         response_send = self.sqs_client.send_message(QueueUrl=queue_url, MessageBody=message_body)
@@ -115,7 +115,13 @@ class SqsProcessor:
                                                          image_full_url,
                                                          is_public)
         logging.info(f'Created S3 object key:{s3_path} url:{s3_url} content:{processing_result}')
-        return s3_url
+        s3_object = {
+            "key": s3_path,
+            "bucket": self.s3_helper.s3_bucket,
+            "region": os.environ['S3_REGION'],
+            "url": s3_url
+        }
+        return s3_object
 
     def create_output_file_on_s3(self, message_type: str,
                                  image_hash: str,
@@ -131,6 +137,84 @@ class SqsProcessor:
         self.s3_helper.save_file_object_on_s3(s3_path, image_absolute_path)
         logging.info(f'Created S3 object key:{s3_path} file:{image_absolute_path}')
 
+    def run_preprocessing(self, inference_id: str, message_object):
+        logging.info(f'Start preprocessing similarity inference:{inference_id}')
+        messages_for_sending = SimilarityProcessor.start_pre_processing(message_object)
+        for send_message in messages_for_sending:
+            self.send_message_to_queue(send_message, self.queue_url)
+
+        message_object['returnData'] = {'preprocessing': 'ok'}
+        logging.info(f"Finished processing and updated message:{message_object}.")
+        return json.dumps(message_object)
+
+    def run_similarity(self, inference_id: str, message_object):
+        document_object = SimilarityProcessor.is_similarity_ready(
+            self.s3_helper,
+            message_object)
+        if document_object is not None:
+            processing_result = self.run_process(self.similarity_executable,
+                                                 self.similarity_script,
+                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+            s3_object = self.create_path_and_save_on_s3(ProcessingTypesEnum.Similarity.value,
+                                                     inference_id,
+                                                     processing_result,
+                                                     "similarity",
+                                                     is_public=True)
+            message_object[StringConstants.DOCUMENT_PATH_KEY] = s3_object
+            logging.info(f'Finished similarity inference:{inference_id} s3 result:{s3_object}')
+            return json.dumps(message_object)
+        else:
+            logging.info(f'Document is under processing inference:{inference_id}')
+            return None
+
+    def run_rmatrix(self, message_object, url_hash, image_id, image_full_url):
+        processing_result = self.run_process(self.rmatrix_executable,
+                                             self.rmatrix_script,
+                                             message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+        self.create_path_and_save_on_s3(ProcessingTypesEnum.RMatrix.value,
+                                        url_hash,
+                                        processing_result,
+                                        image_id,
+                                        image_full_url)
+        return processing_result
+
+    def run_rotate(self, message_object, url_hash, image_id, r_matrix_result):
+        processing_result = self.run_process(self.rotate_executable,
+                                             self.rotate_script,
+                                             message_object[
+                                                 StringConstants.EXECUTABLE_PARAMS_KEY] + f" --rotation_matrix {r_matrix_result}")
+        logging.info(f'Result rotating:{processing_result}')
+        self.create_output_file_on_s3(ProcessingTypesEnum.Rotate.value,
+                                      url_hash,
+                                      image_id,
+                                      str(processing_result))
+        processing_result = {'output': f'{processing_result}'}
+        logging.info(f'Saved rotated image:{processing_result} on s3')
+        os.replace(os.path.join(self.output_processing_directory,
+                                url_hash,
+                                image_id),
+                   os.path.join(self.input_processing_directory,
+                                url_hash,
+                                image_id))
+        logging.info(f'Moved rotated file to input')
+
+        return processing_result
+
+    def run_roombox(self, message_object, message_type, inference_id, image_id, image_full_url):
+        processing_result = self.run_process(self.roombox_executable,
+                                             self.roombox_script,
+                                             message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+        logging.info(f'Executed roombox:{processing_result}')
+        processing_result = SimilarityProcessor.create_layout_object(ProcessingTypesEnum.RoomBox.value,
+                                                                     processing_result)
+        logging.info(f'Executed roombox:{processing_result}')
+        self.create_path_and_save_on_s3(message_type,
+                                        inference_id,
+                                        processing_result,
+                                        image_id,
+                                        image_full_url)
+        logging.info(f'Saved roombox:{processing_result} on s3')
+
     def process_message_in_subprocess(self, message_body: str) -> str:
         processing_result = None
         message_object = json.loads(message_body)
@@ -140,84 +224,42 @@ class SqsProcessor:
         assert inference_id
 
         if message_type == ProcessingTypesEnum.Preprocessing.value:
-            logging.info(f'Start preprocessing similarity inference:{inference_id}')
-            messages_for_sending = SimilarityProcessor.start_pre_processing(message_object)
-            for send_message in messages_for_sending:
-                self.send_message_to_queue(send_message, self.queue_url)
-
-            message_object['returnData'] = {'preprocessing': 'ok'}
-            logging.info(f"Finished processing and updated message:{message_object}.")
-            return json.dumps(message_object)
+            logging.info(f"Start preprocessing message: {message_object}.")
+            return self.run_preprocessing(inference_id, message_object)
 
         if message_type == ProcessingTypesEnum.Similarity.value:
             logging.info(f'Start processing similarity inference:{inference_id}')
-            document_object = SimilarityProcessor.is_similarity_ready(
-                self.s3_helper,
-                message_object)
-            if document_object is not None:
-                processing_result = self.run_process(self.similarity_executable,
-                                                     self.similarity_script,
-                                                     message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-                s3_url = self.create_path_and_save_on_s3(message_type,
-                                                         inference_id,
-                                                         processing_result,
-                                                         "similarity",
-                                                         is_public=True)
-                message_object[StringConstants.DOCUMENT_PATH_KEY] = s3_url
-                logging.info(f'Finished similarity inference:{inference_id} s3 result:{s3_url}')
-                return json.dumps(message_object)
-            else:
-                logging.info(f'Document is under processing inference:{inference_id}')
-                return None
+            return self.run_similarity(inference_id, message_object)
 
         image_id = os.path.basename(message_object[StringConstants.FILE_URL_KEY])
         image_full_url = message_object[StringConstants.FILE_URL_KEY]
         url_hash = hashlib.md5(image_full_url.encode('utf-8')).hexdigest()
 
-        if message_type == ProcessingTypesEnum.RMatrix.value:
+        r_matrix_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value, url_hash, image_id)
 
-            processing_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value,
-                                                     url_hash,
-                                                     image_id)
-            if processing_result is None:
-                logging.info('Processing result is None')
-                processing_result = self.run_process(self.rmatrix_executable,
-                                                     self.rmatrix_script,
-                                                     message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-                self.create_path_and_save_on_s3(ProcessingTypesEnum.RMatrix.value,
-                                                url_hash,
-                                                processing_result,
-                                                image_id,
-                                                image_full_url)
+        if message_type == ProcessingTypesEnum.RMatrix.value and not r_matrix_result:
+            logging.info(f'No r_matrix for file:{url_hash} image:{image_id} on s3 run r_matrix')
 
-        # todo check rotated image
+            r_matrix_result = self.run_rmatrix(message_object, url_hash, image_id, image_full_url)
+
+            logging.info(f'R_matrix:{r_matrix_result}')
+        else:
+            logging.info(f'R_matrix:{r_matrix_result} is taken from s3. Define as processing result.')
+            processing_result = r_matrix_result
+
         rotated_s3_result = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                                        ProcessingTypesEnum.Rotate.value,
                                                        url_hash,
                                                        "",
                                                        image_id)
         rotated_result = self.s3_helper.is_object_exist(rotated_s3_result)
+        logging.info(f'Rotated image is {rotated_result} on s3')
 
+        #  ???  in if -> AND instead OR
         if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
             logging.info('Start processing rotating')
-            processing_result = self.run_process(self.rotate_executable,
-                                                 self.rotate_script,
-                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-            logging.info(f'Result rotating:{processing_result}')
-            self.create_output_file_on_s3(ProcessingTypesEnum.Rotate.value,
-                                          url_hash,
-                                          image_id,
-                                          str(processing_result))
-            processing_result = {'output': f'{processing_result}'}
-            logging.info(f'Saved rotated image:{processing_result} on s3')
-            os.replace(os.path.join(self.output_processing_directory,
-                                    url_hash,
-                                    image_id),
-                       os.path.join(self.input_processing_directory,
-                                    url_hash,
-                                    image_id))
-            logging.info(f'Moved rotated file to input')
-            processing_result = []
+            processing_result = self.run_rotate(message_object, url_hash, image_id, r_matrix_result)
+
         else:
             logging.info(f'Download from s3 key:{rotated_s3_result}')
             self.s3_helper.download_file_object_from_s3(
@@ -228,21 +270,9 @@ class SqsProcessor:
 
         if message_type == ProcessingTypesEnum.RoomBox.value:
             logging.info('Start processing room box')
-            processing_result = self.run_process(self.roombox_executable,
-                                                 self.roombox_script,
-                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-            logging.info(f'Executed roombox:{processing_result}')
-            processing_result = SimilarityProcessor.create_layout_object(ProcessingTypesEnum.RoomBox.value,
-                                                                         processing_result)
-            logging.info(f'Executed roombox:{processing_result}')
-            self.create_path_and_save_on_s3(message_type,
-                                            inference_id,
-                                            processing_result,
-                                            image_id,
-                                            image_full_url)
-            logging.info(f'Saved roombox:{processing_result} on s3')
+            self.run_roombox(message_object, message_type, inference_id, image_id, image_full_url)
 
-        elif message_type == ProcessingTypesEnum.DoorDetecting.value:
+        if message_type == ProcessingTypesEnum.DoorDetecting.value:
             logging.info('Start processing door detecting')
             processing_result = self.run_process(self.doordetecting_executable,
                                                  self.doordetecting_script,
@@ -254,7 +284,7 @@ class SqsProcessor:
                                             image_full_url)
             logging.info(f'Saved door detecting:{processing_result} on s3')
 
-        message_object['returnData'] = json.loads(processing_result or "[]")
+        message_object['returnData'] = json.loads(json.dumps(processing_result) or "[]")
         del message_object[StringConstants.EXECUTABLE_PARAMS_KEY]
         logging.info(f"Finished processing and updated message:{message_object} save result on s3.")
         return json.dumps(message_object)
@@ -263,7 +293,7 @@ class SqsProcessor:
         logging.info(f'Start processing executable:{executable} script:{script} params:{executable_params}')
         subprocess_result = subprocess.run(executable + " " + script + " " + executable_params,
                                            shell=True,
-                                           check=True,
+                                           check=False,
                                            stdout=subprocess.PIPE)
         if not subprocess_result.returncode == 0:
             message = f'Process has failed for process:{executable} script:{script} message:{executable_params}.'

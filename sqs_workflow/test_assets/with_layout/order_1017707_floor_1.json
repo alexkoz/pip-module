@@ -1,0 +1,4012 @@
+{
+    "floor": 1,
+    "fpUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/76fu441i6j/5f0f90925e8a061aff256c76/Tour/map-images/1-floor-5i2cvu550f.jpg",
+    "panos": [
+        {
+            "createdDate": "16.07.2020 02:26:13",
+            "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/76fu441i6j/5f0f90925e8a061aff256c76/Tour/original-images/8ewi530cga.JPG",
+            "layout": [
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_51_b",
+                        "left": "corner_54_t",
+                        "right": "corner_52_t"
+                    },
+                    "id": "corner_51_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "8ewi530cga.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 20.91896842535681,
+                    "y": -23.161895864678243,
+                    "zOrder": 217
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_54_b",
+                        "right": "corner_52_b",
+                        "top": "corner_51_t"
+                    },
+                    "id": "corner_51_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 470.11,
+                        "raw": 471.01
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "8ewi530cga.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 20.91896842535681,
+                    "y": 25.06926436457785,
+                    "zOrder": 217
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_52_b",
+                        "left": "corner_51_t",
+                        "right": "corner_53_t"
+                    },
+                    "id": "corner_52_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "8ewi530cga.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 133.47868248100087,
+                    "y": -29.828889087247656,
+                    "zOrder": 220
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_51_b",
+                        "right": "corner_53_b",
+                        "top": "corner_52_t"
+                    },
+                    "id": "corner_52_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 356.26,
+                        "raw": 356.05
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "8ewi530cga.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 133.47868248100087,
+                    "y": 32.69700147274462,
+                    "zOrder": 220
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_53_b",
+                        "left": "corner_52_t",
+                        "right": "corner_55_t"
+                    },
+                    "id": "corner_53_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "8ewi530cga.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -138.13556618561688,
+                    "y": -25.686501789722154,
+                    "zOrder": 225
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_52_b",
+                        "right": "corner_55_b",
+                        "top": "corner_53_t"
+                    },
+                    "id": "corner_53_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 341.48,
+                        "raw": 338.34
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "8ewi530cga.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -138.13556618561688,
+                    "y": 29.251028712494143,
+                    "zOrder": 208
+                },
+                {
+                    "angle90": false,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_54_b",
+                        "left": "corner_55_t",
+                        "right": "corner_51_t"
+                    },
+                    "id": "corner_54_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "8ewi530cga.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -27.93144861574359,
+                    "y": -23.88502641589496,
+                    "zOrder": 0
+                },
+                {
+                    "angle90": false,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_55_b",
+                        "right": "corner_51_b",
+                        "top": "corner_54_t"
+                    },
+                    "id": "corner_54_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 264.06,
+                        "raw": 262.74
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "8ewi530cga.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -27.93144861574359,
+                    "y": 26.291428370252333,
+                    "zOrder": 222
+                },
+                {
+                    "angle90": false,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_55_b",
+                        "left": "corner_53_t",
+                        "right": "corner_54_t"
+                    },
+                    "id": "corner_55_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "8ewi530cga.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -58.9245809448762,
+                    "y": -36.170349764394196,
+                    "zOrder": 0
+                },
+                {
+                    "angle90": false,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_53_b",
+                        "right": "corner_54_b",
+                        "top": "corner_55_t"
+                    },
+                    "id": "corner_55_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 158.25,
+                        "raw": 158.95
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "8ewi530cga.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -58.9245809448762,
+                    "y": 30.53455179528796,
+                    "zOrder": 224
+                },
+                {
+                    "color": 3373751,
+                    "computedValues": {
+                        "width": 149.2313766684847
+                    },
+                    "elementId": "alpha",
+                    "id": "window_56",
+                    "points": [
+                        {
+                            "x": -19.192387212851884,
+                            "y": -7.937573725621584
+                        },
+                        {
+                            "x": 9.685777258815847,
+                            "y": -7.784434186358501
+                        },
+                        {
+                            "x": 9.685777258815847,
+                            "y": 13.918230331505018
+                        },
+                        {
+                            "x": -19.192387217035844,
+                            "y": 14.184447780230053
+                        }
+                    ],
+                    "room": "8ewi530cga.JPG",
+                    "text": "Window",
+                    "type": "window",
+                    "zOrder": 4
+                },
+                {
+                    "color": 16777215,
+                    "computedValues": {
+                        "width": 78.9724822439915
+                    },
+                    "doorDirectionRight": true,
+                    "doorType": 1,
+                    "elementId": "beta",
+                    "id": "door_58",
+                    "overlap": "link_vxgyscmrpw",
+                    "pathCorner": -1,
+                    "pathDirection": -1,
+                    "points": [
+                        {
+                            "x": 152.49997132451202,
+                            "y": -14.812770377540046
+                        },
+                        {
+                            "x": 134.03979843855706,
+                            "y": -12.321205718849457
+                        },
+                        {
+                            "x": 134.03979843855706,
+                            "y": 32.91068508575002
+                        },
+                        {
+                            "x": 152.499971324512,
+                            "y": 38.08127222523879
+                        }
+                    ],
+                    "positionOffset": 0,
+                    "room": "8ewi530cga.JPG",
+                    "rotationOffset": 0,
+                    "text": "Door: With path<br>width: 2.59 ft",
+                    "to": "54kbn8dnx4.JPG",
+                    "type": "door",
+                    "zOrder": 3
+                },
+                {
+                    "color": 16777215,
+                    "computedValues": {
+                        "width": 88.57660476578621
+                    },
+                    "doorDirectionRight": true,
+                    "doorType": 0,
+                    "elementId": "gamma",
+                    "id": "door_59",
+                    "pathCorner": 1,
+                    "pathDirection": 1,
+                    "points": [
+                        {
+                            "x": -138.40079865632478,
+                            "y": -17.78392790723624
+                        },
+                        {
+                            "x": -154.37244942077893,
+                            "y": -22.105631727106918
+                        },
+                        {
+                            "x": -154.37244942077893,
+                            "y": 35.48338762289011
+                        },
+                        {
+                            "x": -138.4007986563248,
+                            "y": 29.37708045643182
+                        }
+                    ],
+                    "positionOffset": 0,
+                    "room": "8ewi530cga.JPG",
+                    "rotationOffset": 0,
+                    "text": "Door",
+                    "type": "door",
+                    "zOrder": 3
+                }
+            ],
+            "name": "Dining room",
+            "panoId": "5f0f90955e8a061aff256c7a",
+            "pitch": 0.26,
+            "roll": -1.26,
+            "yaw": -8.02
+        },
+        {
+            "createdDate": "16.07.2020 02:26:15",
+            "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/76fu441i6j/5f0f90925e8a061aff256c76/Tour/original-images/fb0cs32y4w.JPG",
+            "layout": [
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_60_b",
+                        "left": "corner_63_t",
+                        "right": "corner_61_t"
+                    },
+                    "id": "corner_60_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "fb0cs32y4w.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -52.57595770394954,
+                    "y": -45.82746115733315,
+                    "zOrder": 230
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_63_b",
+                        "right": "corner_61_b",
+                        "top": "corner_60_t"
+                    },
+                    "id": "corner_60_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 181.11,
+                        "raw": 181.15
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "fb0cs32y4w.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -52.57595770394954,
+                    "y": 60.0188688665592,
+                    "zOrder": 0
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_61_b",
+                        "left": "corner_60_t",
+                        "right": "corner_62_t"
+                    },
+                    "id": "corner_61_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "fb0cs32y4w.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 60.358697776003055,
+                    "y": -34.5186346788265,
+                    "zOrder": 0
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_60_b",
+                        "right": "corner_62_b",
+                        "top": "corner_61_t"
+                    },
+                    "id": "corner_61_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 147.05,
+                        "raw": 147.54
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "fb0cs32y4w.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 60.358697776003055,
+                    "y": 50.02048629504709,
+                    "zOrder": 226
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_62_b",
+                        "left": "corner_61_t",
+                        "right": "corner_63_t"
+                    },
+                    "id": "corner_62_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "fb0cs32y4w.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 125.13776161521926,
+                    "y": -31.264322682334736,
+                    "zOrder": 229
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_61_b",
+                        "right": "corner_63_b",
+                        "top": "corner_62_t"
+                    },
+                    "id": "corner_62_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 181.11,
+                        "raw": 180.67
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "fb0cs32y4w.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 125.13776161521926,
+                    "y": 46.20200362932495,
+                    "zOrder": 233
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_63_b",
+                        "left": "corner_62_t",
+                        "right": "corner_60_t"
+                    },
+                    "id": "corner_63_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "fb0cs32y4w.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -146.63204256019336,
+                    "y": -38.66002840538315,
+                    "zOrder": 231
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_62_b",
+                        "right": "corner_60_b",
+                        "top": "corner_63_t"
+                    },
+                    "id": "corner_63_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 147.05,
+                        "raw": 146.27
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "fb0cs32y4w.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -146.63204256019336,
+                    "y": 53.96855711163726,
+                    "zOrder": 232
+                },
+                {
+                    "color": 16777215,
+                    "computedValues": {
+                        "width": 79.24933166731313
+                    },
+                    "doorDirectionRight": true,
+                    "doorType": 1,
+                    "elementId": "alpha",
+                    "id": "door_64",
+                    "overlap": null,
+                    "pathCorner": 1,
+                    "pathDirection": -1,
+                    "points": [
+                        {
+                            "x": 162.12214432444398,
+                            "y": -29.983539774361674
+                        },
+                        {
+                            "x": -151.48655692421607,
+                            "y": -27.08427183880592
+                        },
+                        {
+                            "x": -151.48655692421096,
+                            "y": 55.4918105010135
+                        },
+                        {
+                            "x": 162.12214368761414,
+                            "y": 58.64439329046224
+                        }
+                    ],
+                    "positionOffset": 0,
+                    "room": "fb0cs32y4w.JPG",
+                    "rotationOffset": 0,
+                    "text": "Door",
+                    "type": "door",
+                    "zOrder": 3
+                }
+            ],
+            "name": "Laundry area",
+            "panoId": "5f0f90975e8a061aff256c7d",
+            "pitch": 0.16,
+            "roll": -1.17,
+            "yaw": -2.86
+        },
+        {
+            "createdDate": "16.07.2020 02:26:16",
+            "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/76fu441i6j/5f0f90925e8a061aff256c76/Tour/original-images/2v9r7yijmz.JPG",
+            "layout": [
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_65_b",
+                        "left": "corner_67_t",
+                        "right": "corner_66_t"
+                    },
+                    "id": "corner_65_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "2v9r7yijmz.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -27.116075987703653,
+                    "y": -21.47281627052441,
+                    "zOrder": 238
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_67_b",
+                        "right": "corner_66_b",
+                        "top": "corner_65_t"
+                    },
+                    "id": "corner_65_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 148.86,
+                        "raw": 149.75
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "2v9r7yijmz.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -27.116075987703653,
+                    "y": 33.529356290727414,
+                    "zOrder": 238
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_66_b",
+                        "left": "corner_65_t",
+                        "right": "corner_68_t"
+                    },
+                    "id": "corner_66_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "2v9r7yijmz.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 11.712705402339395,
+                    "y": -22.07578431475938,
+                    "zOrder": 0
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_65_b",
+                        "right": "corner_68_b",
+                        "top": "corner_66_t"
+                    },
+                    "id": "corner_66_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 327.59,
+                        "raw": 326.49
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "2v9r7yijmz.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 11.712705402339395,
+                    "y": 34.767321297204255,
+                    "zOrder": 235
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_67_b",
+                        "left": "corner_68_t",
+                        "right": "corner_65_t"
+                    },
+                    "id": "corner_67_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "2v9r7yijmz.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -146.20183477469956,
+                    "y": -31.34201524426423,
+                    "zOrder": 0
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_68_b",
+                        "right": "corner_65_b",
+                        "top": "corner_67_t"
+                    },
+                    "id": "corner_67_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 327.59,
+                        "raw": 328.71
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "2v9r7yijmz.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -146.20183477469956,
+                    "y": 45.78162928373213,
+                    "zOrder": 234
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_68_b",
+                        "left": "corner_66_t",
+                        "right": "corner_67_t"
+                    },
+                    "id": "corner_68_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "2v9r7yijmz.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 149.6271101942296,
+                    "y": -34.48747107110036,
+                    "zOrder": 0
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_66_b",
+                        "right": "corner_67_b",
+                        "top": "corner_68_t"
+                    },
+                    "id": "corner_68_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 148.86,
+                        "raw": 147.99
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "2v9r7yijmz.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 149.6271101942296,
+                    "y": 49.85788326340752,
+                    "zOrder": 234
+                },
+                {
+                    "color": 16777215,
+                    "computedValues": {
+                        "width": 67.58027919473957
+                    },
+                    "doorDirectionRight": true,
+                    "doorType": 1,
+                    "elementId": "alpha",
+                    "id": "door_69",
+                    "pathCorner": -1,
+                    "pathDirection": -1,
+                    "points": [
+                        {
+                            "x": -173.81363797063182,
+                            "y": -24.04546229345704
+                        },
+                        {
+                            "x": 154.10753772139975,
+                            "y": -22.977094617231902
+                        },
+                        {
+                            "x": 154.10753772139975,
+                            "y": 50.80860158376648
+                        },
+                        {
+                            "x": -173.81363796602378,
+                            "y": 52.231282075934345
+                        }
+                    ],
+                    "positionOffset": 0,
+                    "room": "2v9r7yijmz.JPG",
+                    "rotationOffset": 0,
+                    "text": "Door",
+                    "type": "door",
+                    "zOrder": 3
+                }
+            ],
+            "name": "Bathroom, Master",
+            "panoId": "5f0f9098734bd35b09a6ac50",
+            "pitch": 0.02,
+            "roll": -0.6,
+            "yaw": -3.31
+        },
+        {
+            "createdDate": "16.07.2020 02:26:16",
+            "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/76fu441i6j/5f0f90925e8a061aff256c76/Tour/original-images/q3x6i8p2pg.JPG",
+            "layout": [
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_70_b",
+                        "left": "corner_73_t",
+                        "right": "corner_71_t"
+                    },
+                    "id": "corner_70_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "q3x6i8p2pg.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -37.76909061431559,
+                    "y": -20.085652953724914,
+                    "zOrder": 253
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_73_b",
+                        "right": "corner_71_b",
+                        "top": "corner_70_t"
+                    },
+                    "id": "corner_70_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 452.68,
+                        "raw": 451.72
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "q3x6i8p2pg.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -37.76909061431559,
+                    "y": 32.14882221204173,
+                    "zOrder": 253
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_71_b",
+                        "left": "corner_70_t",
+                        "right": "corner_72_t"
+                    },
+                    "id": "corner_71_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "q3x6i8p2pg.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 52.999034872542666,
+                    "y": -13.277067604148128,
+                    "zOrder": 252
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_70_b",
+                        "right": "corner_72_b",
+                        "top": "corner_71_t"
+                    },
+                    "id": "corner_71_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 395.92,
+                        "raw": 396.78
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "q3x6i8p2pg.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 52.999034872542666,
+                    "y": 21.96392012067202,
+                    "zOrder": 252
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_72_b",
+                        "left": "corner_71_t",
+                        "right": "corner_75_t"
+                    },
+                    "id": "corner_72_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "q3x6i8p2pg.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 116.65836313994438,
+                    "y": -13.292097120481534,
+                    "zOrder": 0
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_71_b",
+                        "right": "corner_75_b",
+                        "top": "corner_72_t"
+                    },
+                    "id": "corner_72_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 230.94,
+                        "raw": 231.79
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "q3x6i8p2pg.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 116.65836313994438,
+                    "y": 22.146459558814612,
+                    "zOrder": 243
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_73_b",
+                        "left": "corner_74_t",
+                        "right": "corner_70_t"
+                    },
+                    "id": "corner_73_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "q3x6i8p2pg.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -139.39284299052918,
+                    "y": -25.414961927162178,
+                    "zOrder": 0
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_74_b",
+                        "right": "corner_70_b",
+                        "top": "corner_73_t"
+                    },
+                    "id": "corner_73_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 337.14,
+                        "raw": 337.11
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "q3x6i8p2pg.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -139.39284299052918,
+                    "y": 38.678017209350735,
+                    "zOrder": 240
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_74_b",
+                        "left": "corner_75_t",
+                        "right": "corner_73_t"
+                    },
+                    "id": "corner_74_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "q3x6i8p2pg.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 142.64713758420072,
+                    "y": -29.3722389140291,
+                    "zOrder": 0
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_75_b",
+                        "right": "corner_73_b",
+                        "top": "corner_74_t"
+                    },
+                    "id": "corner_74_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 221.74,
+                        "raw": 221.06
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "q3x6i8p2pg.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 142.64713758420072,
+                    "y": 43.80632514131093,
+                    "zOrder": 240
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_75_b",
+                        "left": "corner_72_t",
+                        "right": "corner_74_t"
+                    },
+                    "id": "corner_75_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "q3x6i8p2pg.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 150.97185057294413,
+                    "y": -21.910134449354306,
+                    "zOrder": 254
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_72_b",
+                        "right": "corner_74_b",
+                        "top": "corner_75_t"
+                    },
+                    "id": "corner_75_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 58.77,
+                        "raw": 60.8
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "q3x6i8p2pg.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 150.97185057294413,
+                    "y": 35.520711237464944,
+                    "zOrder": 250
+                },
+                {
+                    "color": 16777215,
+                    "computedValues": {
+                        "width": 72.87002015367827
+                    },
+                    "doorDirectionRight": true,
+                    "doorType": 1,
+                    "elementId": "alpha",
+                    "id": "door_76",
+                    "pathCorner": 1,
+                    "pathDirection": -1,
+                    "points": [
+                        {
+                            "x": -163.24464842284783,
+                            "y": -20.44574096422928
+                        },
+                        {
+                            "x": -141.411158662981,
+                            "y": -16.2507500981192
+                        },
+                        {
+                            "x": -141.41115866298455,
+                            "y": 39.64353137328203
+                        },
+                        {
+                            "x": -163.24464842284786,
+                            "y": 46.660208599843294
+                        }
+                    ],
+                    "positionOffset": 0,
+                    "room": "q3x6i8p2pg.JPG",
+                    "rotationOffset": 0,
+                    "text": "Door",
+                    "type": "door",
+                    "zOrder": 3
+                },
+                {
+                    "color": 16777215,
+                    "computedValues": {
+                        "width": 59.565137886108914
+                    },
+                    "doorDirectionRight": true,
+                    "doorType": 1,
+                    "elementId": "beta",
+                    "id": "door_77",
+                    "pathCorner": 1,
+                    "pathDirection": 1,
+                    "points": [
+                        {
+                            "x": -116.2753260601338,
+                            "y": -20.411535570320737
+                        },
+                        {
+                            "x": -92.00139965129534,
+                            "y": -21.866157672703697
+                        },
+                        {
+                            "x": -92.00139965128795,
+                            "y": 48.62777504195696
+                        },
+                        {
+                            "x": -116.27532597556149,
+                            "y": 46.473780422792174
+                        }
+                    ],
+                    "positionOffset": 0,
+                    "room": "q3x6i8p2pg.JPG",
+                    "rotationOffset": 0,
+                    "text": "Door",
+                    "type": "door",
+                    "zOrder": 3
+                },
+                {
+                    "color": 16777215,
+                    "computedValues": {
+                        "width": 70.17632048673809
+                    },
+                    "doorDirectionRight": true,
+                    "doorType": 1,
+                    "elementId": "gamma",
+                    "id": "door_78",
+                    "pathCorner": 1,
+                    "pathDirection": 1,
+                    "points": [
+                        {
+                            "x": -51.31468397983957,
+                            "y": -15.544984951012077
+                        },
+                        {
+                            "x": -38.8577332782387,
+                            "y": -12.184194150212795
+                        },
+                        {
+                            "x": -38.8577332782387,
+                            "y": 32.87690785210898
+                        },
+                        {
+                            "x": -51.314683895267194,
+                            "y": 39.78442169747722
+                        }
+                    ],
+                    "positionOffset": 0,
+                    "room": "q3x6i8p2pg.JPG",
+                    "rotationOffset": 0,
+                    "text": "Door",
+                    "type": "door",
+                    "zOrder": 3
+                },
+                {
+                    "color": 3373751,
+                    "computedValues": {
+                        "width": 171.95210469568832
+                    },
+                    "elementId": "alpha",
+                    "id": "window_79",
+                    "points": [
+                        {
+                            "x": 69.66733463287079,
+                            "y": -9.404316569803125
+                        },
+                        {
+                            "x": 99.88957718615069,
+                            "y": -9.445559260792026
+                        },
+                        {
+                            "x": 99.88957718615069,
+                            "y": 14.830672721283335
+                        },
+                        {
+                            "x": 69.66733463287073,
+                            "y": 14.767624557839357
+                        }
+                    ],
+                    "room": "q3x6i8p2pg.JPG",
+                    "text": "Window",
+                    "type": "window",
+                    "zOrder": 4
+                },
+                {
+                    "color": 3373751,
+                    "computedValues": {
+                        "width": 176.40171347668536
+                    },
+                    "elementId": "beta",
+                    "id": "window_80",
+                    "points": [
+                        {
+                            "x": 118.38391519298762,
+                            "y": -7.462085415050483
+                        },
+                        {
+                            "x": 143.1724594042454,
+                            "y": -11.500395255618512
+                        },
+                        {
+                            "x": 143.1724594042454,
+                            "y": 30.632496894094853
+                        },
+                        {
+                            "x": 118.38391519298762,
+                            "y": 20.86746671767662
+                        }
+                    ],
+                    "room": "q3x6i8p2pg.JPG",
+                    "text": "Window",
+                    "type": "window",
+                    "zOrder": 4
+                }
+            ],
+            "name": "Bedroom, Master",
+            "panoId": "5f0f90985e8a061aff256c7e",
+            "pitch": -0.22,
+            "roll": -0.75,
+            "yaw": -4.11
+        },
+        {
+            "createdDate": "16.07.2020 02:26:17",
+            "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/76fu441i6j/5f0f90925e8a061aff256c76/Tour/original-images/61d2190xi5.JPG",
+            "layout": [
+                {
+                    "angle90": false,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_81_b",
+                        "left": "corner_89_t",
+                        "right": "corner_88_t"
+                    },
+                    "id": "corner_81_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 159.3417979926268,
+                    "y": -34.26488066106668,
+                    "zOrder": 313
+                },
+                {
+                    "angle90": false,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_89_b",
+                        "right": "corner_88_b",
+                        "top": "corner_81_t"
+                    },
+                    "id": "corner_81_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 245.81,
+                        "raw": 245.9
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 159.3417979926268,
+                    "y": 28.774284435730348,
+                    "zOrder": 282
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_82_b",
+                        "left": "corner_86_t",
+                        "right": "corner_89_t"
+                    },
+                    "id": "corner_82_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 26.818965337891484,
+                    "y": -21.22479815274102,
+                    "zOrder": 310
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_86_b",
+                        "right": "corner_89_b",
+                        "top": "corner_82_t"
+                    },
+                    "id": "corner_82_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 449.21,
+                        "raw": 450.85
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 26.818965337891484,
+                    "y": 23.587550281445935,
+                    "zOrder": 310
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_84_b",
+                        "left": "corner_87_t",
+                        "right": "corner_86_t"
+                    },
+                    "id": "corner_84_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -79.92955124379722,
+                    "y": -22.289380486588012,
+                    "zOrder": 316
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_87_b",
+                        "right": "corner_86_b",
+                        "top": "corner_84_t"
+                    },
+                    "id": "corner_84_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 203.52,
+                        "raw": 204.66
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -79.92955124379722,
+                    "y": 26.954927295146966,
+                    "zOrder": 287
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_86_b",
+                        "left": "corner_84_t",
+                        "right": "corner_82_t"
+                    },
+                    "id": "corner_86_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -50.99840471260808,
+                    "y": -15.428387607646384,
+                    "zOrder": 317
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_84_b",
+                        "right": "corner_82_b",
+                        "top": "corner_86_t"
+                    },
+                    "id": "corner_86_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 478.94,
+                        "raw": 476.8
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -50.99840471260808,
+                    "y": 20.540196145999314,
+                    "zOrder": 267
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_87_b",
+                        "left": "corner_88_t",
+                        "right": "corner_84_t"
+                    },
+                    "id": "corner_87_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -71.46126337080415,
+                    "y": -46.795560320689866,
+                    "zOrder": 320
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_88_b",
+                        "right": "corner_84_b",
+                        "top": "corner_87_t"
+                    },
+                    "id": "corner_87_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 103.99,
+                        "raw": 103.66
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -71.46126337080415,
+                    "y": 36.94971126432154,
+                    "zOrder": 312
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_88_b",
+                        "left": "corner_81_t",
+                        "right": "corner_87_t"
+                    },
+                    "id": "corner_88_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -153.1428304113888,
+                    "y": -33.10587501613064,
+                    "zOrder": 319
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_81_b",
+                        "right": "corner_87_b",
+                        "top": "corner_88_t"
+                    },
+                    "id": "corner_88_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 358.6,
+                        "raw": 356.22
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -153.1428304113888,
+                    "y": 25.207052077793286,
+                    "zOrder": 277
+                },
+                {
+                    "angle90": false,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_89_b",
+                        "left": "corner_82_t",
+                        "right": "corner_81_t"
+                    },
+                    "id": "corner_89_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 123.46140189691002,
+                    "y": -29.46913314022619,
+                    "zOrder": 314
+                },
+                {
+                    "angle90": false,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_82_b",
+                        "right": "corner_81_b",
+                        "top": "corner_89_t"
+                    },
+                    "id": "corner_89_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 171.53,
+                        "raw": 164.26
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": false,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "61d2190xi5.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 123.46140189691002,
+                    "y": 31.58699352045075,
+                    "zOrder": 304
+                },
+                {
+                    "color": 16777215,
+                    "computedValues": {
+                        "width": 89.15736617764503
+                    },
+                    "doorDirectionRight": true,
+                    "doorType": 1,
+                    "elementId": "alpha",
+                    "id": "door_90",
+                    "pathCorner": 1,
+                    "pathDirection": -1,
+                    "points": [
+                        {
+                            "x": 130.7376178619467,
+                            "y": -12.659610572011234
+                        },
+                        {
+                            "x": 151.0403451891238,
+                            "y": -11.953835190889366
+                        },
+                        {
+                            "x": 151.0403451891238,
+                            "y": 30.339480469907166
+                        },
+                        {
+                            "x": 130.73761786194942,
+                            "y": 31.838283829859325
+                        }
+                    ],
+                    "positionOffset": 0,
+                    "room": "61d2190xi5.JPG",
+                    "rotationOffset": 0,
+                    "text": "Door",
+                    "type": "door",
+                    "zOrder": 3
+                },
+                {
+                    "color": 3373751,
+                    "computedValues": {
+                        "width": 56.92078268812077
+                    },
+                    "elementId": "alpha",
+                    "id": "window_91",
+                    "points": [
+                        {
+                            "x": 89.58520125374343,
+                            "y": -12.285879266343725
+                        },
+                        {
+                            "x": 105.36542221543039,
+                            "y": -11.50200975810042
+                        },
+                        {
+                            "x": 105.36542221543039,
+                            "y": 20.451877608005077
+                        },
+                        {
+                            "x": 89.58520125374343,
+                            "y": 21.757601308076033
+                        }
+                    ],
+                    "room": "61d2190xi5.JPG",
+                    "text": "Window",
+                    "type": "window",
+                    "zOrder": 4
+                },
+                {
+                    "color": 3373751,
+                    "computedValues": {
+                        "width": 175.28691524715373
+                    },
+                    "elementId": "beta",
+                    "id": "window_92",
+                    "points": [
+                        {
+                            "x": 39.501297565481536,
+                            "y": -8.769222217522477
+                        },
+                        {
+                            "x": 82.01718184583456,
+                            "y": -12.142358358146636
+                        },
+                        {
+                            "x": 82.01718184583456,
+                            "y": 22.418545779694536
+                        },
+                        {
+                            "x": 39.501297565481536,
+                            "y": 16.47730025826066
+                        }
+                    ],
+                    "room": "61d2190xi5.JPG",
+                    "text": "Window",
+                    "type": "window",
+                    "zOrder": 4
+                },
+                {
+                    "color": 3373751,
+                    "computedValues": {
+                        "width": 58.36133005603867
+                    },
+                    "elementId": "gamma",
+                    "id": "window_93",
+                    "points": [
+                        {
+                            "x": 28.501439463894314,
+                            "y": -7.100906286810885
+                        },
+                        {
+                            "x": 35.673290327426685,
+                            "y": -8.30610010212737
+                        },
+                        {
+                            "x": 35.673290327426685,
+                            "y": 15.291763992584116
+                        },
+                        {
+                            "x": 28.501439463894314,
+                            "y": 13.132142237281776
+                        }
+                    ],
+                    "room": "61d2190xi5.JPG",
+                    "text": "Window",
+                    "type": "window",
+                    "zOrder": 4
+                },
+                {
+                    "color": 3373751,
+                    "computedValues": {
+                        "width": 178.5373395549527
+                    },
+                    "elementId": "delta",
+                    "id": "window_94",
+                    "points": [
+                        {
+                            "x": -21.903309852354823,
+                            "y": -13.078108058739964
+                        },
+                        {
+                            "x": 11.65092374295682,
+                            "y": -12.872292722082186
+                        },
+                        {
+                            "x": 11.650923742954035,
+                            "y": 13.689900091705145
+                        },
+                        {
+                            "x": -21.903309137086808,
+                            "y": 13.90778711780367
+                        }
+                    ],
+                    "room": "61d2190xi5.JPG",
+                    "text": "Window",
+                    "type": "window",
+                    "zOrder": 4
+                },
+                {
+                    "color": 16777215,
+                    "computedValues": {
+                        "width": 77.80144597050106
+                    },
+                    "doorDirectionRight": true,
+                    "doorType": 1,
+                    "elementId": "beta",
+                    "id": "door_95",
+                    "pathCorner": -1,
+                    "pathDirection": -1,
+                    "points": [
+                        {
+                            "x": -27.365709148463566,
+                            "y": -9.178122999081099
+                        },
+                        {
+                            "x": -39.55754425960572,
+                            "y": -8.25313001150081
+                        },
+                        {
+                            "x": -39.55754425960572,
+                            "y": 23.739802941623307
+                        },
+                        {
+                            "x": -27.365708433195493,
+                            "y": 26.10022861893501
+                        }
+                    ],
+                    "positionOffset": 0,
+                    "room": "61d2190xi5.JPG",
+                    "rotationOffset": 0,
+                    "text": "Door",
+                    "type": "door",
+                    "zOrder": 3
+                }
+            ],
+            "name": "Living Room",
+            "panoId": "5f0f90995e8a061aff256c7f",
+            "pitch": 0.67,
+            "roll": -1.19,
+            "yaw": -6.84
+        },
+        {
+            "createdDate": "16.07.2020 02:26:19",
+            "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/76fu441i6j/5f0f90925e8a061aff256c76/Tour/original-images/9kt93s3pk8.JPG",
+            "layout": [
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_96_b",
+                        "left": "corner_97_t",
+                        "right": "corner_99_t"
+                    },
+                    "id": "corner_96_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "9kt93s3pk8.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 28.62156714135415,
+                    "y": -36.92387218833519,
+                    "zOrder": 324
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_97_b",
+                        "right": "corner_99_b",
+                        "top": "corner_96_t"
+                    },
+                    "id": "corner_96_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 213.22,
+                        "raw": 213.64
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "9kt93s3pk8.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 28.62156714135415,
+                    "y": 51.01362078956007,
+                    "zOrder": 0
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_97_b",
+                        "left": "corner_98_t",
+                        "right": "corner_96_t"
+                    },
+                    "id": "corner_97_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "9kt93s3pk8.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -46.798948367901176,
+                    "y": -31.251989184248107,
+                    "zOrder": 332
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_98_b",
+                        "right": "corner_96_b",
+                        "top": "corner_97_t"
+                    },
+                    "id": "corner_97_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 165.91,
+                        "raw": 165.32
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "9kt93s3pk8.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -46.798948367901176,
+                    "y": 46.341699796907996,
+                    "zOrder": 321
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_98_b",
+                        "left": "corner_101_t",
+                        "right": "corner_97_t"
+                    },
+                    "id": "corner_98_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "9kt93s3pk8.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -113.13826073215304,
+                    "y": -39.288873704249355,
+                    "zOrder": 331
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_101_b",
+                        "right": "corner_97_b",
+                        "top": "corner_98_t"
+                    },
+                    "id": "corner_98_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 141.98,
+                        "raw": 142.11
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "9kt93s3pk8.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -113.13826073215304,
+                    "y": 54.70368151131737,
+                    "zOrder": 323
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_99_b",
+                        "left": "corner_96_t",
+                        "right": "corner_100_t"
+                    },
+                    "id": "corner_99_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "9kt93s3pk8.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 146.262918887306,
+                    "y": -35.881365037827656,
+                    "zOrder": 329
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_96_b",
+                        "right": "corner_100_b",
+                        "top": "corner_99_t"
+                    },
+                    "id": "corner_99_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 93.53,
+                        "raw": 94.89
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "9kt93s3pk8.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 146.262918887306,
+                    "y": 50.337554908502995,
+                    "zOrder": 329
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_100_b",
+                        "left": "corner_99_t",
+                        "right": "corner_101_t"
+                    },
+                    "id": "corner_100_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "9kt93s3pk8.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -167.3472202368452,
+                    "y": -37.9241751322682,
+                    "zOrder": 0
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_99_b",
+                        "right": "corner_101_b",
+                        "top": "corner_100_t"
+                    },
+                    "id": "corner_100_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 71.24,
+                        "raw": 72.32
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "9kt93s3pk8.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -167.3472202368452,
+                    "y": 53.6056359985573,
+                    "zOrder": 328
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_101_b",
+                        "left": "corner_100_t",
+                        "right": "corner_98_t"
+                    },
+                    "id": "corner_101_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "9kt93s3pk8.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -144.81262060863716,
+                    "y": -61.299606309764876,
+                    "zOrder": 330
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_100_b",
+                        "right": "corner_98_b",
+                        "top": "corner_101_t"
+                    },
+                    "id": "corner_101_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 72.37,
+                        "raw": 73.08
+                    },
+                    "linkedTo": null,
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "parent": null,
+                    "room": "9kt93s3pk8.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -144.81262060863716,
+                    "y": 73.3259280163024,
+                    "zOrder": 0
+                },
+                {
+                    "color": 16777215,
+                    "computedValues": {
+                        "width": 71.4599030478773
+                    },
+                    "doorDirectionRight": true,
+                    "doorType": 1,
+                    "elementId": "alpha",
+                    "id": "door_102",
+                    "overlap": "link_upzbxuosxa",
+                    "pathCorner": -1,
+                    "pathDirection": -1,
+                    "points": [
+                        {
+                            "x": -171.37344296900295,
+                            "y": -25.668372397422928
+                        },
+                        {
+                            "x": 152.47938825698952,
+                            "y": -23.991312889008697
+                        },
+                        {
+                            "x": 152.47938825698952,
+                            "y": 51.946859369854465
+                        },
+                        {
+                            "x": -171.37344234418126,
+                            "y": 54.06195998988026
+                        }
+                    ],
+                    "positionOffset": 0,
+                    "room": "9kt93s3pk8.JPG",
+                    "rotationOffset": 0,
+                    "text": "Door: With path<br>width: 2.34 ft",
+                    "to": "8ewi530cga.JPG",
+                    "type": "door",
+                    "zOrder": 3
+                }
+            ],
+            "name": "Bathroom, Half",
+            "panoId": "5f0f909b734bd35b09a6ac52",
+            "pitch": 0.68,
+            "roll": -1.81,
+            "yaw": -2.86
+        },
+        {
+            "createdDate": "16.07.2020 02:26:22",
+            "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/76fu441i6j/5f0f90925e8a061aff256c76/Tour/original-images/54kbn8dnx4.JPG",
+            "layout": [
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_103_b",
+                        "left": "corner_104_t",
+                        "right": "corner_106_t"
+                    },
+                    "id": "corner_103_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "54kbn8dnx4.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 33.162874031909894,
+                    "y": -22.65488737632737,
+                    "zOrder": 350
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_104_b",
+                        "right": "corner_106_b",
+                        "top": "corner_103_t"
+                    },
+                    "id": "corner_103_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 593.96,
+                        "raw": 595.05
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "54kbn8dnx4.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 33.162874031909894,
+                    "y": 23.38674979085492,
+                    "zOrder": 344
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_104_b",
+                        "left": "corner_105_t",
+                        "right": "corner_103_t"
+                    },
+                    "id": "corner_104_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "54kbn8dnx4.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -25.470960093565054,
+                    "y": -23.049582111832194,
+                    "zOrder": 349
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_105_b",
+                        "right": "corner_103_b",
+                        "top": "corner_104_t"
+                    },
+                    "id": "corner_104_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 340.95,
+                        "raw": 341.43
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "54kbn8dnx4.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -25.470960093565054,
+                    "y": 23.846119291626348,
+                    "zOrder": 343
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_105_b",
+                        "left": "corner_106_t",
+                        "right": "corner_104_t"
+                    },
+                    "id": "corner_105_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "54kbn8dnx4.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -147.9225137594983,
+                    "y": -22.72611825517627,
+                    "zOrder": 351
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_106_b",
+                        "right": "corner_104_b",
+                        "top": "corner_105_t"
+                    },
+                    "id": "corner_105_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 593.96,
+                        "raw": 592.99
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "54kbn8dnx4.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": -147.9225137594983,
+                    "y": 24.675745391996188,
+                    "zOrder": 341
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "bottom": "corner_106_b",
+                        "left": "corner_103_t",
+                        "right": "corner_105_t"
+                    },
+                    "id": "corner_106_t",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "links": [],
+                    "location": "CEILING",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "54kbn8dnx4.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 151.29019643140975,
+                    "y": -21.834060753639697,
+                    "zOrder": 352
+                },
+                {
+                    "angle90": true,
+                    "children": [],
+                    "deletable": true,
+                    "drawOptions": {
+                        "renderer": "css3d"
+                    },
+                    "edges": {
+                        "left": "corner_103_b",
+                        "right": "corner_105_b",
+                        "top": "corner_106_t"
+                    },
+                    "id": "corner_106_b",
+                    "images": {
+                        "control": "images/pano/marker-yellow.png",
+                        "dotBlue": "images/pano/dotBlue.png",
+                        "dotGreen": "images/pano/dotGreen.png",
+                        "dotRed": "images/pano/dotRed.png",
+                        "dotWhite": "images/pano/dotWhite.png",
+                        "htmlPlacement": "images/pano/htmlPlacement.png",
+                        "lineH": "images/pano/lineH.png",
+                        "lineV": "images/pano/lineV.png",
+                        "locked": "images/pano/marker-locked.png",
+                        "mergeIcon": "images/pano/merge-icon.png",
+                        "pointCeiling": "images/pano/marker-blue.png",
+                        "pointCeiling90": "images/pano/marker-angle-blue.png",
+                        "pointFloor": "images/pano/marker.png",
+                        "pointFloor90": "images/pano/marker-angle.png",
+                        "portal": "images/pano/target.png",
+                        "select": "images/pano/selectbox.png"
+                    },
+                    "lengths": {
+                        "aligned": 340.95,
+                        "raw": 340.61
+                    },
+                    "links": [],
+                    "location": "FLOOR",
+                    "needUpdate": true,
+                    "needUpdateTemlpate": true,
+                    "pano": {},
+                    "room": "54kbn8dnx4.JPG",
+                    "type": "corner",
+                    "visible": true,
+                    "x": 151.29019643140975,
+                    "y": 24.06104494066682,
+                    "zOrder": 339
+                },
+                {
+                    "color": 16777215,
+                    "computedValues": {
+                        "width": 278.59309479267336
+                    },
+                    "doorDirectionRight": true,
+                    "doorType": 6,
+                    "elementId": "alpha",
+                    "id": "door_107",
+                    "pathCorner": 1,
+                    "pathDirection": 1,
+                    "points": [
+                        {
+                            "x": 154.39186935609877,
+                            "y": -10.459145014845092
+                        },
+                        {
+                            "x": -154.45286635307593,
+                            "y": -11.004050796677586
+                        },
+                        {
+                            "x": -154.45286635307593,
+                            "y": 25.89277256094006
+                        },
+                        {
+                            "x": 154.39186936242407,
+                            "y": 24.74138902898805
+                        }
+                    ],
+                    "positionOffset": 0,
+                    "room": "54kbn8dnx4.JPG",
+                    "rotationOffset": 0,
+                    "text": "Door",
+                    "type": "door",
+                    "zOrder": 3
+                },
+                {
+                    "color": 16777215,
+                    "computedValues": {
+                        "width": 71.97554911272209
+                    },
+                    "doorDirectionRight": true,
+                    "doorType": 1,
+                    "elementId": "beta",
+                    "id": "door_108",
+                    "pathCorner": 1,
+                    "pathDirection": 1,
+                    "points": [
+                        {
+                            "x": 35.80435909946351,
+                            "y": -17.074991679581473
+                        },
+                        {
+                            "x": 44.21902962059778,
+                            "y": -20.455211700643225
+                        },
+                        {
+                            "x": 44.21902962059778,
+                            "y": 29.503975135145815
+                        },
+                        {
+                            "x": 35.80435923214196,
+                            "y": 24.985153472533955
+                        }
+                    ],
+                    "positionOffset": 0,
+                    "room": "54kbn8dnx4.JPG",
+                    "rotationOffset": 0,
+                    "text": "Door",
+                    "type": "door",
+                    "zOrder": 3
+                }
+            ],
+            "name": "Garage",
+            "panoId": "5f0f909e734bd35b09a6ac55",
+            "pitch": 1.09,
+            "roll": -1.53,
+            "yaw": 2.41
+        }
+    ],
+    "tourId": "1342386",
+    "tourLink": "https://app.docusketch.com/admin/tour/5f0f90925e8a061aff256c75?accessKey=5fc7&p.device=Desktop&orderId=5f0f917d734bd35b09a6ac5b&dollhousePreview=1"
+}

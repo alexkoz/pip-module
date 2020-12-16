@@ -1,0 +1,227 @@
+{
+  "floor": 1,
+  "fpUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/map-images/1-floor-5ucnzloa3i.jpg",
+  "panos": [
+    {
+      "createdDate": "01.06.2020 14:56:41",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/di7z4k5425.JPG",
+      "name": "Main Entry",
+      "panoId": "5ed4ecf9eac0e75ce1884a0e",
+      "pitch": -0.46,
+      "roll": 0.05,
+      "yaw": 1.77
+    },
+    {
+      "createdDate": "01.06.2020 14:56:41",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/f63ubad57u.JPG",
+      "name": "Kitchen",
+      "panoId": "5ed4ecf9e9ecff21cfd718c0",
+      "pitch": -0.55,
+      "roll": -0.21,
+      "yaw": -2.58
+    },
+    {
+      "createdDate": "01.06.2020 14:56:42",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/d5r69z203i.JPG",
+      "name": "Kitchen 2",
+      "panoId": "5ed4ecfaeac0e75ce1884a0f",
+      "parentPanoId": "5ed4ecf9e9ecff21cfd718c0",
+      "pitch": -1.35,
+      "roll": -0.35,
+      "yaw": 40.91
+    },
+    {
+      "createdDate": "01.06.2020 14:56:42",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/18zg9872p3.JPG",
+      "name": "Dining room",
+      "panoId": "5ed4ecfae9ecff21cfd718c1",
+      "pitch": -0.71,
+      "roll": 0.15,
+      "yaw": 1.65
+    },
+    {
+      "createdDate": "01.06.2020 14:56:42",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/xo5sk2d6hz.JPG",
+      "name": "Dining room 2",
+      "panoId": "5ed4ecfaeac0e75ce1884a10",
+      "parentPanoId": "5ed4ecfae9ecff21cfd718c1",
+      "pitch": -0.2,
+      "roll": -0.22,
+      "yaw": 39.15
+    },
+    {
+      "createdDate": "01.06.2020 14:56:42",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/x3845c7hrl.JPG",
+      "name": "Living Room",
+      "panoId": "5ed4ecfae9ecff21cfd718c2",
+      "pitch": -0.36,
+      "roll": 0.02,
+      "yaw": 32.58
+    },
+    {
+      "createdDate": "01.06.2020 14:56:42",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/2sc86kpj70.JPG",
+      "name": "Living Room 2",
+      "panoId": "5ed4ecfaeac0e75ce1884a11",
+      "parentPanoId": "5ed4ecfae9ecff21cfd718c2",
+      "pitch": -1.04,
+      "roll": -0.02,
+      "yaw": 3.41
+    },
+    {
+      "createdDate": "01.06.2020 14:56:42",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/1m164u2113.JPG",
+      "name": "Hallway",
+      "panoId": "5ed4ecfae9ecff21cfd718c3",
+      "pitch": -0.94,
+      "roll": 0.25,
+      "yaw": -5.71
+    },
+    {
+      "createdDate": "01.06.2020 14:56:42",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/82o0j5993l.JPG",
+      "name": "Hallway 2",
+      "panoId": "5ed4ecfaeac0e75ce1884a12",
+      "parentPanoId": "5ed4ecfae9ecff21cfd718c3",
+      "pitch": -0.64,
+      "roll": -0.14,
+      "yaw": -0.49
+    },
+    {
+      "createdDate": "01.06.2020 14:56:43",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/hlx6x4x99m.JPG",
+      "name": "Hallway 3",
+      "panoId": "5ed4ecfbe9ecff21cfd718c4",
+      "parentPanoId": "5ed4ecfae9ecff21cfd718c3",
+      "pitch": -0.55,
+      "roll": -0.34,
+      "yaw": -4.42
+    },
+    {
+      "createdDate": "01.06.2020 14:56:43",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/ty0gnunjjm.JPG",
+      "name": "Hallway Bathroom",
+      "panoId": "5ed4ecfbeac0e75ce1884a13",
+      "pitch": 0.29,
+      "roll": 0.52,
+      "yaw": -3.76
+    },
+    {
+      "createdDate": "01.06.2020 14:56:43",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/kzqjysjh46.JPG",
+      "name": "Hallway Bathroom 2",
+      "panoId": "5ed4ecfbe9ecff21cfd718c5",
+      "parentPanoId": "5ed4ecfbeac0e75ce1884a13",
+      "pitch": -0.14,
+      "roll": -0.13,
+      "yaw": -28.06
+    },
+    {
+      "createdDate": "01.06.2020 14:56:43",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/n0l066b0r4.JPG",
+      "name": "Small Bedroom",
+      "panoId": "5ed4ecfbeac0e75ce1884a14",
+      "pitch": -0.56,
+      "roll": -1.05,
+      "yaw": -43.65
+    },
+    {
+      "createdDate": "01.06.2020 14:56:43",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/ecxa55y03b.JPG",
+      "name": "Small Bedroom 2",
+      "panoId": "5ed4ecfbe9ecff21cfd718c6",
+      "parentPanoId": "5ed4ecfbeac0e75ce1884a14",
+      "pitch": -0.87,
+      "roll": 0.39,
+      "yaw": 37.28
+    },
+    {
+      "createdDate": "01.06.2020 14:56:43",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/7896e3650n.JPG",
+      "name": "Master Bedroom",
+      "panoId": "5ed4ecfbeac0e75ce1884a15",
+      "pitch": -0.47,
+      "roll": -0.69,
+      "yaw": -38.12
+    },
+    {
+      "createdDate": "01.06.2020 14:56:44",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/8r9j66v11x.JPG",
+      "name": "Master Bedroom 2",
+      "panoId": "5ed4ecfce9ecff21cfd718c7",
+      "parentPanoId": "5ed4ecfbeac0e75ce1884a15",
+      "pitch": -0.69,
+      "roll": 0.14,
+      "yaw": 37.28
+    },
+    {
+      "createdDate": "01.06.2020 14:56:44",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/h23me8r766.JPG",
+      "name": "Bedroom ",
+      "panoId": "5ed4ecfceac0e75ce1884a16",
+      "pitch": -0.44,
+      "roll": -1.19,
+      "yaw": 30.04
+    },
+    {
+      "createdDate": "01.06.2020 14:56:44",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/29utxb8t4f.JPG",
+      "name": "Bedroom  2",
+      "panoId": "5ed4ecfce9ecff21cfd718c8",
+      "parentPanoId": "5ed4ecfceac0e75ce1884a16",
+      "pitch": -0.32,
+      "roll": -0.57,
+      "yaw": 34.96
+    },
+    {
+      "createdDate": "01.06.2020 14:56:44",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/305d183xh5.JPG",
+      "name": "Bathroom",
+      "panoId": "5ed4ecfceac0e75ce1884a17",
+      "pitch": -0.77,
+      "roll": -0.46,
+      "yaw": -8.41
+    },
+    {
+      "createdDate": "01.06.2020 14:56:44",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/s2gn1ls870.JPG",
+      "name": "Bathroom 2",
+      "panoId": "5ed4ecfce9ecff21cfd718c9",
+      "parentPanoId": "5ed4ecfceac0e75ce1884a17",
+      "pitch": -0.64,
+      "roll": -0.16,
+      "yaw": -13.71
+    },
+    {
+      "createdDate": "01.06.2020 14:56:44",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/b7wk34u101.JPG",
+      "name": "Kitchen 3",
+      "panoId": "5ed4ecfceac0e75ce1884a18",
+      "parentPanoId": "5ed4ecf9e9ecff21cfd718c0",
+      "pitch": -1.07,
+      "roll": -0.72,
+      "yaw": 7.26
+    },
+    {
+      "createdDate": "01.06.2020 14:56:44",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/jth5z9w0up.JPG",
+      "name": "Attached Garage",
+      "panoId": "5ed4ecfce9ecff21cfd718ca",
+      "pitch": -1.1,
+      "roll": -0.08,
+      "yaw": 12.77
+    },
+    {
+      "createdDate": "01.06.2020 14:56:45",
+      "fileUrl": "https://docusketch-production-resources.s3.amazonaws.com/items/u5li5808v8/5ed4ecf7e9ecff21cfd718b8/Tour/original-images/bk9ud1320w.JPG",
+      "name": "Attached Garage 2",
+      "panoId": "5ed4ecfdeac0e75ce1884a19",
+      "parentPanoId": "5ed4ecfce9ecff21cfd718ca",
+      "pitch": -0.7,
+      "roll": 0.24,
+      "yaw": -2.66
+    }
+  ],
+  "tourId": "1334373",
+  "tourLink": "https://app.docusketch.com/admin/tour/5ed4ecf7e9ecff21cfd718b7?accessKey=5e8b&p.device=Desktop&orderId=5ed4edefe9ecff21cfd718d1&dollhousePreview=1"
+}

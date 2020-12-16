@@ -129,6 +129,6 @@ dmypy.json
 .pyre/
 .idea/
 
-sqs_workflow/tmp/
+tmp/
 
 logging_config.ini
