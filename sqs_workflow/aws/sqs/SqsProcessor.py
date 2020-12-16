@@ -115,7 +115,13 @@ class SqsProcessor:
                                                          image_full_url,
                                                          is_public)
         logging.info(f'Created S3 object key:{s3_path} url:{s3_url} content:{processing_result}')
-        return s3_url
+        s3_object = {
+            "key": s3_path,
+            "bucket": self.s3_helper.s3_bucket,
+            "region": os.environ['S3_REGION'],
+            "url": s3_url
+        }
+        return s3_object
 
     def create_output_file_on_s3(self, message_type: str,
                                  image_hash: str,
@@ -149,13 +155,13 @@ class SqsProcessor:
             processing_result = self.run_process(self.similarity_executable,
                                                  self.similarity_script,
                                                  message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-            s3_url = self.create_path_and_save_on_s3(ProcessingTypesEnum.Similarity.value,
+            s3_object = self.create_path_and_save_on_s3(ProcessingTypesEnum.Similarity.value,
                                                      inference_id,
                                                      processing_result,
                                                      "similarity",
                                                      is_public=True)
-            message_object[StringConstants.DOCUMENT_PATH_KEY] = s3_url
-            logging.info(f'Finished similarity inference:{inference_id} s3 result:{s3_url}')
+            message_object[StringConstants.DOCUMENT_PATH_KEY] = s3_object
+            logging.info(f'Finished similarity inference:{inference_id} s3 result:{s3_object}')
             return json.dumps(message_object)
         else:
             logging.info(f'Document is under processing inference:{inference_id}')
