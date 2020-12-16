@@ -177,7 +177,10 @@ class SqsProcessor:
                 return None
 
         image_full_url = message_object[StringConstants.FILE_URL_KEY]
-        image_id = os.path.basename(image_full_url)[:os.path.basename(image_full_url).find('?')]
+        if "?" in image_full_url:
+            image_id = os.path.basename(image_full_url)[:os.path.basename(image_full_url).find('?')]
+        else:
+            image_id = os.path.basename(image_full_url)
         url_hash = hashlib.md5(image_full_url.encode('utf-8')).hexdigest()
         logging.info(f" Hash:{url_hash}, id:{image_id}, url:{image_full_url}")
         if message_type == ProcessingTypesEnum.RMatrix.value:
@@ -323,7 +326,10 @@ class SqsProcessor:
             logging.info(f'Similarity does not have a document yet. Use steps document.')
 
         url_file_name = message_object[StringConstants.FILE_URL_KEY]
-        file_name = os.path.basename(url_file_name)[:os.path.basename(url_file_name).find('?')]
+        if "?" in url_file_name:
+            file_name = os.path.basename(url_file_name)[:os.path.basename(url_file_name).find('?')]
+        else:
+            file_name = os.path.basename(url_file_name)
         url_hash = hashlib.md5(url_file_name.encode('utf-8')).hexdigest()
         logging.info(f"Download url:{url_file_name} file:{file_name} hash:{url_hash}")
         input_path = os.path.join(self.input_processing_directory, url_hash)
