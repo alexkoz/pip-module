@@ -138,7 +138,7 @@ class SqsProcessor:
         logging.info(f'Created S3 object key:{s3_path} file:{image_absolute_path}')
 
     def process_message_in_subprocess(self, message_body: str) -> str:
-        processing_result = []
+
         message_object = json.loads(message_body)
         inference_id = str(message_object[StringConstants.INFERENCE_ID_KEY])
         message_type = str(message_object[StringConstants.MESSAGE_TYPE_KEY])
@@ -195,6 +195,7 @@ class SqsProcessor:
                                                 processing_result,
                                                 image_id,
                                                 image_full_url)
+                logging.info(f'Processing result:{processing_result}')
 
         # todo check rotated image
         rotated_s3_result = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
@@ -215,7 +216,7 @@ class SqsProcessor:
                                           image_id,
                                           str(rotated_result))
 
-            logging.info(f'Saved rotated image:{processing_result} on s3')
+            logging.info(f'Saved rotated image:{rotated_result} on s3')
             os.replace(os.path.join(self.output_processing_directory,
                                     url_hash,
                                     image_id),
@@ -259,7 +260,7 @@ class SqsProcessor:
                                             image_full_url)
             logging.info(f'Saved door detecting:{processing_result} on s3')
 
-        message_object['returnData'] = json.loads(processing_result or "[]")
+        message_object['returnData'] = json.loads(processing_result)
         del message_object[StringConstants.EXECUTABLE_PARAMS_KEY]
         logging.info(f"Finished processing and updated message:{message_object} save result on s3.")
         return json.dumps(message_object)
