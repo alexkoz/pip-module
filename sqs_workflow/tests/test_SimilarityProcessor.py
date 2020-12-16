@@ -2,6 +2,7 @@ import hashlib
 import json
 import logging
 import os
+import sys
 from pathlib import Path
 from unittest import TestCase
 
@@ -10,8 +11,8 @@ from sqs_workflow.tests.S3HelperMock import S3HelperMock
 from sqs_workflow.tests.test_sqsProcessor import TestSqsProcessor
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
-from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
 from sqs_workflow.utils.Utils import Utils
+from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
@@ -33,10 +34,22 @@ class TestSimilarityProcessor(TestCase):
         os.environ['IMMO_ACCESS'] = "clipnow"
         os.environ['IMMO_SECRET'] = "clipnow"
         os.environ['IMMO_REGION_NAME'] = 'eu-west-1'
+        os.environ['IMMO_AWS_PROFILE'] = 'clipnow'
         os.environ['DOCU_AWS_PROFILE'] = 'sqs'
         os.environ['DOCU_ACCESS'] = 'sqs'
         os.environ['DOCU_SECRET'] = 'sqs'
         os.environ['S3_REGION'] = 'sqs'
+        aids = os.path.join(self.common_path, 'aids')
+        os.environ[f'{ProcessingTypesEnum.Similarity.value}_EXECUTABLE'] = sys.executable
+        os.environ[f'{ProcessingTypesEnum.Similarity.value}_SCRIPT'] = os.path.join(aids, 'dummy_similarity.py')
+        os.environ[f'{ProcessingTypesEnum.RoomBox.value}_EXECUTABLE'] = sys.executable
+        os.environ[f'{ProcessingTypesEnum.RoomBox.value}_SCRIPT'] = os.path.join(aids, 'dummy_roombox.py')
+        os.environ[f'{ProcessingTypesEnum.RMatrix.value}_EXECUTABLE'] = sys.executable
+        os.environ[f'{ProcessingTypesEnum.RMatrix.value}_SCRIPT'] = os.path.join(aids, 'dummy_rmatrix.py')
+        os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_EXECUTABLE'] = sys.executable
+        os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_SCRIPT'] = os.path.join(aids, 'dummy_dd.py')
+        os.environ[f'{ProcessingTypesEnum.Rotate.value}_EXECUTABLE'] = sys.executable
+        os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT'] = os.path.join(aids, 'dummy_rmatrix.py')
         Utils.download_from_http = TestSqsProcessor.download_from_http
 
     def test_create_layout_object(self):
@@ -126,16 +139,17 @@ class TestSimilarityProcessor(TestCase):
                     or message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.RoomBox.value)
 
     def test_is_similarity_ready(self):
+
+        Utils.download_from_http = TestSqsProcessor.download_from_http
         similarity_message_w_document_path = {
             StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Similarity.value,
-            StringConstants.DOCUMENT_PATH_KEY: os.path.join(self.common_path, 'test_assets', 'two_panos.json'),  # "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+            StringConstants.DOCUMENT_PATH_KEY: f"{self.common_path}/test_assets/fccc6d02b113260b57db5569e8f9c897/order_1012550_floor_1.json.json",
             StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
             StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64"
         }
 
         res = self.similarity_processor.is_similarity_ready(S3HelperMock([]), similarity_message_w_document_path)
-        self.assertTrue(len(res[StringConstants.PANOS_KEY]))
-        # self.assertTrue(len(res[StringConstants.PANOS_KEY]) == 2)
+        self.assertTrue(len(res[StringConstants.PANOS_KEY]) == 23)
 
         hash_document_path = hashlib.md5(
             similarity_message_w_document_path.get(StringConstants.DOCUMENT_PATH_KEY).encode('utf-8')).hexdigest()
@@ -145,7 +159,7 @@ class TestSimilarityProcessor(TestCase):
         similarity_message_w_steps_document_path = {
 
             StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Similarity.value,
-            StringConstants.STEPS_DOCUMENT_PATH_KEY: f"file://{str(Path.home())}/projects/python/misc/sqs_workflow/sqs_workflow/test_assets/two_panos.json",
+            StringConstants.DOCUMENT_PATH_KEY: f"{self.common_path}/test_assets/with_layout/order_1017707_floor_1.json",
             StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
             StringConstants.INFERENCE_ID_KEY: 100,
             StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
@@ -156,9 +170,3 @@ class TestSimilarityProcessor(TestCase):
 
         res2 = self.similarity_processor.is_similarity_ready(S3HelperMock([]), similarity_message_w_steps_document_path)
         self.assertTrue(res2[StringConstants.PANOS_KEY][0]['layout'])
-
-        # Checks that input file modified
-        input_path = similarity_message_w_steps_document_path[StringConstants.EXECUTABLE_PARAMS_KEY].split(' ')[1]
-        with open(input_path) as f:
-            modified_json_contains = json.load(f)
-        self.assertTrue(modified_json_contains[StringConstants.PANOS_KEY][0]['layout'])

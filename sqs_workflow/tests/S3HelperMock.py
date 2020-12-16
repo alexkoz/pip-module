@@ -8,6 +8,7 @@ class S3HelperMock(S3Helper):
 
     def __init__(self, existing_keys):
         self.existing_keys = existing_keys
+        self.s3_bucket = os.environ['S3_BUCKET']
 
     def is_object_exist(self, s3_key: str) -> bool:
         logging.info(f'Start checking object: {s3_key}')

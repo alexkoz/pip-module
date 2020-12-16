@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from unittest import TestCase
 
-from sqs_workflow.tests.S3HelperMock import S3HelperMock
+from S3HelperMock import S3HelperMock
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 from sqs_workflow.tests.QueueMock import QueueMock
@@ -35,14 +35,14 @@ class TestSqsProcessor(TestCase):
     def download_from_http(url: str, absolute_file_path=None) -> str:
         content = '{}'
         if os.path.exists(url):
-            print('exists')
             with open(url, 'r') as read_file:
-                new_content = read_file.read()
-                # read_file.close()
-                return new_content
-        with open(absolute_file_path, 'w') as document_file:
-            document_file.write(content)
-            document_file.close()
+                content = read_file.read()
+                read_file.close()
+
+        if absolute_file_path is not None:
+            with open(absolute_file_path, 'w') as document_file:
+                document_file.write(content)
+                document_file.close()
         return content
 
     def setUp(self):
@@ -571,7 +571,7 @@ class TestSqsProcessor(TestCase):
         processing_result = 'test-processing-result-content'
         image_url = 'http://s3.com/path/image.jpg'
         self.processor.s3_helper = s3_helper
-        s3_url = self.processor.create_path_and_save_on_s3(message_type,
+        s3_object = self.processor.create_path_and_save_on_s3(message_type,
                                                            inference_id,
                                                            processing_result,
                                                            image_id,
@@ -582,7 +582,7 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(
             'api/inference/test-message-type/test-inference-id/test-image-id/result.json' in s3_helper.existing_keys)
         self.assertTrue(
-            s3_url == 'https://TEST-BUCKET.s3-eu-west-1.amazonaws.com/api/inference/test-message-type/test-inference-id/test-image-id/result.json')
+            s3_object['url'] == 'https://TEST-BUCKET.s3-eu-west-1.amazonaws.com/api/inference/test-message-type/test-inference-id/test-image-id/result.json')
 
     @staticmethod
     def clear_local_directories():
