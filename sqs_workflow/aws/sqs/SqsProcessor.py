@@ -323,7 +323,7 @@ class SqsProcessor:
             logging.info(f'Similarity does not have a document yet. Use steps document.')
 
         url_file_name = message_object[StringConstants.FILE_URL_KEY]
-        file_name = os.path.basename(url_file_name)
+        file_name = os.path.basename(url_file_name)[:os.path.basename(url_file_name).find('?')]
         url_hash = hashlib.md5(url_file_name.encode('utf-8')).hexdigest()
         logging.info(f"Download url:{url_file_name} file:{file_name} hash:{url_hash}")
         input_path = os.path.join(self.input_processing_directory, url_hash)
