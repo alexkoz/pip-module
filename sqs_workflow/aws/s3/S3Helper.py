@@ -10,7 +10,7 @@ class S3Helper:
 
     def __init__(self):
 
-        self.s3_bucket = os.environ['S3_BUCKET']
+        self.s3_bucket = f"{os.environ['S3_BUCKET']}-{os.environ['APP_BRANCH']}"
         self.s3_client = boto3.client(
             's3',
             aws_access_key_id=os.environ['IMMO_ACCESS'],
