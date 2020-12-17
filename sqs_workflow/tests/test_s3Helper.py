@@ -5,7 +5,6 @@ from pathlib import Path
 from unittest import TestCase
 
 from sqs_workflow.aws.s3.S3Helper import S3Helper
-from sqs_workflow.tests.test_sqsProcessor import TestSqsProcessor
 
 
 class TestS3Helper(TestCase):

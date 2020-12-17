@@ -31,6 +31,7 @@ class TestSimilarityProcessor(TestCase):
         os.environ['INPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'input')
         os.environ['OUTPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'output')
         os.environ['S3_BUCKET'] = "test_bucket"
+        os.environ['APP_BRANCH'] = "test_bucket"
         os.environ['IMMO_ACCESS'] = "clipnow"
         os.environ['IMMO_SECRET'] = "clipnow"
         os.environ['IMMO_REGION_NAME'] = 'eu-west-1'
