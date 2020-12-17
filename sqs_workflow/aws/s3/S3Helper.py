@@ -41,8 +41,10 @@ class S3Helper:
         )
         s3 = session.resource('s3')
         obj = s3.Object(self.s3_bucket, s3_key)
-        obj.put(Body=object_body,
-                Tagging=f'{StringConstants.FILE_URL_KEY}={full_url_tag}')
+        # full_url_tag = f'{StringConstants.FILE_URL_KEY}={full_url_tag}'
+        # logging.info(f"Tag for object:{full_url_tag}")
+        obj.put(Body=object_body)
+                # Tagging=full_url_tag)
         if is_public:
             object_acl = s3.ObjectAcl(self.s3_bucket, s3_key)
             object_acl.put(ACL='public-read')
