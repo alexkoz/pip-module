@@ -178,7 +178,8 @@ class SqsProcessor:
                                         image_full_url)
         return processing_result
 
-    def run_rotate(self, message_object, url_hash, image_id, r_matrix_result):
+    def run_rotate(self, message_object, url_hash:str, image_id: str, r_matrix_result):
+        assert r_matrix_result
         processing_result = self.run_process(self.rotate_executable,
                                              self.rotate_script,
                                              message_object[
@@ -240,7 +241,7 @@ class SqsProcessor:
 
         r_matrix_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value, url_hash, image_id)
 
-        if message_type == ProcessingTypesEnum.RMatrix.value and not r_matrix_result:
+        if message_type == ProcessingTypesEnum.RMatrix.value and r_matrix_result is not None:
             logging.info(f'No r_matrix for file:{url_hash} image:{image_id} on s3 run r_matrix')
 
             r_matrix_result = self.run_rmatrix(message_object, url_hash, image_id, image_full_url)
@@ -262,7 +263,7 @@ class SqsProcessor:
         if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
             logging.info('Start processing rotating')
             processing_result = self.run_rotate(message_object, url_hash, image_id, r_matrix_result)
-
+            logging.info(f'Rotation result:{processing_result}')
         else:
             logging.info(f'Download from s3 key:{rotated_s3_result}')
             self.s3_helper.download_file_object_from_s3(
