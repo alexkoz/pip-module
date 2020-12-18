@@ -156,10 +156,10 @@ class SqsProcessor:
                                                  self.similarity_script,
                                                  message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
             s3_object = self.create_path_and_save_on_s3(ProcessingTypesEnum.Similarity.value,
-                                                     inference_id,
-                                                     processing_result,
-                                                     "similarity",
-                                                     is_public=True)
+                                                        inference_id,
+                                                        processing_result,
+                                                        "similarity",
+                                                        is_public=True)
             message_object[StringConstants.DOCUMENT_PATH_KEY] = s3_object
             logging.info(f'Finished similarity inference:{inference_id} s3 result:{s3_object}')
             return json.dumps(message_object)
@@ -178,7 +178,7 @@ class SqsProcessor:
                                         image_full_url)
         return processing_result
 
-    def run_rotate(self, message_object, url_hash:str, image_id: str, r_matrix_result):
+    def run_rotate(self, message_object, url_hash: str, image_id: str, r_matrix_result):
         assert r_matrix_result
         processing_result = self.run_process(self.rotate_executable,
                                              self.rotate_script,
@@ -202,19 +202,37 @@ class SqsProcessor:
         return processing_result
 
     def run_roombox(self, message_object, message_type, inference_id, image_id, image_full_url):
-        processing_result = self.run_process(self.roombox_executable,
-                                             self.roombox_script,
-                                             message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-        logging.info(f'Executed roombox:{processing_result}')
-        processing_result = SimilarityProcessor.create_layout_object(ProcessingTypesEnum.RoomBox.value,
-                                                                     processing_result)
-        logging.info(f'Executed roombox:{processing_result}')
+        room_box_result = self.run_process(self.roombox_executable,
+                                           self.roombox_script,
+                                           message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+        logging.info(f'Executed roombox:{room_box_result}')
+        room_box_result = SimilarityProcessor.create_layout_object(ProcessingTypesEnum.RoomBox.value,
+                                                                   room_box_result)
+        logging.info(f'Executed roombox:{room_box_result}')
         self.create_path_and_save_on_s3(message_type,
                                         inference_id,
-                                        processing_result,
+                                        room_box_result,
                                         image_id,
                                         image_full_url)
-        logging.info(f'Saved roombox:{processing_result} on s3')
+        logging.info(f'Saved roombox:{room_box_result} on s3')
+        return json.loads(room_box_result)
+
+    def run_door_detecting(self, message_type: str,
+                           message_object,
+                           inference_id: str,
+                           image_id: str,
+                           image_full_url: str):
+        logging.info('Start processing door detecting')
+        door_detecting_result = self.run_process(self.doordetecting_executable,
+                                                 self.doordetecting_script,
+                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+        self.create_path_and_save_on_s3(message_type,
+                                        inference_id,
+                                        door_detecting_result,
+                                        image_id,
+                                        image_full_url)
+        logging.info(f'Saved door detecting:{door_detecting_result} on s3')
+        return json.loads(door_detecting_result)
 
     def process_message_in_subprocess(self, message_body: str) -> str:
         processing_result = None
@@ -274,19 +292,12 @@ class SqsProcessor:
 
         if message_type == ProcessingTypesEnum.RoomBox.value:
             logging.info('Start processing room box')
-            self.run_roombox(message_object, message_type, inference_id, image_id, image_full_url)
+            processing_result = self.run_roombox(message_object, message_type, inference_id, image_id, image_full_url)
 
         if message_type == ProcessingTypesEnum.DoorDetecting.value:
             logging.info('Start processing door detecting')
-            processing_result = self.run_process(self.doordetecting_executable,
-                                                 self.doordetecting_script,
-                                                 message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
-            self.create_path_and_save_on_s3(message_type,
-                                            inference_id,
-                                            processing_result,
-                                            image_id,
-                                            image_full_url)
-            logging.info(f'Saved door detecting:{processing_result} on s3')
+            processing_result = self.run_door_detecting(message_type, message_object, inference_id, image_id,
+                                                        image_full_url)
 
         message_object['returnData'] = json.loads(json.dumps(processing_result) or "[]")
         del message_object[StringConstants.EXECUTABLE_PARAMS_KEY]
