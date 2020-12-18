@@ -183,7 +183,7 @@ class SqsProcessor:
         processing_result = self.run_process(self.rotate_executable,
                                              self.rotate_script,
                                              message_object[
-                                                 StringConstants.EXECUTABLE_PARAMS_KEY] + f" --rotation_matrix {r_matrix_result}")
+                                                 StringConstants.EXECUTABLE_PARAMS_KEY] + f" --rotation_matrix \"{r_matrix_result}\"")
         logging.info(f'Result rotating:{processing_result}')
         self.create_output_file_on_s3(ProcessingTypesEnum.Rotate.value,
                                       url_hash,
