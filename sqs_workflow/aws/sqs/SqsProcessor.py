@@ -241,7 +241,7 @@ class SqsProcessor:
 
         r_matrix_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value, url_hash, image_id)
 
-        if message_type == ProcessingTypesEnum.RMatrix.value or r_matrix_result is not None:
+        if message_type == ProcessingTypesEnum.RMatrix.value or r_matrix_result is None:
             logging.info(f'No r_matrix for file:{url_hash} image:{image_id} on s3 run r_matrix')
 
             r_matrix_result = self.run_rmatrix(message_object, url_hash, image_id, image_full_url)
