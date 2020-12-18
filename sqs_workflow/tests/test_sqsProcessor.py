@@ -60,7 +60,7 @@ class TestSqsProcessor(TestCase):
         os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_EXECUTABLE'] = sys.executable
         os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_SCRIPT'] = os.path.join(aids, 'dummy_dd.py')
         os.environ[f'{ProcessingTypesEnum.Rotate.value}_EXECUTABLE'] = sys.executable
-        os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT'] = os.path.join(aids, 'dummy_rmatrix.py')
+        os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT'] = os.path.join(aids, 'dummy_rotate.py')
         os.environ['IMMO_AWS_PROFILE'] = "clipnow"
         os.environ['IMMO_ACCESS'] = "clipnow"
         os.environ['IMMO_SECRET'] = "clipnow"
@@ -377,11 +377,17 @@ class TestSqsProcessor(TestCase):
         def create_output_file_on_s3_mock(ProcessingTypesEnum, url_hash, image_id, processing_result):
             return 'test_output_file_to_s3'
 
-        def download_file_object_from_s3_mock(rotated_s3_result, input_path, url_hash, image_id):
+        def download_file_object_from_s3_mock(url_hash, image_id):
             return 'rest'
 
         def download_fileobj_mock():
             return 'result'
+
+        def rotated_result_on_s3_exists(rotated_s3_result):
+            return True
+
+        def rotated_result_on_s3_none(rotated_s3_result):
+            return None
 
         self.s3_helper = S3HelperMock(['api/inference/ROTATE/294ee74d8d88a37523c2e28e5c0e150c/s7zu187383.JPG'])
         self.processor.s3_helper = self.s3_helper
@@ -422,15 +428,32 @@ class TestSqsProcessor(TestCase):
                            StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
         rmatrix_message = json.dumps(rmatrix_message)
 
-        # PRY results exists on S3
+        # # PRY results exists on S3, Rotate doesn't exists on s3 -- output from dummy_rotate
         self.processor.check_pry_on_s3 = check_pry_on_s3_exists
+        self.s3_helper.is_object_exist = rotated_result_on_s3_none
 
         response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
         self.assertTrue(response['returnData'][
-                            'output'] == '[[0.11, -0.22, -0.33],[0.44, 0.55, 0.66],[0.77, -0.88, 0.99]]')
+                            'output'] == 'ok')
+        #
+        # # PRY results exists on S3, Rotate exists on s3 -- output from mock_pry
+        self.processor.check_pry_on_s3 = check_pry_on_s3_exists
+        self.s3_helper.is_object_exist = rotated_result_on_s3_exists
 
-        # PRY results doesn't exists on S3
+        response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
+        self.assertTrue(response['returnData'] == '[[0.11, -0.22, -0.33],[0.44, 0.55, 0.66],[0.77, -0.88, 0.99]]')
+
+        # PRY results doesn't exists on S3, Rotate doesn't exists on s3 -- output from dummy_rmatrix
         self.processor.check_pry_on_s3 = check_pry_on_s3_none
+        self.s3_helper.is_object_exist = rotated_result_on_s3_none
+
+        response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
+        self.assertTrue(response['returnData'][
+                            'output'] == '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]')
+
+        # PRY results doesn't exists on S3, Rotate exists on s3 --
+        self.processor.check_pry_on_s3 = check_pry_on_s3_none
+        self.s3_helper.is_object_exist = rotated_result_on_s3_exists
 
         response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
         self.assertTrue(response['returnData'][
