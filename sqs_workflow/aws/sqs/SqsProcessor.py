@@ -241,10 +241,12 @@ class SqsProcessor:
 
         r_matrix_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value, url_hash, image_id)
 
-        if message_type == ProcessingTypesEnum.RMatrix.value and r_matrix_result is not None:
+        if message_type == ProcessingTypesEnum.RMatrix.value and r_matrix_result is None:
             logging.info(f'No r_matrix for file:{url_hash} image:{image_id} on s3 run r_matrix')
 
             r_matrix_result = self.run_rmatrix(message_object, url_hash, image_id, image_full_url)
+            # todo spec Class = test_SimilarityProcessor which test def process_mesg_in_subprocess
+            # todo 2 tests w/ r_matrix -- 1- rmatrix on s3. 2- not on s3, dummy returns rmatrix
 
             logging.info(f'R_matrix:{r_matrix_result}')
         else:

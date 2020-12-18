@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from unittest import TestCase
 
-from S3HelperMock import S3HelperMock
+from sqs_workflow.tests.S3HelperMock import S3HelperMock
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 from sqs_workflow.tests.QueueMock import QueueMock
@@ -360,6 +360,79 @@ class TestSqsProcessor(TestCase):
         self.processor.check_pry_on_s3 = check_pry_on_s3
 
         response = json.loads(self.processor.process_message_in_subprocess(roombox_message))
+        self.assertTrue(response['returnData'][
+                            'output'] == '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]')
+
+    def test_process_rmatrix_in_subprocess(self):
+        def check_pry_on_s3_exists(message_type: str, url_hash: str, image_id: str):
+            return '[[0.11, -0.22, -0.33],[0.44, 0.55, 0.66],[0.77, -0.88, 0.99]]'
+
+        def check_pry_on_s3_none(message_type: str, url_hash: str, image_id: str):
+            return None
+
+        def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
+                                            image_full_url='document', is_public=False):
+            return 'test_s3_url_result'
+
+        def create_output_file_on_s3_mock(ProcessingTypesEnum, url_hash, image_id, processing_result):
+            return 'test_output_file_to_s3'
+
+        def download_file_object_from_s3_mock(rotated_s3_result, input_path, url_hash, image_id):
+            return 'rest'
+
+        def download_fileobj_mock():
+            return 'result'
+
+        self.s3_helper = S3HelperMock(['api/inference/ROTATE/294ee74d8d88a37523c2e28e5c0e150c/s7zu187383.JPG'])
+        self.processor.s3_helper = self.s3_helper
+        self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
+        self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
+        self.s3_helper.download_file_object_from_s3 = download_file_object_from_s3_mock
+        self.s3_helper.download_fileobj = download_fileobj_mock
+
+        dir_input = os.path.join(self.processor.input_processing_directory,
+                                 '294ee74d8d88a37523c2e28e5c0e150c')
+        dir_output = os.path.join(self.processor.output_processing_directory,
+                                  '294ee74d8d88a37523c2e28e5c0e150c')
+
+        if not os.path.exists(dir_input):
+            os.makedirs(dir_input)
+        if not os.path.exists(dir_output):
+            os.makedirs(dir_output)
+
+        test_absolute_path = os.path.join(dir_output,
+                                          's7zu187383.JPG')
+
+        with open(test_absolute_path, 'w') as image_file:
+            image_file.write('{}')
+            image_file.close()
+        logging.info('Created temporary "image" file')
+
+        input_path = os.path.join(self.processor.input_processing_directory,
+                                  'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
+        output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
+
+        rmatrix_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.RMatrix.value,
+                           StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                           StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                           StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                           StringConstants.DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/only-panos_data_from_01.06.2020/order_1012550_floor_1.json.json",
+                           StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value],
+                           StringConstants.INFERENCE_ID_KEY: "1111",
+                           StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
+        rmatrix_message = json.dumps(rmatrix_message)
+
+        # PRY results exists on S3
+        self.processor.check_pry_on_s3 = check_pry_on_s3_exists
+
+        response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
+        self.assertTrue(response['returnData'][
+                            'output'] == '[[0.11, -0.22, -0.33],[0.44, 0.55, 0.66],[0.77, -0.88, 0.99]]')
+
+        # PRY results doesn't exists on S3
+        self.processor.check_pry_on_s3 = check_pry_on_s3_none
+
+        response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
         self.assertTrue(response['returnData'][
                             'output'] == '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]')
 
