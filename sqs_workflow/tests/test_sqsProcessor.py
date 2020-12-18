@@ -459,6 +459,8 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(response['returnData'][
                             'output'] == '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]')
 
+        # UNFINISHED!
+
     def send_message_to_queue_mock(self, message, queue_url):
         if self.queue_mock_messages is None:
             self.queue_mock_messages = []
