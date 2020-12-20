@@ -137,7 +137,7 @@ class SqsProcessor:
         self.s3_helper.save_file_object_on_s3(s3_path, image_absolute_path)
         logging.info(f'Created S3 object key:{s3_path} file:{image_absolute_path}')
 
-    def run_preprocessing(self, inference_id: str, message_object):
+    def run_preprocessing(self, message_object, inference_id: str):
         logging.info(f'Start preprocessing similarity inference:{inference_id}')
         messages_for_sending = SimilarityProcessor.start_pre_processing(message_object)
         for send_message in messages_for_sending:
@@ -147,7 +147,7 @@ class SqsProcessor:
         logging.info(f"Finished processing and updated message:{message_object}.")
         return json.dumps(message_object)
 
-    def run_similarity(self, inference_id: str, message_object):
+    def run_similarity(self, message_object, inference_id: str, ):
         document_object = SimilarityProcessor.is_similarity_ready(
             self.s3_helper,
             message_object)
@@ -217,10 +217,7 @@ class SqsProcessor:
         logging.info(f'Saved roombox:{room_box_result} on s3')
         return json.loads(room_box_result)
 
-    def run_door_detecting(self, message_type: str,
-                           message_object,
-                           inference_id: str,
-                           image_id: str,
+    def run_door_detecting(self, message_object, message_type: str, inference_id: str, image_id: str,
                            image_full_url: str):
         logging.info('Start processing door detecting')
         door_detecting_result = self.run_process(self.doordetecting_executable,
@@ -244,11 +241,11 @@ class SqsProcessor:
 
         if message_type == ProcessingTypesEnum.Preprocessing.value:
             logging.info(f"Start preprocessing message: {message_object}.")
-            return self.run_preprocessing(inference_id, message_object)
+            return self.run_preprocessing(message_object, inference_id)
 
         if message_type == ProcessingTypesEnum.Similarity.value:
             logging.info(f'Start processing similarity inference:{inference_id}')
-            return self.run_similarity(inference_id, message_object)
+            return self.run_similarity(message_object, inference_id)
 
         image_full_url = message_object[StringConstants.FILE_URL_KEY]
         if "?" in image_full_url:
@@ -263,8 +260,6 @@ class SqsProcessor:
             logging.info(f'No r_matrix for file:{url_hash} image:{image_id} on s3 run r_matrix')
 
             r_matrix_result = self.run_rmatrix(message_object, url_hash, image_id, image_full_url)
-            # todo spec Class = test_SimilarityProcessor which test def process_mesg_in_subprocess
-            # todo 2 tests w/ r_matrix -- 1- rmatrix on s3. 2- not on s3, dummy returns rmatrix
 
             logging.info(f'R_matrix:{r_matrix_result}')
         else:
@@ -279,14 +274,13 @@ class SqsProcessor:
         rotated_result = self.s3_helper.is_object_exist(rotated_s3_result)
         logging.info(f'Rotated image is {rotated_result} on s3')
 
-        #  ???  in if -> AND instead OR
         if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
             logging.info('Start processing rotating')
             processing_result = self.run_rotate(message_object, url_hash, image_id, r_matrix_result)
             logging.info(f'Rotation result:{processing_result}')
         else:
             logging.info(f'Download from s3 key:{rotated_s3_result}')
-            self.s3_helper.download_file_object_from_s3(
+            processing_result = self.s3_helper.download_file_object_from_s3(
                 rotated_s3_result,
                 os.path.join(self.input_processing_directory,
                              url_hash,
@@ -298,7 +292,7 @@ class SqsProcessor:
 
         if message_type == ProcessingTypesEnum.DoorDetecting.value:
             logging.info('Start processing door detecting')
-            processing_result = self.run_door_detecting(message_type, message_object, inference_id, image_id,
+            processing_result = self.run_door_detecting(message_object, message_type, inference_id, image_id,
                                                         image_full_url)
 
         message_object['returnData'] = json.loads(json.dumps(processing_result) or "[]")
@@ -314,7 +308,7 @@ class SqsProcessor:
                                            stdout=subprocess.PIPE)
         if not subprocess_result.returncode == 0:
             message = f'Process has failed for process:{executable} script:{script} message:{executable_params}.'
-            self.alert_service.send_slack_message(message, 0)
+            # self.alert_service.send_slack_message(message, 0)
         logging.info(f'subprocess code: {subprocess_result.returncode} output: {subprocess_result.stdout}')
         output = subprocess_result.stdout.decode("utf-8").rstrip()
         logging.info(f"Output:{output}")
