@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 import sys
+import subprocess
 from pathlib import Path
 from unittest import TestCase
 
@@ -461,11 +462,11 @@ class TestSqsProcessor(TestCase):
         output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
 
         door_detection_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.DoorDetecting.value,
-                           StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
-                           StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
-                           StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
-                           StringConstants.INFERENCE_ID_KEY: "1111",
-                           StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
+                                  StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                                  StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                                  StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                                  StringConstants.INFERENCE_ID_KEY: "1111",
+                                  StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
         door_detection_message = json.dumps(door_detection_message)
 
         response = json.loads(self.processor.process_message_in_subprocess(door_detection_message))
@@ -896,3 +897,22 @@ class TestSqsProcessor(TestCase):
 
         self.processor.create_output_file_on_s3(test_message_type, test_image_hash, image_id, image_absolute_path)
         self.assertTrue(s3_path in self.processor.s3_helper.existing_keys)
+
+    def test_fail_subprocess_run(self):
+        def run_roombox_fail_mock(message_object, message_type, inference_id, image_id, image_full_url):
+            executable = os.environ['ROOM_BOX_EXECUTABLE']
+            script = os.environ['ROOM_BOX_SCRIPT_FAIL']
+            subprocess_result = subprocess.run(executable + " " + script,
+                                               shell=True,
+                                               check=False,
+                                               stdout=subprocess.PIPE)
+            if not subprocess_result.returncode == 0:
+                passed = False
+                message = f'Process has failed for process:{executable} script:{script}.'
+                assert passed, message
+
+        self.processor.run_roombox = run_roombox_fail_mock
+
+        self.assertRaises(AssertionError,
+                          lambda: self.processor.run_roombox('message_object', 'message_type', 'inference_id',
+                                                             'image_id', 'image_full_url'))

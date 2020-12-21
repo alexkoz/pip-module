@@ -10,7 +10,8 @@ class AlertService:
     def __init__(self):
         pass
 
-    def send_slack_message(self, message, msg_type):
+    @staticmethod
+    def send_slack_message(message, msg_type):
         """
         types: 0 - without mention,
         1 - with mention somebody
@@ -33,7 +34,8 @@ class AlertService:
         except:
             logging.info('No environment variable for Slack. Check SLACK_URL, SLACK_ID')
 
-    def send_email_message(self, message):
+    @staticmethod
+    def send_email_message(message):
         try:
             gmail_user = os.environ['GMAIL_USER']
             gmail_password = os.environ['GMAIL_PASSW']

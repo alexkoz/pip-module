@@ -307,8 +307,12 @@ class SqsProcessor:
                                            check=False,
                                            stdout=subprocess.PIPE)
         if not subprocess_result.returncode == 0:
+            passed = False
             message = f'Process has failed for process:{executable} script:{script} message:{executable_params}.'
+            logging.info(message)
             # self.alert_service.send_slack_message(message, 0)
+            assert passed, message
+
         logging.info(f'subprocess code: {subprocess_result.returncode} output: {subprocess_result.stdout}')
         output = subprocess_result.stdout.decode("utf-8").rstrip()
         logging.info(f"Output:{output}")
