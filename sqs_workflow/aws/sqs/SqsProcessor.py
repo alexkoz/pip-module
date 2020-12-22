@@ -394,3 +394,33 @@ class SqsProcessor:
             StringConstants.EXECUTABLE_PARAMS_KEY] = f' --input_path {os.path.join(input_path, file_name)} --output_path {output_path}'
         logging.info(f"Downloaded and prepared executables:{message_object[StringConstants.EXECUTABLE_PARAMS_KEY]}")
         return json.dumps(message_object)
+
+    @staticmethod
+    def run_queue_processor(queue_name):
+        try:
+            logging.info(f'Started process for queue:{queue_name}')
+            Utils.check_environment()
+            processor = SqsProcessor(queue_name)
+            list_of_messages = processor.pull_messages(1)
+            logging.info(f'Pulled messages {len(list_of_messages)} s from queue:{queue_name}')
+            while len(list_of_messages) > 0:
+                for message in list_of_messages:
+                    # todo swallow the exception
+                    # todo send error to return message
+                    try:
+                        message_body = processor.prepare_for_processing(message.body)
+                        message_body = processor.process_message_in_subprocess(message_body)
+                        if message_body is not None:
+                            logging.info(f"Setting message body:{message_body}")
+                            processor.complete_processing_message(message, message_body)
+                    except Exception as e:
+                        error_message = json.loads(message.body)
+                        error_message['error'] = str(e)
+                        message_body = json.dumps(error_message)
+                        processor.complete_processing_message(message, message_body)
+
+                logging.info(f"Keep pulling messages queue:{queue_name}")
+                list_of_messages = processor.pull_messages(1)
+        except Exception as e:
+            logging.critical(e, exc_info=True)  # log exception info at CRITICAL log level
+
