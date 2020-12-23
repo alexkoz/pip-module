@@ -8,6 +8,7 @@ from unittest import TestCase
 
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.S3HelperMock import S3HelperMock
+from sqs_workflow.tests.TestUtils import TestUtils
 from sqs_workflow.tests.test_sqsProcessor import TestSqsProcessor
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
@@ -28,29 +29,7 @@ class TestSimilarityProcessor(TestCase):
                                'sqs_workflow')
 
     def setUp(self):
-        os.environ['INPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'input')
-        os.environ['OUTPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'output')
-        os.environ['S3_BUCKET'] = "test_bucket"
-        os.environ['APP_BRANCH'] = "test_bucket"
-        os.environ['IMMO_ACCESS'] = "clipnow"
-        os.environ['IMMO_SECRET'] = "clipnow"
-        os.environ['IMMO_REGION_NAME'] = 'eu-west-1'
-        os.environ['IMMO_AWS_PROFILE'] = 'clipnow'
-        os.environ['DOCU_AWS_PROFILE'] = 'sqs'
-        os.environ['DOCU_ACCESS'] = 'sqs'
-        os.environ['DOCU_SECRET'] = 'sqs'
-        os.environ['S3_REGION'] = 'sqs'
-        aids = os.path.join(self.common_path, 'aids')
-        os.environ[f'{ProcessingTypesEnum.Similarity.value}_EXECUTABLE'] = sys.executable
-        os.environ[f'{ProcessingTypesEnum.Similarity.value}_SCRIPT'] = os.path.join(aids, 'dummy_similarity.py')
-        os.environ[f'{ProcessingTypesEnum.RoomBox.value}_EXECUTABLE'] = sys.executable
-        os.environ[f'{ProcessingTypesEnum.RoomBox.value}_SCRIPT'] = os.path.join(aids, 'dummy_roombox.py')
-        os.environ[f'{ProcessingTypesEnum.RMatrix.value}_EXECUTABLE'] = sys.executable
-        os.environ[f'{ProcessingTypesEnum.RMatrix.value}_SCRIPT'] = os.path.join(aids, 'dummy_rmatrix.py')
-        os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_EXECUTABLE'] = sys.executable
-        os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_SCRIPT'] = os.path.join(aids, 'dummy_dd.py')
-        os.environ[f'{ProcessingTypesEnum.Rotate.value}_EXECUTABLE'] = sys.executable
-        os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT'] = os.path.join(aids, 'dummy_rmatrix.py')
+        TestUtils.setup_environment_for_unit_tests()
         Utils.download_from_http = TestSqsProcessor.download_from_http
 
     def test_create_layout_object(self):
