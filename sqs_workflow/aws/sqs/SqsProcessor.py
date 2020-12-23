@@ -232,7 +232,7 @@ class SqsProcessor:
         return json.loads(door_detecting_result)
 
     def process_message_in_subprocess(self, message_body: str) -> str:
-        processing_result = None
+
         message_object = json.loads(message_body)
         inference_id = str(message_object[StringConstants.INFERENCE_ID_KEY])
         message_type = str(message_object[StringConstants.MESSAGE_TYPE_KEY])
@@ -307,11 +307,9 @@ class SqsProcessor:
                                            check=False,
                                            stdout=subprocess.PIPE)
         if not subprocess_result.returncode == 0:
-            passed = False
             message = f'Process has failed for process:{executable} script:{script} message:{executable_params}.'
             logging.info(message)
-            # self.alert_service.send_slack_message(message, 0)
-            assert passed, message
+            return message
 
         logging.info(f'subprocess code: {subprocess_result.returncode} output: {subprocess_result.stdout}')
         output = subprocess_result.stdout.decode("utf-8").rstrip()

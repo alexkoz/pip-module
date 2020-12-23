@@ -1,17 +1,18 @@
-import copy
 import json
 import logging
 import os
 import shutil
-import sys
 import subprocess
+import sys
 from pathlib import Path
 from unittest import TestCase
 
-from sqs_workflow.tests.S3HelperMock import S3HelperMock
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 from sqs_workflow.tests.QueueMock import QueueMock
+from sqs_workflow.tests.RunProcessMock import RunProcessMock
+from sqs_workflow.tests.S3HelperMock import S3HelperMock
+from sqs_workflow.tests.TestUtils import TestUtils
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.Utils import Utils
@@ -47,37 +48,13 @@ class TestSqsProcessor(TestCase):
         return content
 
     def setUp(self):
-        os.environ['INPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'input')
-        os.environ['OUTPUT_DIRECTORY'] = os.path.join(self.common_path, 'tmp', 'output')
-        os.environ['S3_BUCKET'] = 'TEST-BUCKET'
-        os.environ['S3_REGION'] = 'eu-west-1'
-        aids = os.path.join(self.common_path, 'aids')
-        os.environ[f'{ProcessingTypesEnum.Similarity.value}_EXECUTABLE'] = sys.executable
-        os.environ[f'{ProcessingTypesEnum.Similarity.value}_SCRIPT'] = os.path.join(aids, 'dummy_similarity.py')
-        os.environ[f'{ProcessingTypesEnum.RoomBox.value}_EXECUTABLE'] = sys.executable
-        os.environ[f'{ProcessingTypesEnum.RoomBox.value}_SCRIPT'] = os.path.join(aids, 'dummy_roombox.py')
-        os.environ[f'{ProcessingTypesEnum.RMatrix.value}_EXECUTABLE'] = sys.executable
-        os.environ[f'{ProcessingTypesEnum.RMatrix.value}_SCRIPT'] = os.path.join(aids, 'dummy_rmatrix.py')
-        os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_EXECUTABLE'] = sys.executable
-        os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_SCRIPT'] = os.path.join(aids, 'dummy_dd.py')
-        os.environ[f'{ProcessingTypesEnum.Rotate.value}_EXECUTABLE'] = sys.executable
-        os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT'] = os.path.join(aids, 'dummy_rotate.py')
-        os.environ['IMMO_AWS_PROFILE'] = "clipnow"
-        os.environ['IMMO_ACCESS'] = "clipnow"
-        os.environ['IMMO_SECRET'] = "clipnow"
-        os.environ['IMMO_REGION_NAME'] = 'eu-west-1'
-        os.environ['DOCU_AWS_PROFILE'] = 'sqs'
-        os.environ['DOCU_ACCESS'] = 'sqs'
-        os.environ['DOCU_SECRET'] = 'sqs'
-        os.environ['DOCU_REGION_NAME'] = 'us-east-1'
-        os.environ['APP_BRANCH'] = "test"
+        TestUtils.setup_environment_for_unit_tests()
         Utils.download_from_http = TestSqsProcessor.download_from_http
 
         self.clear_local_directories()
         SqsProcessor.define_sqs_queue_properties = TestSqsProcessor.define_sqs_queue_properties
         self.processor = SqsProcessor("-immoviewer-ai")
-        self.processor_copy = copy.copy(self.processor)
-        self.similarity_processor = SimilarityProcessor()
+
         self.processor.queue = QueueMock()
         self.processor.return_queue = QueueMock()
 
@@ -123,7 +100,6 @@ class TestSqsProcessor(TestCase):
 
     def test_run_process(self):
         self.queue_mock_messages = None
-        self.processor.run_process = self.processor_copy.run_process
 
         roombox_executable = sys.executable
         roombox_script = os.path.join(self.common_path, 'aids', 'dummy_roombox.py')
@@ -154,11 +130,10 @@ class TestSqsProcessor(TestCase):
         similarity_message = json.dumps(similarity_message)
         return similarity_message
 
-    @staticmethod
-    def is_similarity_ready_none(s3_helper, message_object):
-        return None
+
 
     def test_process_similarity_in_subprocess(self):
+
         def run_process_mock(executable: str, script: str, executable_params: str):
             return 'test_similarity_subprocess_output'
 
@@ -169,6 +144,10 @@ class TestSqsProcessor(TestCase):
                                             image_full_url='document',
                                             is_public=False):
             return 'test_s3_url_result'
+
+        processor_mock = RunProcessMock()
+
+        SqsProcessor.pull_messages = processor_mock.pull_messages_mock
 
         self.processor.run_process = run_process_mock
         self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
@@ -189,16 +168,28 @@ class TestSqsProcessor(TestCase):
 
         similarity_message = json.dumps(similarity_message)
 
-        SimilarityProcessor.is_similarity_ready = self.is_similarity_ready_none
+        def is_similarity_ready_none(s3_helper, message_object):
+            print("similarity none")
+            return None
+
+        SimilarityProcessor.is_similarity_ready = is_similarity_ready_none
         self.assertIsNone(self.processor.process_message_in_subprocess(similarity_message))
         SimilarityProcessor.is_similarity_ready = self.is_similarity_ready_document
-        self.assertTrue(json.loads(self.processor.process_message_in_subprocess(similarity_message))[
-                            'documentPath'] == 'test_s3_url_result')
+
+        result = json.loads(self.processor.process_message_in_subprocess(similarity_message))[
+            'documentPath']
+
+        self.assertTrue(result == 'test_s3_url_result')
         logging.info('test_process_similarity_in_subprocess is finished')
 
     def test_process_rotate_in_subprocess(self):
-        def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
-                                            image_full_url='document', is_public=False):
+
+        def create_path_and_save_on_s3_mock(message_type: str,
+                                            inference_id: str,
+                                            processing_result: str,
+                                            image_id: str,
+                                            image_full_url='document',
+                                            _public=False):
             return 'test_s3_url_result'
 
         def create_output_file_on_s3_mock(ProcessingTypesEnum, url_hash, image_id, processing_result):
@@ -482,6 +473,7 @@ class TestSqsProcessor(TestCase):
         self.queue_mock_messages.append(message)
 
     def test_run_similarity(self):
+
         def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
                                             image_full_url='document', is_public=False):
             return 'test_s3_url_result'
@@ -509,7 +501,8 @@ class TestSqsProcessor(TestCase):
         similarity_message = json.dumps(similarity_message)
         message_object = json.loads(similarity_message)
 
-        self.similarity_processor.is_similarity_ready = is_similarity_ready_none_mock
+        SimilarityProcessor.is_similarity_ready = is_similarity_ready_none_mock
+
         response = self.processor.run_similarity(message_object, 'inference_id')
         # todo fix is_similarity_ready_none_mock
         # self.assertTrue(response['tourId'] == '1342240')  # as in dummy_similarity
@@ -638,7 +631,6 @@ class TestSqsProcessor(TestCase):
 
         self.queue_mock_messages = None
         self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
-        self.similarity_processor.create_layout_object = create_layout_object_mock
 
         input_path = os.path.join(self.processor.input_processing_directory,
                                   'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
@@ -660,6 +652,7 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(len(resp['layout']) == 8)  # as a number of points in "uv" in dummy_roombox
 
     def test_run_door_detection(self):
+
         def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
                                             image_full_url='document', is_public=False):
             return {"test_s3_url_result": "value_test_s3_url_result_ok"}
@@ -729,7 +722,7 @@ class TestSqsProcessor(TestCase):
                                                         "--input_path /input/img.jpg --output_path /output/path/")
             logging.info(f'process_result: {process_result}')
 
-            if process_result == 'fail':
+            if "Process has failed" in  process_result:
                 fail_counter += 1
             else:
                 ok_counter += 1
@@ -899,9 +892,10 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(s3_path in self.processor.s3_helper.existing_keys)
 
     def test_fail_subprocess_run(self):
+
         def run_roombox_fail_mock(message_object, message_type, inference_id, image_id, image_full_url):
-            executable = os.environ['ROOM_BOX_EXECUTABLE']
-            script = os.environ['ROOM_BOX_SCRIPT_FAIL']
+            executable = sys.executable
+            script = os.path.join(os.getcwd(), 'sqs_workflow/sqs_workflow/aids/dummy_roombox_fail.py')
             subprocess_result = subprocess.run(executable + " " + script,
                                                shell=True,
                                                check=False,
