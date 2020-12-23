@@ -264,7 +264,8 @@ class SqsProcessor:
             logging.info(f'R_matrix:{r_matrix_result}')
         else:
             logging.info(f'R_matrix:{r_matrix_result} is taken from s3. Define as processing result.')
-            processing_result = r_matrix_result
+
+        processing_result = r_matrix_result
 
         rotated_s3_result = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                                        ProcessingTypesEnum.Rotate.value,
@@ -276,11 +277,11 @@ class SqsProcessor:
 
         if message_type == ProcessingTypesEnum.Rotate.value or not rotated_result:
             logging.info('Start processing rotating')
-            processing_result = self.run_rotate(message_object, url_hash, image_id, r_matrix_result)
+            self.run_rotate(message_object, url_hash, image_id, r_matrix_result)
             logging.info(f'Rotation result:{processing_result}')
         else:
             logging.info(f'Download from s3 key:{rotated_s3_result}')
-            processing_result = self.s3_helper.download_file_object_from_s3(
+            self.s3_helper.download_file_object_from_s3(
                 rotated_s3_result,
                 os.path.join(self.input_processing_directory,
                              url_hash,
@@ -421,4 +422,3 @@ class SqsProcessor:
                 list_of_messages = processor.pull_messages(1)
         except Exception as e:
             logging.critical(e, exc_info=True)  # log exception info at CRITICAL log level
-
