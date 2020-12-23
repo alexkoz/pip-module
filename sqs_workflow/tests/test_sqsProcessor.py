@@ -360,8 +360,7 @@ class TestSqsProcessor(TestCase):
         self.processor.check_pry_on_s3 = check_pry_on_s3
 
         response = json.loads(self.processor.process_message_in_subprocess(roombox_message))
-        self.assertTrue(response['returnData'][
-                            'output'] == '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]')
+        self.assertTrue("layout" in response['returnData'])
 
     def send_message_to_queue_mock(self, message, queue_url):
         if self.queue_mock_messages is None:
@@ -490,8 +489,12 @@ class TestSqsProcessor(TestCase):
         logging.info('test_run_rotate is finished')
 
     def test_run_roombox(self):
-        def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
-                                            image_full_url='document', is_public=False):
+        def create_path_and_save_on_s3_mock(message_type: str,
+                                            inference_id: str,
+                                            processing_result: str,
+                                            image_id: str,
+                                            image_full_url='document',
+                                            is_public=False):
             return 'test_s3_url_result'
 
         self.queue_mock_messages = None
@@ -512,9 +515,13 @@ class TestSqsProcessor(TestCase):
                            }
         roombox_message = json.dumps(roombox_message)
         message_object = json.loads(roombox_message)
+        result = self.processor.run_roombox(message_object,
+                                            'message_type',
+                                            'inference_id',
+                                            'image_id',
+                                            'image_full_url')
 
-        self.assertIsNone(
-            self.processor.run_roombox(message_object, 'message_type', 'inference_id', 'image_id', 'image_full_url'))
+        self.assertTrue("layout" in result)
         logging.info('test_run_rmatrix is finished')
 
     def test_fail_in_subprocess(self):
