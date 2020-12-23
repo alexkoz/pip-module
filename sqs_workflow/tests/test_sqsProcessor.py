@@ -10,7 +10,6 @@ from unittest import TestCase
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.AlertServiceMock import AlertServiceMock
 from sqs_workflow.tests.QueueMock import QueueMock
-from sqs_workflow.tests.RunProcessMock import RunProcessMock
 from sqs_workflow.tests.S3HelperMock import S3HelperMock
 from sqs_workflow.tests.TestUtils import TestUtils
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
@@ -418,19 +417,19 @@ class TestSqsProcessor(TestCase):
             return 'result'
 
         SqsProcessor.define_sqs_queue_properties = TestSqsProcessor.define_sqs_queue_properties
-        self.processor = SqsProcessor("-immoviewer-ai")
-        self.processor.queue = QueueMock()
-        self.processor.return_queue = QueueMock()
+        processor = SqsProcessor("-immoviewer-ai")
+        processor.queue = QueueMock()
+        processor.return_queue = QueueMock()
 
-        self.processor.s3_helper = S3HelperMock(['api/inference/ROTATE/294ee74d8d88a37523c2e28e5c0e150c/s7zu187383.JPG'])
-        self.processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
-        self.processor.create_output_file_on_s3 = create_output_file_on_s3_mock
-        self.processor.s3_helper.download_file_object_from_s3 = download_file_object_from_s3_mock
-        self.processor.s3_helper.download_fileobj = download_fileobj_mock
+        processor.s3_helper = S3HelperMock(['api/inference/ROTATE/294ee74d8d88a37523c2e28e5c0e150c/s7zu187383.JPG'])
+        processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
+        processor.create_output_file_on_s3 = create_output_file_on_s3_mock
+        processor.s3_helper.download_file_object_from_s3 = download_file_object_from_s3_mock
+        processor.s3_helper.download_fileobj = download_fileobj_mock
 
-        dir_input = os.path.join(self.processor.input_processing_directory,
+        dir_input = os.path.join(processor.input_processing_directory,
                                  '294ee74d8d88a37523c2e28e5c0e150c')
-        dir_output = os.path.join(self.processor.output_processing_directory,
+        dir_output = os.path.join(processor.output_processing_directory,
                                   '294ee74d8d88a37523c2e28e5c0e150c')
 
         if not os.path.exists(dir_input):
@@ -446,9 +445,9 @@ class TestSqsProcessor(TestCase):
             image_file.close()
         logging.info('Created temporary "image" file')
 
-        input_path = os.path.join(self.processor.input_processing_directory,
+        input_path = os.path.join(processor.input_processing_directory,
                                   'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
-        output_path = os.path.join(self.processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
+        output_path = os.path.join(processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
 
         door_detection_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.DoorDetecting.value,
                                   StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
@@ -458,7 +457,8 @@ class TestSqsProcessor(TestCase):
                                   StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
         door_detection_message = json.dumps(door_detection_message)
 
-        response = json.loads(self.processor.process_message_in_subprocess(door_detection_message))
+        processing_result = processor.process_message_in_subprocess(door_detection_message)
+        response = json.loads(processing_result)
 
         self.assertTrue(response['returnData'][0]['fileUrl'] == 'http://domen.com/img1.JPG')
         self.assertTrue(response['returnData'][0]['layout'])

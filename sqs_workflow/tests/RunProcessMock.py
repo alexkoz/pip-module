@@ -48,8 +48,5 @@ class RunProcessMock:
         self.message_body = json.loads(message_body)
         return message_body
 
-    def prepare_for_processing_none_mock(self, message_body):
-        return None
-
     def process_message_in_subprocess_none_mock(self, message_body):
         return None
