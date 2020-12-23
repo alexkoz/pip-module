@@ -44,7 +44,7 @@ class RunProcessMock:
         return self.messages_queue
 
     def prepare_for_processing_mock(self, message_body):
-        return json.dumps(message_body)
+        return message_body
 
     def process_message_in_subprocess_mock(self, message_body):
         self.message_body = json.loads(message_body)
@@ -103,32 +103,40 @@ class TestRun(TestCase):
                             'error'] == 'the JSON object must be str, bytes or bytearray, not NoneType')
 
     # Process_message_in_subprocess is None
-    # def test_run_proc_message_in_subproc_is_none(self):
-    #     SqsProcessor.define_sqs_queue_properties = TestSqsProcessor.define_sqs_queue_properties
-    #
-    #     processor_mock = RunProcessMock()
-    #
-    #     SqsProcessor.pull_messages = processor_mock.pull_messages_mock
-    #     SqsProcessor.complete_processing_message = processor_mock.complete_processing_message_mock
-    #
-    #     SqsProcessor.prepare_for_processing = processor_mock.prepare_for_processing_mock
-    #     SqsProcessor.process_message_in_subprocess = processor_mock.process_message_in_subprocess_none_mock
-    #
-    #     SqsProcessor.list_of_messages = None
-    #
-    #     processor = SqsProcessor('-immoviewer-test')
-    #
-    #     response = processor.run_queue_processor('-mock-queue-name')
-    #     self.assertTrue(json.loads(processor_mock.messages_queue[0])[
-    #                         'error'] == 'the JSON object must be str, bytes or bytearray, not NoneType')
+    def test_run_proc_message_in_subproc_is_none(self):
+        SqsProcessor.define_sqs_queue_properties = TestSqsProcessor.define_sqs_queue_properties
 
-    #
-    # # Process_message_in_subprocess is None, prepare_for_processing is None
-    # SqsProcessor.process_message_in_subprocess = process_message_in_subprocess_none_mock
-    # SqsProcessor.prepare_for_processing = prepare_for_processing_none_mock
-    # response = run_queue_processor('-mock-queue-name')
+        processor_mock = RunProcessMock()
 
-    print('finish test')
+        SqsProcessor.pull_messages = processor_mock.pull_messages_mock
+        SqsProcessor.complete_processing_message = processor_mock.complete_processing_message_mock
 
-    def test_test(self):
-        self.assertTrue(1 == 1)
+        SqsProcessor.prepare_for_processing = processor_mock.prepare_for_processing_mock
+        SqsProcessor.process_message_in_subprocess = processor_mock.process_message_in_subprocess_none_mock
+
+        SqsProcessor.list_of_messages = None
+
+        processor = SqsProcessor('-immoviewer-test')
+
+        response = processor.run_queue_processor('-mock-queue-name')
+        self.assertTrue(response is None)
+
+    # Process_message_in_subprocess is None, prepare_for_processing is None
+    def test_proc_message_and_prepare_for_proc_both_none(self):
+        SqsProcessor.define_sqs_queue_properties = TestSqsProcessor.define_sqs_queue_properties
+
+        processor_mock = RunProcessMock()
+
+        SqsProcessor.pull_messages = processor_mock.pull_messages_mock
+        SqsProcessor.complete_processing_message = processor_mock.complete_processing_message_mock
+
+        SqsProcessor.prepare_for_processing = processor_mock.prepare_for_processing_none_mock
+        SqsProcessor.process_message_in_subprocess = processor_mock.process_message_in_subprocess_none_mock
+
+        SqsProcessor.list_of_messages = None
+
+        processor = SqsProcessor('-immoviewer-test')
+
+        response = processor.run_queue_processor('-mock-queue-name')
+        self.assertTrue(response is None)
+
