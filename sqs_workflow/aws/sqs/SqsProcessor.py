@@ -265,7 +265,7 @@ class SqsProcessor:
         else:
             logging.info(f'R_matrix:{r_matrix_result} is taken from s3. Define as processing result.')
 
-        processing_result = r_matrix_result
+        processing_result = json.loads(r_matrix_result)
 
         rotated_s3_result = Utils.create_result_s3_key(StringConstants.COMMON_PREFIX,
                                                        ProcessingTypesEnum.Rotate.value,

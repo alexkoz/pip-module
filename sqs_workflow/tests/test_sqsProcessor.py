@@ -229,7 +229,7 @@ class TestSqsProcessor(TestCase):
         rotate_message = json.dumps(rotate_message)
 
         response = json.loads(self.processor.process_message_in_subprocess(rotate_message))
-        self.assertTrue(response['returnData'] == '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]')
+        self.assertTrue(response['returnData'] == [[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]])
 
     def test_process_roombox_in_subprocess(self):
 
@@ -364,14 +364,14 @@ class TestSqsProcessor(TestCase):
         self.s3_helper.is_object_exist = rotated_result_on_s3_none
 
         response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
-        self.assertTrue(response['returnData'] == '[[0.11, -0.22, -0.33],[0.44, 0.55, 0.66],[0.77, -0.88, 0.99]]')
+        self.assertTrue(response['returnData'] == [[0.11, -0.22, -0.33],[0.44, 0.55, 0.66],[0.77, -0.88, 0.99]])
 
         # # PRY results exists on S3, Rotate exists on s3 -- output from rotated_result_on_s3
         self.processor.check_pry_on_s3 = check_pry_on_s3_exists
         self.s3_helper.is_object_exist = rotated_result_on_s3_exists
 
         response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
-        self.assertTrue(response['returnData'] == '[[0.11, -0.22, -0.33],[0.44, 0.55, 0.66],[0.77, -0.88, 0.99]]')
+        self.assertTrue(response['returnData'] == [[0.11, -0.22, -0.33],[0.44, 0.55, 0.66],[0.77, -0.88, 0.99]])
 
         # PRY results doesn't exists on S3, Rotate doesn't exists on s3 -- output from mock_pry
         if not os.path.exists(dir_input):
@@ -392,14 +392,14 @@ class TestSqsProcessor(TestCase):
 
         response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
 
-        self.assertTrue(response['returnData'] == '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]')
+        self.assertTrue(response['returnData'] == [[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]])
 
         # PRY results doesn't exists on S3, Rotate exists on s3 -- output from rotated_result_on_s3
         self.processor.check_pry_on_s3 = check_pry_on_s3_none
         self.s3_helper.is_object_exist = rotated_result_on_s3_exists
 
         response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
-        self.assertTrue(response['returnData'] == '[[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]]')
+        self.assertTrue(response['returnData'] == [[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]])
 
     def test_process_door_detection_in_subprocess(self):
 
