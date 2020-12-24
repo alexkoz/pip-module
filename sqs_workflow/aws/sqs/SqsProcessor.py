@@ -47,6 +47,8 @@ class SqsProcessor:
         self.rmatrix_script = os.environ[f'{ProcessingTypesEnum.RMatrix.value}_SCRIPT']
         self.doordetecting_executable = os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_EXECUTABLE']
         self.doordetecting_script = os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_SCRIPT']
+        self.objectsdetecting_executable = os.environ[f'{ProcessingTypesEnum.ObjectsDetecting.value}_EXECUTABLE']
+        self.objectsdetecting_script = os.environ[f'{ProcessingTypesEnum.ObjectsDetecting.value}_SCRIPT']
         self.rotate_executable = os.environ[f'{ProcessingTypesEnum.Rotate.value}_EXECUTABLE']
         self.rotate_script = os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT']
         logging.info(f'SQS processor initialized for profile:{queue_name}')
@@ -231,6 +233,20 @@ class SqsProcessor:
         logging.info(f'Saved door detecting:{door_detecting_result} on s3')
         return json.loads(door_detecting_result)
 
+    def run_objects_detecting(self, message_object, message_type: str, inference_id: str, image_id: str,
+                              image_full_url: str):
+        logging.info('Start processing objects detecting')
+        objects_detecting_result = self.run_process(self.objectsdetecting_executable,
+                                                    self.objectsdetecting_script,
+                                                    message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
+        self.create_path_and_save_on_s3(message_type,
+                                        inference_id,
+                                        objects_detecting_result,
+                                        image_id,
+                                        image_full_url)
+        logging.info(f'Saved objects detecting:{objects_detecting_result} on s3')
+        return json.loads(objects_detecting_result)
+
     def process_message_in_subprocess(self, message_body: str) -> str:
 
         message_object = json.loads(message_body)
@@ -295,6 +311,11 @@ class SqsProcessor:
             logging.info('Start processing door detecting')
             processing_result = self.run_door_detecting(message_object, message_type, inference_id, image_id,
                                                         image_full_url)
+
+        if message_type == ProcessingTypesEnum.ObjectsDetecting.value:
+            logging.info('Start processing objects detecting')
+            processing_result = self.run_objects_detecting(message_object, message_type, inference_id, image_id,
+                                                           image_full_url)
 
         message_object['returnData'] = json.loads(json.dumps(processing_result) or "[]")
         del message_object[StringConstants.EXECUTABLE_PARAMS_KEY]

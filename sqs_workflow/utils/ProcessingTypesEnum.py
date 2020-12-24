@@ -8,3 +8,4 @@ class ProcessingTypesEnum(Enum):
     RMatrix = "R_MATRIX"
     Rotate = "ROTATE"
     DoorDetecting = "DOOR_DETECTION"
+    ObjectsDetecting = "OBJECTS_DETECTION"

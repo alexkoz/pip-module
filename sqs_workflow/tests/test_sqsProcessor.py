@@ -465,6 +465,67 @@ class TestSqsProcessor(TestCase):
         self.assertTrue(response['returnData'][1]['fileUrl'] == 'http://domen.com/img2.JPG')
         self.assertTrue(response['returnData'][1]['layout'])
 
+    def test_process_objects_detection_in_subprocess(self):
+
+        def create_path_and_save_on_s3_mock(message_type: str, inference_id: str, processing_result: str, image_id: str,
+                                            image_full_url='document', is_public=False):
+            return 'test_s3_url_result'
+
+        def create_output_file_on_s3_mock(ProcessingTypesEnum, url_hash, image_id, processing_result):
+            return 'test_output_file_to_s3'
+
+        def download_file_object_from_s3_mock(rotated_s3_result, input_path, url_hash, image_id):
+            return 'rest'
+
+        def download_fileobj_mock():
+            return 'result'
+
+        SqsProcessor.define_sqs_queue_properties = TestSqsProcessor.define_sqs_queue_properties
+        processor = SqsProcessor("-immoviewer-ai")
+        processor.queue = QueueMock()
+        processor.return_queue = QueueMock()
+
+        processor.s3_helper = S3HelperMock(['api/inference/ROTATE/294ee74d8d88a37523c2e28e5c0e150c/s7zu187383.JPG'])
+        processor.create_path_and_save_on_s3 = create_path_and_save_on_s3_mock
+        processor.create_output_file_on_s3 = create_output_file_on_s3_mock
+        processor.s3_helper.download_file_object_from_s3 = download_file_object_from_s3_mock
+        processor.s3_helper.download_fileobj = download_fileobj_mock
+
+        dir_input = os.path.join(processor.input_processing_directory,
+                                 '294ee74d8d88a37523c2e28e5c0e150c')
+        dir_output = os.path.join(processor.output_processing_directory,
+                                  '294ee74d8d88a37523c2e28e5c0e150c')
+
+        if not os.path.exists(dir_input):
+            os.makedirs(dir_input)
+        if not os.path.exists(dir_output):
+            os.makedirs(dir_output)
+
+        test_absolute_path = os.path.join(dir_output,
+                                          's7zu187383.JPG')
+
+        with open(test_absolute_path, 'w') as image_file:
+            image_file.write('{}')
+            image_file.close()
+        logging.info('Created temporary "image" file')
+
+        input_path = os.path.join(processor.input_processing_directory,
+                                  'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
+        output_path = os.path.join(processor.output_processing_directory, 'fccc6d02b113260b57db5569e8f9c897')
+
+        objects_detection_message = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.ObjectsDetecting.value,
+                                     StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                                     StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                                     StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                                     StringConstants.INFERENCE_ID_KEY: "1111",
+                                     StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
+        objects_detection_message = json.dumps(objects_detection_message)
+
+        processing_result = processor.process_message_in_subprocess(objects_detection_message)
+        response = json.loads(processing_result)
+        self.assertTrue(response['returnData'][0]['layout'][0]['id'] == 'indoor_objects_0_g0s6xk4c52')
+        self.assertTrue(response['returnData'][0]['layout'][1]['id'] == 'indoor_objects_1_g0s6xk4c52')
+
     def send_message_to_queue_mock(self, message, queue_url):
         if self.queue_mock_messages is None:
             self.queue_mock_messages = []
