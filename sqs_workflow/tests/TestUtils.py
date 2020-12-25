@@ -30,6 +30,8 @@ class TestUtils:
         os.environ[f'{ProcessingTypesEnum.DoorDetecting.value}_SCRIPT'] = os.path.join(aids, 'dummy_dd.py')
         os.environ[f'{ProcessingTypesEnum.Rotate.value}_EXECUTABLE'] = sys.executable
         os.environ[f'{ProcessingTypesEnum.Rotate.value}_SCRIPT'] = os.path.join(aids, 'dummy_rotate.py')
+        os.environ[f'{ProcessingTypesEnum.ObjectsDetecting.value}_EXECUTABLE'] = sys.executable
+        os.environ[f'{ProcessingTypesEnum.ObjectsDetecting.value}_SCRIPT'] = os.path.join(aids, 'dummy_objects_detection.py')
         os.environ['IMMO_AWS_PROFILE'] = "clipnow"
         os.environ['IMMO_ACCESS'] = "clipnow"
         os.environ['IMMO_SECRET'] = "clipnow"
