@@ -8,6 +8,7 @@ import boto3
 import requests
 
 from pathlib import Path
+from datetime import datetime
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
@@ -140,7 +141,7 @@ class E2ETestSqsProcessor(TestCase):
         # E2EUtils.purge_queue(self.processor.return_queue_url)
         logging.info('Purged queues')
 
-        inference_id = 999777
+        inference_id = 'e2e-test-' + datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
         preprocessing_message = {
             StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.DoorDetecting.value,
             StringConstants.INFERENCE_ID_KEY: inference_id,
@@ -177,3 +178,29 @@ class E2ETestSqsProcessor(TestCase):
         self.assertTrue(r2 == '<Response [403]>')
 
         logging.info('Test is finished')
+
+    def test_e2e_object_detection(self):
+        # E2EUtils.purge_queue(self.processor.queue_url)
+        # E2EUtils.purge_queue(self.processor.return_queue_url)
+        logging.info('Purged queues')
+
+        inference_id = 'e2e-test-' + datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
+        preprocessing_message = {
+            StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.ObjectsDetecting.value,
+            StringConstants.INFERENCE_ID_KEY: inference_id,
+            StringConstants.FILE_URL_KEY: "https://docusketch-production-resources.s3.amazonaws.com/items/cy2461o342/5eb33f7cf42b580e7aaa60f2/Tour/original-images/4624adl9ir.JPG",
+            StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value],
+            "tourId": "0123",
+            "panoId": "0123"
+        }
+        assert self.processor.queue_url == 'https://eu-central-1.queue.amazonaws.com/700659137911/sandy-immoviewer-ai'
+        self.processor.send_message_to_queue(json.dumps(preprocessing_message), self.processor.queue_url)
+        logging.info('Preprocessing_message sent to queue')
+
+        for i in range(120, 0, -1):
+            print(i, end='\r')
+            time.sleep(1)
+
+        self.assertTrue(len(self.s3_helper.list_s3_objects(f'api/inference/OBJECTS_DETECTION/{inference_id}/')) == 1)
+        print('done')
+
