@@ -1,0 +1,1923 @@
+{
+  "tourId": 1536185,
+  "tourLink": "https://immoviewer.com/admin/tour/5d36c82246e0fb004f045316?accessKey=5d31&p.device=Desktop&orderId=5d36c94fc9e77c0054fbab02&dollhousePreview=1",
+  "floor": 0,
+  "fpUrl": "https://immoviewer-production-resources.s3.amazonaws.com/items/zakhar/5d36c82246e0fb004f045317/Tour/map-images/0-floor-3820d2jgom.jpg",
+  "panos": [
+    {
+      "fileUrl": "https://immoviewer-production-resources.s3.amazonaws.com/items/zakhar/5d36c82246e0fb004f045317/Tour/original-images/srv_shw8biq86i.JPG",
+      "panoId": "5d36c8594cedfd004fce8226",
+      "name": "Corridor",
+      "createdDate": "23.07.2019 10:42:01",
+      "pitch": 0.04,
+      "roll": 0.12,
+      "yaw": -0.12,
+      "layout": [
+        {
+          "edges": {
+            "bottom": "corner_1_b",
+            "right": "corner_8_t",
+            "left": "corner_40_t"
+          },
+          "id": "corner_1_t",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": 63.60876183700799,
+          "y": -34.16190126223541,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "zOrder": 11
+        },
+        {
+          "edges": {
+            "top": "corner_1_t",
+            "right": "corner_8_b",
+            "left": "corner_40_b"
+          },
+          "id": "corner_1_b",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": 65.54322838912498,
+          "y": 37.48664284424612,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 149.52,
+            "aligned": 148.85
+          },
+          "zOrder": 20
+        },
+        {
+          "edges": {
+            "bottom": "corner_8_b",
+            "left": "corner_1_t",
+            "right": "corner_1709_t"
+          },
+          "id": "corner_8_t",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": 111.36579499526098,
+          "y": -33.39786880377122,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "zOrder": 15
+        },
+        {
+          "edges": {
+            "top": "corner_8_t",
+            "left": "corner_1_b",
+            "right": "corner_1709_b"
+          },
+          "id": "corner_8_b",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": 111.36579499526098,
+          "y": 38.57115973205158,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 155.33,
+            "aligned": 155.01
+          }
+        },
+        {
+          "edges": {
+            "bottom": "corner_21_b",
+            "left": "corner_1712_t",
+            "right": "corner_40_t"
+          },
+          "id": "corner_21_t",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": -109.25646660901268,
+          "y": -32.27714879395526,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "zOrder": 11
+        },
+        {
+          "edges": {
+            "top": "corner_21_t",
+            "left": "corner_1712_b",
+            "right": "corner_40_b"
+          },
+          "id": "corner_21_b",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": -109.15538134995685,
+          "y": 35.92105373516682,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 152.87,
+            "aligned": 153.42
+          }
+        },
+        {
+          "edges": {
+            "bottom": "corner_40_b",
+            "left": "corner_21_t",
+            "right": "corner_1_t"
+          },
+          "id": "corner_40_t",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": -66.64159946233372,
+          "y": -32.22170129750175,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "zOrder": 14
+        },
+        {
+          "edges": {
+            "top": "corner_40_t",
+            "left": "corner_21_b",
+            "right": "corner_1_b"
+          },
+          "id": "corner_40_b",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": -66.64159946233372,
+          "y": 35.00164494390812,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 374.7,
+            "aligned": 372.72
+          },
+          "zOrder": 14
+        },
+        {
+          "id": "door_126",
+          "type": "door",
+          "room": "srv_shw8biq86i.JPG",
+          "text": "Door \u00abAlpha\u00bb",
+          "points": [
+            {
+              "x": 94.63112902105692,
+              "y": -21.116670513319796
+            },
+            {
+              "x": 68.93015421178058,
+              "y": -20.535035668597423
+            },
+            {
+              "x": 68.93015383631842,
+              "y": 38.21267891578592
+            },
+            {
+              "x": 94.6311281760303,
+              "y": 40.31435191640103
+            }
+          ],
+          "zOrder": 3,
+          "color": 16777215,
+          "elementId": "alpha",
+          "doorType": 1,
+          "doorDirectionRight": true,
+          "pathDirection": "-1",
+          "pathCorner": "-1",
+          "rotationOffset": 0,
+          "positionOffset": 0,
+          "overlap": null,
+          "to": ""
+        },
+        {
+          "id": "door_211",
+          "type": "door",
+          "room": "srv_shw8biq86i.JPG",
+          "text": "Door \u00abBeta\u00bb",
+          "points": [
+            {
+              "x": 25.568322054395026,
+              "y": -32.32680155764032
+            },
+            {
+              "x": -35.957369293903525,
+              "y": -30.248161003073413
+            },
+            {
+              "x": -35.957369293903525,
+              "y": 55.4860476041616
+            },
+            {
+              "x": 25.568322054395026,
+              "y": 58.6490340373886
+            }
+          ],
+          "zOrder": 3,
+          "color": 16777215,
+          "elementId": "beta",
+          "doorType": 1,
+          "doorDirectionRight": true,
+          "pathDirection": "1",
+          "pathCorner": "1",
+          "rotationOffset": 0,
+          "positionOffset": 0,
+          "overlap": null,
+          "to": ""
+        },
+        {
+          "edges": {
+            "bottom": "corner_1709_b",
+            "left": "corner_8_t",
+            "right": "corner_1710_t"
+          },
+          "id": "corner_1709_t",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": 162.9080175962995,
+          "y": -54.03027070035685,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": false,
+          "links": []
+        },
+        {
+          "edges": {
+            "top": "corner_1709_t",
+            "left": "corner_8_b",
+            "right": "corner_1710_b"
+          },
+          "id": "corner_1709_b",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": 162.9080175962995,
+          "y": 65.72461426621659,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": false,
+          "links": [],
+          "lengths": {
+            "raw": 61.11,
+            "aligned": 61.14
+          },
+          "zOrder": 21
+        },
+        {
+          "edges": {
+            "bottom": "corner_1710_b",
+            "left": "corner_1709_t",
+            "right": "corner_1713_t"
+          },
+          "id": "corner_1710_t",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": -170.9120133837648,
+          "y": -56.25454925328691,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": false,
+          "links": [],
+          "zOrder": 14
+        },
+        {
+          "edges": {
+            "top": "corner_1710_t",
+            "left": "corner_1709_b",
+            "right": "corner_1713_b"
+          },
+          "id": "corner_1710_b",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": -170.9120133837648,
+          "y": 87.18579641501475,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": false,
+          "links": [],
+          "lengths": {
+            "raw": 46.68,
+            "aligned": 46.87
+          },
+          "zOrder": 15
+        },
+        {
+          "edges": {
+            "bottom": "corner_1712_b",
+            "left": "corner_1713_t",
+            "right": "corner_21_t"
+          },
+          "id": "corner_1712_t",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": -158.21643931094084,
+          "y": -42.64990859569419,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": false,
+          "links": [],
+          "zOrder": 19
+        },
+        {
+          "edges": {
+            "top": "corner_1712_t",
+            "left": "corner_1713_b",
+            "right": "corner_21_b"
+          },
+          "id": "corner_1712_b",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": -158.21643931094084,
+          "y": 65.00801406438855,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": false,
+          "links": [],
+          "lengths": {
+            "raw": 169.67,
+            "aligned": 171.55
+          },
+          "zOrder": 19
+        },
+        {
+          "edges": {
+            "bottom": "corner_1713_b",
+            "left": "corner_1710_t",
+            "right": "corner_1712_t"
+          },
+          "id": "corner_1713_t",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": -138.61070602408068,
+          "y": -53.2670396471254,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": false,
+          "links": []
+        },
+        {
+          "edges": {
+            "top": "corner_1713_t",
+            "left": "corner_1710_b",
+            "right": "corner_1712_b"
+          },
+          "id": "corner_1713_b",
+          "room": "srv_shw8biq86i.JPG",
+          "type": "corner",
+          "x": -138.61070602408068,
+          "y": 70.62309819398676,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": false,
+          "links": [],
+          "lengths": {
+            "raw": 26.87,
+            "aligned": 27.09
+          },
+          "zOrder": 18
+        }
+      ],
+      "input_path": "/home/ubuntu/purge/sqs_processing/input/92cdcc4c2fc2be5be1aae4ca1245dcd4/similarity_model_1007823_floor_0_5fda14546cba500291403918.json",
+      "output_path": "/home/ubuntu/purge/sqs_processing/output/92cdcc4c2fc2be5be1aae4ca1245dcd4",
+      "hotspots": [
+        {
+          "pano_id": "5d36c8e346e0fb004f045331",
+          "visual_probability": 0.99,
+          "key_points": [
+            [
+              [
+                271.9887390136719,
+                2477.103515625
+              ],
+              [
+                302.3426208496094,
+                2470.32470703125
+              ]
+            ],
+            [
+              [
+                2251.066650390625,
+                1278.004150390625
+              ],
+              [
+                2750.4296875,
+                1262.219970703125
+              ]
+            ],
+            [
+              [
+                2346.76123046875,
+                600.7088012695312
+              ],
+              [
+                2131.931640625,
+                1402.67236328125
+              ]
+            ],
+            [
+              [
+                2438.020263671875,
+                2535.895263671875
+              ],
+              [
+                2470.378173828125,
+                2526.3056640625
+              ]
+            ],
+            [
+              [
+                2643.2958984375,
+                1344.0902099609375
+              ],
+              [
+                2712.6806640625,
+                1345.2779541015625
+              ]
+            ],
+            [
+              [
+                2686.168701171875,
+                1344.257568359375
+              ],
+              [
+                2757.636474609375,
+                1345.875244140625
+              ]
+            ],
+            [
+              [
+                2700.452880859375,
+                1345.958740234375
+              ],
+              [
+                2773.630859375,
+                1347.8592529296875
+              ]
+            ],
+            [
+              [
+                2701.984130859375,
+                2531.99755859375
+              ],
+              [
+                2718.894287109375,
+                2523.571533203125
+              ]
+            ],
+            [
+              [
+                2759.9140625,
+                1296.1260986328125
+              ],
+              [
+                2473.56396484375,
+                1317.942626953125
+              ]
+            ],
+            [
+              [
+                2891.627197265625,
+                1558.60400390625
+              ],
+              [
+                1041.766357421875,
+                1952.18701171875
+              ]
+            ],
+            [
+              [
+                3156.1533203125,
+                1005.766357421875
+              ],
+              [
+                4627.20751953125,
+                1710.07080078125
+              ]
+            ],
+            [
+              [
+                5214.79833984375,
+                2474.418701171875
+              ],
+              [
+                5253.24365234375,
+                2482.952392578125
+              ]
+            ],
+            [
+              [
+                5232.529296875,
+                2540.388671875
+              ],
+              [
+                5276.01171875,
+                2550.101318359375
+              ]
+            ]
+          ],
+          "merged_image_path": null
+        },
+        {
+          "pano_id": "5d36c89246e0fb004f045325",
+          "visual_probability": 0.4,
+          "key_points": [
+            [
+              [
+                271.9887390136719,
+                2477.103515625
+              ],
+              [
+                280.7928466796875,
+                2473.0927734375
+              ]
+            ],
+            [
+              [
+                2643.2958984375,
+                1344.0902099609375
+              ],
+              [
+                2574.004150390625,
+                1346.1126708984375
+              ]
+            ],
+            [
+              [
+                5232.529296875,
+                2540.388671875
+              ],
+              [
+                5237.1669921875,
+                2547.232421875
+              ]
+            ]
+          ],
+          "merged_image_path": null
+        },
+        {
+          "pano_id": "5d36c8d04cedfd004fce8229",
+          "visual_probability": 0.7,
+          "key_points": [
+            [
+              [
+                271.9887390136719,
+                2477.103515625
+              ],
+              [
+                308.7366027832031,
+                2477.517822265625
+              ]
+            ],
+            [
+              [
+                2438.020263671875,
+                2535.895263671875
+              ],
+              [
+                2473.799560546875,
+                2529.64013671875
+              ]
+            ],
+            [
+              [
+                2686.168701171875,
+                1344.257568359375
+              ],
+              [
+                2680.439453125,
+                1344.341552734375
+              ]
+            ],
+            [
+              [
+                2700.452880859375,
+                1345.958740234375
+              ],
+              [
+                2696.2646484375,
+                1346.2454833984375
+              ]
+            ],
+            [
+              [
+                5232.529296875,
+                2540.388671875
+              ],
+              [
+                5254.5146484375,
+                2546.0302734375
+              ]
+            ]
+          ],
+          "merged_image_path": null
+        },
+        {
+          "pano_id": "5d36c8774cedfd004fce8228",
+          "visual_probability": 0.4,
+          "key_points": [
+            [
+              [
+                292.1813659667969,
+                2473.81591796875
+              ],
+              [
+                279.6560974121094,
+                2479.595458984375
+              ]
+            ],
+            [
+              [
+                2438.020263671875,
+                2535.895263671875
+              ],
+              [
+                2433.641357421875,
+                2530.999267578125
+              ]
+            ],
+            [
+              [
+                2671.375244140625,
+                2524.5927734375
+              ],
+              [
+                2661.747314453125,
+                2519.813232421875
+              ]
+            ],
+            [
+              [
+                5232.529296875,
+                2540.388671875
+              ],
+              [
+                5205.748046875,
+                2545.045166015625
+              ]
+            ]
+          ],
+          "merged_image_path": null
+        },
+        {
+          "pano_id": "5d36c8b446e0fb004f045330",
+          "visual_probability": 0.1,
+          "key_points": [
+            [
+              [
+                2643.2958984375,
+                1344.0902099609375
+              ],
+              [
+                2629.481689453125,
+                1346.4674072265625
+              ]
+            ]
+          ],
+          "merged_image_path": null
+        }
+      ]
+    },
+    {
+      "fileUrl": "https://immoviewer-production-resources.s3.amazonaws.com/items/zakhar/5d36c82246e0fb004f045317/Tour/original-images/srv_gg83m3cco2.JPG",
+      "panoId": "5d36c8774cedfd004fce8228",
+      "name": "Bathroom",
+      "createdDate": "23.07.2019 10:42:31",
+      "pitch": 0.02,
+      "roll": 0.13,
+      "yaw": -0.39,
+      "layout": [
+        {
+          "edges": {
+            "bottom": "corner_272_b",
+            "right": "corner_279_t",
+            "left": "corner_323_t"
+          },
+          "id": "corner_272_t",
+          "room": "srv_gg83m3cco2.JPG",
+          "type": "corner",
+          "x": -148.8800266135401,
+          "y": -34.02744096892547,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "zOrder": 30
+        },
+        {
+          "edges": {
+            "top": "corner_272_t",
+            "right": "corner_279_b",
+            "left": "corner_323_b"
+          },
+          "id": "corner_272_b",
+          "room": "srv_gg83m3cco2.JPG",
+          "type": "corner",
+          "x": -149.62318451537487,
+          "y": 38.6000010395551,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 231.68,
+            "aligned": 231.78
+          }
+        },
+        {
+          "edges": {
+            "bottom": "corner_279_b",
+            "left": "corner_272_t",
+            "right": "corner_304_t"
+          },
+          "id": "corner_279_t",
+          "room": "srv_gg83m3cco2.JPG",
+          "type": "corner",
+          "x": -53.95042521853111,
+          "y": -45.477982098941304,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "zOrder": 31
+        },
+        {
+          "edges": {
+            "top": "corner_279_t",
+            "left": "corner_272_b",
+            "right": "corner_304_b"
+          },
+          "id": "corner_279_b",
+          "room": "srv_gg83m3cco2.JPG",
+          "type": "corner",
+          "x": -55.661498942588196,
+          "y": 50.60733744981836,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 265.03,
+            "aligned": 261.15
+          },
+          "zOrder": 32
+        },
+        {
+          "edges": {
+            "bottom": "corner_304_b",
+            "left": "corner_279_t",
+            "right": "corner_323_t"
+          },
+          "id": "corner_304_t",
+          "room": "srv_gg83m3cco2.JPG",
+          "type": "corner",
+          "x": 65.07060466814198,
+          "y": -35.03344984134575,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "zOrder": 33
+        },
+        {
+          "edges": {
+            "top": "corner_304_t",
+            "left": "corner_279_b",
+            "right": "corner_323_b"
+          },
+          "id": "corner_304_b",
+          "room": "srv_gg83m3cco2.JPG",
+          "type": "corner",
+          "x": 66.3377403546549,
+          "y": 40.071914165238574,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 237.98,
+            "aligned": 231.78
+          }
+        },
+        {
+          "edges": {
+            "bottom": "corner_323_b",
+            "left": "corner_304_t",
+            "right": "corner_272_t"
+          },
+          "id": "corner_323_t",
+          "room": "srv_gg83m3cco2.JPG",
+          "type": "corner",
+          "x": 134.76189065920386,
+          "y": -28.54503476787296,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "zOrder": 28
+        },
+        {
+          "edges": {
+            "top": "corner_323_t",
+            "left": "corner_304_b",
+            "right": "corner_272_b"
+          },
+          "id": "corner_323_b",
+          "room": "srv_gg83m3cco2.JPG",
+          "type": "corner",
+          "x": 134.5896810964989,
+          "y": 32.333033967313824,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 263.81,
+            "aligned": 261.15
+          },
+          "zOrder": 27
+        },
+        {
+          "id": "door_649",
+          "type": "door",
+          "room": "srv_gg83m3cco2.JPG",
+          "text": "Door \u00abAlpha\u00bb",
+          "points": [
+            {
+              "x": -47.835770837660334,
+              "y": -31.34286453071445
+            },
+            {
+              "x": -47.62433742498354,
+              "y": 55.576473603608484
+            },
+            {
+              "x": 0.6806054064463751,
+              "y": 64.5348070798927
+            },
+            {
+              "x": 0.4800374185434748,
+              "y": -42.009415215698844
+            }
+          ],
+          "zOrder": 3,
+          "color": 16777215,
+          "elementId": "alpha",
+          "doorType": 1,
+          "doorDirectionRight": true,
+          "pathDirection": 1,
+          "pathCorner": 1,
+          "rotationOffset": 0,
+          "positionOffset": 0,
+          "overlap": null,
+          "to": ""
+        }
+      ],
+      "input_path": "/home/ubuntu/purge/sqs_processing/input/92cdcc4c2fc2be5be1aae4ca1245dcd4/similarity_model_1007823_floor_0_5fda14546cba500291403918.json",
+      "output_path": "/home/ubuntu/purge/sqs_processing/output/92cdcc4c2fc2be5be1aae4ca1245dcd4"
+    },
+    {
+      "fileUrl": "https://immoviewer-production-resources.s3.amazonaws.com/items/zakhar/5d36c82246e0fb004f045317/Tour/original-images/srv_hw0vwkn590.JPG",
+      "panoId": "5d36c89246e0fb004f045325",
+      "name": "Kitchen",
+      "createdDate": "23.07.2019 10:42:58",
+      "pitch": 0.0,
+      "roll": 0.09,
+      "yaw": 0.05,
+      "layout": [
+        {
+          "edges": {
+            "bottom": "corner_734_b",
+            "right": "corner_741_t",
+            "left": "corner_773_t"
+          },
+          "id": "corner_734_t",
+          "room": "srv_hw0vwkn590.JPG",
+          "type": "corner",
+          "x": -22.96862943816774,
+          "y": -19.246796534707304,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": []
+        },
+        {
+          "edges": {
+            "top": "corner_734_t",
+            "right": "corner_741_b",
+            "left": "corner_773_b"
+          },
+          "id": "corner_734_b",
+          "room": "srv_hw0vwkn590.JPG",
+          "type": "corner",
+          "x": -21.927491852884373,
+          "y": 24.68518417398994,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 225.02,
+            "aligned": 231.98
+          },
+          "zOrder": 40
+        },
+        {
+          "edges": {
+            "bottom": "corner_741_b",
+            "left": "corner_734_t",
+            "right": "corner_754_t"
+          },
+          "id": "corner_741_t",
+          "room": "srv_hw0vwkn590.JPG",
+          "type": "corner",
+          "x": 18.430603414852555,
+          "y": -19.76698856787778,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": []
+        },
+        {
+          "edges": {
+            "top": "corner_741_t",
+            "left": "corner_734_b",
+            "right": "corner_754_b"
+          },
+          "id": "corner_741_b",
+          "room": "srv_hw0vwkn590.JPG",
+          "type": "corner",
+          "x": 18.430603414852555,
+          "y": 24.708735709847225,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 603.41,
+            "aligned": 603.04
+          }
+        },
+        {
+          "edges": {
+            "bottom": "corner_754_b",
+            "left": "corner_741_t",
+            "right": "corner_773_t"
+          },
+          "id": "corner_754_t",
+          "room": "srv_hw0vwkn590.JPG",
+          "type": "corner",
+          "x": 160.6436463537335,
+          "y": -20.555102795484732,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": []
+        },
+        {
+          "edges": {
+            "top": "corner_754_t",
+            "left": "corner_741_b",
+            "right": "corner_773_b"
+          },
+          "id": "corner_754_b",
+          "room": "srv_hw0vwkn590.JPG",
+          "type": "corner",
+          "x": 160.6436463537335,
+          "y": 25.693878494355914,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 237.48,
+            "aligned": 231.98
+          }
+        },
+        {
+          "edges": {
+            "bottom": "corner_773_b",
+            "left": "corner_754_t",
+            "right": "corner_734_t"
+          },
+          "id": "corner_773_t",
+          "room": "srv_hw0vwkn590.JPG",
+          "type": "corner",
+          "x": -155.6073861931712,
+          "y": -19.830149679818813,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": []
+        },
+        {
+          "edges": {
+            "top": "corner_773_t",
+            "left": "corner_754_b",
+            "right": "corner_734_b"
+          },
+          "id": "corner_773_b",
+          "room": "srv_hw0vwkn590.JPG",
+          "type": "corner",
+          "x": -155.6073861931712,
+          "y": 24.787687099773514,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 598.68,
+            "aligned": 603.04
+          }
+        },
+        {
+          "id": "door_822",
+          "type": "door",
+          "room": "srv_hw0vwkn590.JPG",
+          "text": "Door \u00abAlpha\u00bb",
+          "points": [
+            {
+              "x": -54.796049527014134,
+              "y": 43.269873453729936
+            },
+            {
+              "x": -54.289367092180726,
+              "y": -31.80922127531789
+            },
+            {
+              "x": -120.18891419481369,
+              "y": -32.73090560209153
+            },
+            {
+              "x": -120.11507063511698,
+              "y": 44.89325923320148
+            }
+          ],
+          "zOrder": 3,
+          "color": 16777215,
+          "elementId": "alpha",
+          "doorType": 1,
+          "doorDirectionRight": true,
+          "pathDirection": 1,
+          "pathCorner": 1,
+          "rotationOffset": 0,
+          "positionOffset": 0,
+          "overlap": null,
+          "to": ""
+        },
+        {
+          "id": "window_931",
+          "type": "window",
+          "room": "srv_hw0vwkn590.JPG",
+          "text": "Window \u00abAlpha\u00bb",
+          "points": [
+            {
+              "x": -21.263526184417856,
+              "y": -18.428188670740543
+            },
+            {
+              "x": -21.20623933269087,
+              "y": 8.70602744119645
+            },
+            {
+              "x": 16.264489718165123,
+              "y": 9.410034013520315
+            },
+            {
+              "x": 16.292700157576405,
+              "y": -19.836858022034917
+            }
+          ],
+          "zOrder": 4,
+          "lines": [],
+          "color": 3373751,
+          "elementId": "alpha"
+        }
+      ],
+      "input_path": "/home/ubuntu/purge/sqs_processing/input/92cdcc4c2fc2be5be1aae4ca1245dcd4/similarity_model_1007823_floor_0_5fda14546cba500291403918.json",
+      "output_path": "/home/ubuntu/purge/sqs_processing/output/92cdcc4c2fc2be5be1aae4ca1245dcd4",
+      "hotspots": [
+        {
+          "pano_id": "5d36c8e346e0fb004f045331",
+          "visual_probability": 0.99,
+          "key_points": [
+            [
+              [
+                280.7928466796875,
+                2473.0927734375
+              ],
+              [
+                302.3426208496094,
+                2470.32470703125
+              ]
+            ],
+            [
+              [
+                358.34295654296875,
+                2521.03759765625
+              ],
+              [
+                390.80133056640625,
+                2525.65869140625
+              ]
+            ],
+            [
+              [
+                2454.754150390625,
+                1558.869140625
+              ],
+              [
+                2393.95947265625,
+                1662.4940185546875
+              ]
+            ],
+            [
+              [
+                2474.85888671875,
+                2519.591064453125
+              ],
+              [
+                2506.244873046875,
+                2516.818603515625
+              ]
+            ],
+            [
+              [
+                2574.004150390625,
+                1346.1126708984375
+              ],
+              [
+                2712.6806640625,
+                1345.2779541015625
+              ]
+            ],
+            [
+              [
+                2589.066162109375,
+                1073.4002685546875
+              ],
+              [
+                2456.219970703125,
+                991.6348266601562
+              ]
+            ],
+            [
+              [
+                2604.388427734375,
+                1237.9119873046875
+              ],
+              [
+                2473.56396484375,
+                1317.942626953125
+              ]
+            ],
+            [
+              [
+                2622.708740234375,
+                1943.8751220703125
+              ],
+              [
+                1041.766357421875,
+                1952.18701171875
+              ]
+            ],
+            [
+              [
+                2636.95849609375,
+                1620.74169921875
+              ],
+              [
+                2732.4443359375,
+                1766.6766357421875
+              ]
+            ],
+            [
+              [
+                2645.54052734375,
+                1582.5013427734375
+              ],
+              [
+                2746.085205078125,
+                1710.574951171875
+              ]
+            ],
+            [
+              [
+                2690.00439453125,
+                1072.955078125
+              ],
+              [
+                2598.108154296875,
+                983.2099609375
+              ]
+            ],
+            [
+              [
+                2724.432373046875,
+                1314.836669921875
+              ],
+              [
+                2623.362060546875,
+                1316.966796875
+              ]
+            ],
+            [
+              [
+                2741.12548828125,
+                1347.4915771484375
+              ],
+              [
+                2601.10205078125,
+                1347.9276123046875
+              ]
+            ],
+            [
+              [
+                2745.06982421875,
+                1304.4964599609375
+              ],
+              [
+                2794.1923828125,
+                1305.0281982421875
+              ]
+            ],
+            [
+              [
+                2759.80322265625,
+                1347.5244140625
+              ],
+              [
+                2617.830078125,
+                1347.751220703125
+              ]
+            ],
+            [
+              [
+                5221.13134765625,
+                2478.3623046875
+              ],
+              [
+                5253.24365234375,
+                2482.952392578125
+              ]
+            ],
+            [
+              [
+                5237.1669921875,
+                2547.232421875
+              ],
+              [
+                5276.01171875,
+                2550.101318359375
+              ]
+            ]
+          ],
+          "merged_image_path": null
+        }
+      ]
+    },
+    {
+      "fileUrl": "https://immoviewer-production-resources.s3.amazonaws.com/items/zakhar/5d36c82246e0fb004f045317/Tour/original-images/srv_p0dts5811s.JPG",
+      "panoId": "5d36c8b446e0fb004f045330",
+      "name": "Balcony",
+      "createdDate": "23.07.2019 10:43:32",
+      "pitch": 0.13,
+      "roll": -0.03,
+      "yaw": -0.56,
+      "layout": [],
+      "input_path": "/home/ubuntu/purge/sqs_processing/input/92cdcc4c2fc2be5be1aae4ca1245dcd4/similarity_model_1007823_floor_0_5fda14546cba500291403918.json",
+      "output_path": "/home/ubuntu/purge/sqs_processing/output/92cdcc4c2fc2be5be1aae4ca1245dcd4"
+    },
+    {
+      "fileUrl": "https://immoviewer-production-resources.s3.amazonaws.com/items/zakhar/5d36c82246e0fb004f045317/Tour/original-images/srv_9f5q1431u9.JPG",
+      "panoId": "5d36c8d04cedfd004fce8229",
+      "name": "Living room",
+      "createdDate": "23.07.2019 10:44:00",
+      "pitch": -0.01,
+      "roll": 0.08,
+      "yaw": -0.32,
+      "layout": [
+        {
+          "edges": {
+            "bottom": "corner_945_b",
+            "right": "corner_952_t",
+            "left": "corner_984_t"
+          },
+          "id": "corner_945_t",
+          "room": "srv_9f5q1431u9.JPG",
+          "type": "corner",
+          "x": 30.919837967018566,
+          "y": -20.218088644799554,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "zOrder": 47
+        },
+        {
+          "edges": {
+            "top": "corner_945_t",
+            "right": "corner_952_b",
+            "left": "corner_984_b"
+          },
+          "id": "corner_945_b",
+          "room": "srv_9f5q1431u9.JPG",
+          "type": "corner",
+          "x": 31.173504593818166,
+          "y": 22.892424581250626,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 607.04,
+            "aligned": 606.83
+          }
+        },
+        {
+          "edges": {
+            "bottom": "corner_952_b",
+            "left": "corner_945_t",
+            "right": "corner_965_t"
+          },
+          "id": "corner_952_t",
+          "room": "srv_9f5q1431u9.JPG",
+          "type": "corner",
+          "x": 148.24101949987767,
+          "y": -20.159096354460353,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "zOrder": 48
+        },
+        {
+          "edges": {
+            "top": "corner_952_t",
+            "left": "corner_945_b",
+            "right": "corner_965_b"
+          },
+          "id": "corner_952_b",
+          "room": "srv_9f5q1431u9.JPG",
+          "type": "corner",
+          "x": 148.65524257013152,
+          "y": 22.911178133285915,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 374.84,
+            "aligned": 372.35
+          }
+        },
+        {
+          "edges": {
+            "bottom": "corner_965_b",
+            "left": "corner_952_t",
+            "right": "corner_984_t"
+          },
+          "id": "corner_965_t",
+          "room": "srv_9f5q1431u9.JPG",
+          "type": "corner",
+          "x": -148.59280160551862,
+          "y": -19.844302797133633,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "zOrder": 49
+        },
+        {
+          "edges": {
+            "top": "corner_965_t",
+            "left": "corner_952_b",
+            "right": "corner_984_b"
+          },
+          "id": "corner_965_b",
+          "room": "srv_9f5q1431u9.JPG",
+          "type": "corner",
+          "x": -148.4943340780004,
+          "y": 22.40209956560069,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 606.72,
+            "aligned": 606.83
+          }
+        },
+        {
+          "edges": {
+            "bottom": "corner_984_b",
+            "left": "corner_965_t",
+            "right": "corner_945_t"
+          },
+          "id": "corner_984_t",
+          "room": "srv_9f5q1431u9.JPG",
+          "type": "corner",
+          "x": -32.405339448604536,
+          "y": -20.02133132215261,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "zOrder": 50
+        },
+        {
+          "edges": {
+            "top": "corner_984_t",
+            "left": "corner_965_b",
+            "right": "corner_945_b"
+          },
+          "id": "corner_984_b",
+          "room": "srv_9f5q1431u9.JPG",
+          "type": "corner",
+          "x": -32.1342435629802,
+          "y": 23.19290260376499,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 370.17,
+            "aligned": 372.35
+          },
+          "zOrder": 54
+        },
+        {
+          "id": "door_1105",
+          "type": "door",
+          "room": "srv_9f5q1431u9.JPG",
+          "text": "Door \u00abAlpha\u00bb",
+          "points": [
+            {
+              "x": 34.577707392795276,
+              "y": -17.07307531531395
+            },
+            {
+              "x": 34.519353792550646,
+              "y": 24.912572630223046
+            },
+            {
+              "x": 61.55961551449741,
+              "y": 35.639552971089365
+            },
+            {
+              "x": 61.38761760528337,
+              "y": -25.422060912467586
+            }
+          ],
+          "zOrder": 3,
+          "color": 16777215,
+          "elementId": "alpha",
+          "doorType": 1,
+          "doorDirectionRight": true,
+          "pathDirection": 1,
+          "pathCorner": 1,
+          "rotationOffset": 0,
+          "positionOffset": -0.04,
+          "overlap": null,
+          "to": ""
+        },
+        {
+          "id": "door_1166",
+          "type": "door",
+          "room": "srv_9f5q1431u9.JPG",
+          "text": "Door \u00abBeta\u00bb",
+          "points": [
+            {
+              "x": -30.808615852198216,
+              "y": -13.738532315876283
+            },
+            {
+              "x": -31.05380241278067,
+              "y": 23.457670466197758
+            },
+            {
+              "x": -14.477270860845636,
+              "y": 26.20521458923749
+            },
+            {
+              "x": -14.135935281997831,
+              "y": -15.391417740552367
+            }
+          ],
+          "zOrder": 3,
+          "color": 16777215,
+          "elementId": "beta",
+          "doorType": 1,
+          "doorDirectionRight": true,
+          "pathDirection": 1,
+          "pathCorner": 1,
+          "rotationOffset": 0,
+          "positionOffset": 0,
+          "overlap": null
+        },
+        {
+          "id": "door_1312",
+          "type": "door",
+          "room": "srv_9f5q1431u9.JPG",
+          "text": "Door \u00abGamma\u00bb",
+          "points": [
+            {
+              "x": -119.1367157290542,
+              "y": -25.209545118384383
+            },
+            {
+              "x": -118.9834193966673,
+              "y": 34.74382709132642
+            },
+            {
+              "x": -70.80334018109482,
+              "y": 36.80046878370013
+            },
+            {
+              "x": -70.90532276628988,
+              "y": -26.49187168198803
+            }
+          ],
+          "zOrder": 3,
+          "color": 16777215,
+          "elementId": "gamma",
+          "doorType": 1,
+          "doorDirectionRight": true,
+          "pathDirection": 1,
+          "pathCorner": 1,
+          "rotationOffset": 0,
+          "positionOffset": 0,
+          "overlap": null,
+          "to": ""
+        },
+        {
+          "id": "door_1548",
+          "type": "door",
+          "room": "srv_9f5q1431u9.JPG",
+          "text": "Door \u00abDelta\u00bb<br>to Corridor",
+          "points": [
+            {
+              "x": 170.3344028725403,
+              "y": -12.539566933554813
+            },
+            {
+              "x": 170.32035984801445,
+              "y": 25.561764049072735
+            },
+            {
+              "x": -169.91596195568926,
+              "y": 25.555936994951683
+            },
+            {
+              "x": -170.00367981079262,
+              "y": -12.174830781134967
+            }
+          ],
+          "zOrder": 3,
+          "color": 16777215,
+          "elementId": "delta",
+          "doorType": 1,
+          "doorDirectionRight": true,
+          "pathDirection": 1,
+          "pathCorner": 1,
+          "rotationOffset": 0,
+          "positionOffset": 0,
+          "overlap": null,
+          "to": "srv_shw8biq86i.JPG"
+        },
+        {
+          "id": "window_1622",
+          "type": "window",
+          "room": "srv_9f5q1431u9.JPG",
+          "text": "Window \u00abAlpha\u00bb",
+          "points": [
+            {
+              "x": -11.36139764025603,
+              "y": -19.9783075101139
+            },
+            {
+              "x": -11.72685076808034,
+              "y": 10.584652061705368
+            },
+            {
+              "x": 8.755501592568976,
+              "y": 10.607711167144888
+            },
+            {
+              "x": 8.408254737408924,
+              "y": -20.215184406785667
+            }
+          ],
+          "zOrder": 4,
+          "lines": [],
+          "color": 3373751,
+          "elementId": "alpha"
+        },
+        {
+          "id": "window_1707",
+          "type": "window",
+          "room": "srv_9f5q1431u9.JPG",
+          "text": "Window \u00abBeta\u00bb",
+          "points": [
+            {
+              "x": 12.49258095723087,
+              "y": -19.514501168372988
+            },
+            {
+              "x": 12.61672625874047,
+              "y": 9.724017095187156
+            },
+            {
+              "x": 28.568774209011167,
+              "y": 8.430669989370944
+            },
+            {
+              "x": 28.5432709669999,
+              "y": -17.398664878556442
+            }
+          ],
+          "zOrder": 4,
+          "lines": [],
+          "color": 3373751,
+          "elementId": "beta"
+        }
+      ],
+      "input_path": "/home/ubuntu/purge/sqs_processing/input/92cdcc4c2fc2be5be1aae4ca1245dcd4/similarity_model_1007823_floor_0_5fda14546cba500291403918.json",
+      "output_path": "/home/ubuntu/purge/sqs_processing/output/92cdcc4c2fc2be5be1aae4ca1245dcd4"
+    },
+    {
+      "fileUrl": "https://immoviewer-production-resources.s3.amazonaws.com/items/zakhar/5d36c82246e0fb004f045317/Tour/original-images/srv_16k53f2ag3.JPG",
+      "panoId": "5d36c8e346e0fb004f045331",
+      "name": "Bedroom",
+      "createdDate": "23.07.2019 10:44:19",
+      "pitch": 0.01,
+      "roll": 0.11,
+      "yaw": -0.1,
+      "layout": [
+        {
+          "edges": {
+            "bottom": "corner_1373_b",
+            "right": "corner_1380_t",
+            "left": "corner_1412_t"
+          },
+          "id": "corner_1373_t",
+          "room": "srv_16k53f2ag3.JPG",
+          "type": "corner",
+          "x": -34.03736927512915,
+          "y": -25.711077997299004,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": []
+        },
+        {
+          "edges": {
+            "top": "corner_1373_t",
+            "right": "corner_1380_b",
+            "left": "corner_1412_b"
+          },
+          "id": "corner_1373_b",
+          "room": "srv_16k53f2ag3.JPG",
+          "type": "corner",
+          "x": -34.03736927512915,
+          "y": 32.138847496623754,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 302.26,
+            "aligned": 305.19
+          }
+        },
+        {
+          "edges": {
+            "bottom": "corner_1380_b",
+            "left": "corner_1373_t",
+            "right": "corner_1393_t"
+          },
+          "id": "corner_1380_t",
+          "room": "srv_16k53f2ag3.JPG",
+          "type": "corner",
+          "x": 40.07106946388694,
+          "y": -23.83887336739602,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": []
+        },
+        {
+          "edges": {
+            "top": "corner_1380_t",
+            "left": "corner_1373_b",
+            "right": "corner_1393_b"
+          },
+          "id": "corner_1380_b",
+          "room": "srv_16k53f2ag3.JPG",
+          "type": "corner",
+          "x": 40.07106946388694,
+          "y": 29.798591709245024,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 354.33,
+            "aligned": 353.04
+          }
+        },
+        {
+          "edges": {
+            "bottom": "corner_1393_b",
+            "left": "corner_1380_t",
+            "right": "corner_1412_t"
+          },
+          "id": "corner_1393_t",
+          "room": "srv_16k53f2ag3.JPG",
+          "type": "corner",
+          "x": 132.33947428727313,
+          "y": -26.626737148122636,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": []
+        },
+        {
+          "edges": {
+            "top": "corner_1393_t",
+            "left": "corner_1380_b",
+            "right": "corner_1412_b"
+          },
+          "id": "corner_1393_b",
+          "room": "srv_16k53f2ag3.JPG",
+          "type": "corner",
+          "x": 132.33947428727313,
+          "y": 33.28342143515329,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 309.03,
+            "aligned": 305.19
+          }
+        },
+        {
+          "edges": {
+            "bottom": "corner_1412_b",
+            "left": "corner_1393_t",
+            "right": "corner_1373_t"
+          },
+          "id": "corner_1412_t",
+          "room": "srv_16k53f2ag3.JPG",
+          "type": "corner",
+          "x": -137.53833773785183,
+          "y": -28.681585983997618,
+          "visible": true,
+          "location": "CEILING",
+          "linkedTo": null,
+          "angle90": true,
+          "links": []
+        },
+        {
+          "edges": {
+            "top": "corner_1412_t",
+            "left": "corner_1393_b",
+            "right": "corner_1373_b"
+          },
+          "id": "corner_1412_b",
+          "room": "srv_16k53f2ag3.JPG",
+          "type": "corner",
+          "x": -137.53833773785183,
+          "y": 35.85198247999702,
+          "visible": true,
+          "location": "FLOOR",
+          "linkedTo": null,
+          "angle90": true,
+          "links": [],
+          "lengths": {
+            "raw": 351.05,
+            "aligned": 353.04
+          }
+        },
+        {
+          "id": "window_1437",
+          "type": "window",
+          "room": "srv_16k53f2ag3.JPG",
+          "text": "Window \u00abAlpha\u00bb",
+          "points": [
+            {
+              "x": -30.489964654030473,
+              "y": -23.912103786440554
+            },
+            {
+              "x": -30.27561617997162,
+              "y": 9.901690596135712
+            },
+            {
+              "x": 32.77118844706513,
+              "y": 9.42777409198441
+            },
+            {
+              "x": 32.32154342414202,
+              "y": -23.19000226788292
+            }
+          ],
+          "zOrder": 4,
+          "lines": [],
+          "color": 3373751,
+          "elementId": "alpha"
+        },
+        {
+          "id": "door_1498",
+          "type": "door",
+          "room": "srv_16k53f2ag3.JPG",
+          "text": "Door \u00abAlpha\u00bb<br>to Living room",
+          "points": [
+            {
+              "x": 43.23914728288037,
+              "y": -21.498475953986436
+            },
+            {
+              "x": 42.85876617400618,
+              "y": 31.228656231381752
+            },
+            {
+              "x": 77.75734846432545,
+              "y": 41.3220651659964
+            },
+            {
+              "x": 77.58533970608181,
+              "y": -29.721273650498986
+            }
+          ],
+          "zOrder": 3,
+          "color": 16777215,
+          "elementId": "alpha",
+          "doorType": 1,
+          "doorDirectionRight": true,
+          "pathDirection": 1,
+          "pathCorner": 1,
+          "rotationOffset": 0,
+          "positionOffset": 0,
+          "overlap": null,
+          "to": "srv_9f5q1431u9.JPG"
+        }
+      ]
+    }
+  ],
+  "start": "2020-12-16 14:07:37.089147",
+  "end": "2020-12-16 14:08:04.799478"
+}
