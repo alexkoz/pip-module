@@ -434,6 +434,7 @@ class SqsProcessor:
                             logging.info(f"Setting message body:{message_body}")
                             processor.complete_processing_message(message, message_body)
                     except Exception as e:
+                        logging.info(f"Processing failed with exception:{str(e)}")
                         error_message = json.loads(message.body)
                         error_message['error'] = str(e)
                         message_body = json.dumps(error_message)
