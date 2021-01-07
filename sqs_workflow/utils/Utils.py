@@ -80,4 +80,4 @@ class Utils:
             logging.info(f'Image sucessfully Downloaded:{absolute_file_path}')
         else:
             logging.info('Image Couldn\'t be retreived')
-            raise
+            raise Exception(f"Image:{url} is not downloaded")
