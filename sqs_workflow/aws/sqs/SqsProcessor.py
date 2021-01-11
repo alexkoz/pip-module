@@ -203,13 +203,14 @@ class SqsProcessor:
         return processing_result
 
     def run_roombox(self, message_object, message_type, inference_id, image_id, image_full_url):
+
         room_box_result = self.run_process(self.roombox_executable,
                                            self.roombox_script,
                                            message_object[StringConstants.EXECUTABLE_PARAMS_KEY])
         logging.info(f'Executed roombox:{room_box_result}')
         room_box_result = SimilarityProcessor.create_layout_object(ProcessingTypesEnum.RoomBox.value,
                                                                    room_box_result)
-        logging.info(f'Executed roombox:{room_box_result}')
+        logging.info(f'Improved roombox:{room_box_result}')
         self.create_path_and_save_on_s3(message_type,
                                         inference_id,
                                         room_box_result,
@@ -420,14 +421,13 @@ class SqsProcessor:
                 for message in list_of_messages:
                     # todo swallow the exception
                     # todo send error to return message
-                    message_body = processor.process_message_in_subprocess(message.body)
-                    message_body = processor.prepare_for_processing(message_body)
+                    message_body = processor.prepare_for_processing(message.body)
+                    message_body = processor.process_message_in_subprocess(message_body)
                     if message_body is not None:
                         logging.info(f"Setting message body:{message_body}")
                         processor.complete_processing_message(message, message_body)
                     else:
                         logging.info(f"Did not get message body for message:{message.id}")
-
 
                 logging.info(f"Keep pulling messages queue:{queue_name}")
                 list_of_messages = processor.pull_messages(1)

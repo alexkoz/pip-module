@@ -84,7 +84,7 @@ class Utils:
             raise Exception(f"Image:{url} is not downloaded")
 
     @staticmethod
-    def generate_image_hash(url: str) -> str:
+    def generate_image_hash(url: str) -> (str, str):
         if "?" in url:
             image_url = url[:url.find('?')]
             file_name = os.path.basename(url)[:os.path.basename(url).find('?')]
