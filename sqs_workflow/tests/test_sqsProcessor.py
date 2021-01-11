@@ -1,10 +1,10 @@
+import hashlib
 import json
 import logging
 import os
 import shutil
 import subprocess
 import sys
-import hashlib
 from pathlib import Path
 from unittest import TestCase
 
@@ -102,16 +102,19 @@ class TestSqsProcessor(TestCase):
         url = "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG?v=1610063255908"
         url_no_version = "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG"
         url_question_mark = "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG?"
-        hash = Utils.generate_image_hash(url)
-        hash_no_version = Utils.generate_image_hash(url_no_version)
-        hash_question_mark = Utils.generate_image_hash(url_question_mark)
-
-        generated_hash = hashlib.md5("https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG".encode('utf-8')).hexdigest()
+        hash, file_name = Utils.generate_image_hash(url)
+        self.assertTrue(file_name == "68j3wi3p37.JPG")
+        hash_no_version, file_name = Utils.generate_image_hash(url_no_version)
+        self.assertTrue(file_name == "68j3wi3p37.JPG")
+        hash_question_mark, file_name = Utils.generate_image_hash(url_question_mark)
+        generated_hash = hashlib.md5(
+            "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG".encode(
+                'utf-8')).hexdigest()
 
         self.assertTrue(hash == generated_hash)
+        self.assertTrue(file_name == "68j3wi3p37.JPG")
         self.assertTrue(hash == hash_no_version)
         self.assertTrue(hash == hash_question_mark)
-
 
     def test_run_process(self):
         self.queue_mock_messages = None

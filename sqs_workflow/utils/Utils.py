@@ -86,11 +86,11 @@ class Utils:
     @staticmethod
     def generate_image_hash(url: str) -> str:
         if "?" in url:
-            image_id = url[:url.find('?')]
-            print(image_id)
+            image_url = url[:url.find('?')]
+            file_name = os.path.basename(url)[:os.path.basename(url).find('?')]
         else:
-            image_id = url
-            print(image_id)
+            image_url = url
+            file_name = os.path.basename(url)
 
-        generated_hash = hashlib.md5(image_id.encode('utf-8')).hexdigest()
-        return generated_hash
+        generated_hash = hashlib.md5(image_url.encode('utf-8')).hexdigest()
+        return generated_hash, file_name

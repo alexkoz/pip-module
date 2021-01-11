@@ -263,7 +263,7 @@ class SqsProcessor:
             return self.run_similarity(message_object, inference_id)
 
         image_full_url = message_object[StringConstants.FILE_URL_KEY]
-        url_hash = Utils.generate_image_hash(image_full_url)
+        url_hash, image_id = Utils.generate_image_hash(image_full_url)
 
         r_matrix_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value, url_hash, image_id)
 
@@ -377,11 +377,9 @@ class SqsProcessor:
             logging.info(f'Similarity does not have a document yet. Use steps document.')
 
         url_file_name = message_object[StringConstants.FILE_URL_KEY]
-        if "?" in url_file_name:
-            file_name = os.path.basename(url_file_name)[:os.path.basename(url_file_name).find('?')]
-        else:
-            file_name = os.path.basename(url_file_name)
-        url_hash = Utils.generate_image_hash(file_name)
+
+
+        url_hash, file_name = Utils.generate_image_hash(url_file_name)
         logging.info(f"Download url:{url_file_name} file:{file_name} hash:{url_hash}")
         input_path = os.path.join(self.input_processing_directory, url_hash)
         output_path = os.path.join(self.output_processing_directory, url_hash)
