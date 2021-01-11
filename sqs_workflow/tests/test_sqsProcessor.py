@@ -105,7 +105,10 @@ class TestSqsProcessor(TestCase):
         hash = Utils.generate_image_hash(url)
         hash_no_version = Utils.generate_image_hash(url_no_version)
         hash_question_mark = Utils.generate_image_hash(url_question_mark)
-        self.assertTrue(hash == "somehash")
+
+        generated_hash = hashlib.md5("https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG".encode('utf-8')).hexdigest()
+
+        self.assertTrue(hash == generated_hash)
         self.assertTrue(hash == hash_no_version)
         self.assertTrue(hash == hash_question_mark)
 

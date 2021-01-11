@@ -263,11 +263,6 @@ class SqsProcessor:
             return self.run_similarity(message_object, inference_id)
 
         image_full_url = message_object[StringConstants.FILE_URL_KEY]
-        if "?" in image_full_url:
-            image_id = os.path.basename(image_full_url)[:os.path.basename(image_full_url).find('?')]
-        else:
-            image_id = os.path.basename(image_full_url)
-
         url_hash = Utils.generate_image_hash(image_full_url)
 
         r_matrix_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value, url_hash, image_id)
@@ -386,7 +381,7 @@ class SqsProcessor:
             file_name = os.path.basename(url_file_name)[:os.path.basename(url_file_name).find('?')]
         else:
             file_name = os.path.basename(url_file_name)
-        url_hash = Utils.generate_image_hash(url_file_name)
+        url_hash = Utils.generate_image_hash(file_name)
         logging.info(f"Download url:{url_file_name} file:{file_name} hash:{url_hash}")
         input_path = os.path.join(self.input_processing_directory, url_hash)
         output_path = os.path.join(self.output_processing_directory, url_hash)

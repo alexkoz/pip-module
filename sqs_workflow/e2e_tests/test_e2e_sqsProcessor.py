@@ -3,7 +3,6 @@ import logging
 import os
 import time
 from unittest import TestCase
-import datetime
 import boto3
 import requests
 
@@ -80,7 +79,7 @@ class E2ETestSqsProcessor(TestCase):
         document_url = "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/similarity/test_w_5_panos_without_layout.json"
         document_object = requests.get(document_url).json()
 
-        inference_id = f'e2e-test-{datetime.datetime.now()}'.replace(' ', '').replace(':', '')
+        inference_id = f'e2e-test-{datetime.now()}'.replace(' ', '').replace(':', '')
         preprocessing_message = {
             StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Preprocessing.value,
             "orderId": "5da5d5164cedfd0050363a2e",
@@ -88,7 +87,8 @@ class E2ETestSqsProcessor(TestCase):
             "tourId": "1342386",
             StringConstants.INFERENCE_ID_KEY: inference_id,
             StringConstants.DOCUMENT_PATH_KEY: document_url,
-            StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value]
+            StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value,
+                                        ProcessingTypesEnum.ObjectsDetecting.value]
         }
         # Sends message to queue
         send_preprocessing_message_result = self.processor.send_message_to_queue(
