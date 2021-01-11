@@ -81,3 +81,8 @@ class Utils:
         else:
             logging.info('Image Couldn\'t be retreived')
             raise Exception(f"Image:{url} is not downloaded")
+
+    @staticmethod
+    def generate_image_hash(url: str) -> str:
+        hashlib.md5(url.encode('utf-8')).hexdigest()
+        return ""
