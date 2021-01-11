@@ -268,7 +268,7 @@ class SqsProcessor:
             image_id = os.path.basename(image_full_url)[:os.path.basename(image_full_url).find('?')]
         else:
             image_id = os.path.basename(image_full_url)
-        url_hash = Utils.generate_image_hash(image_full_url.encode('utf-8'))
+        url_hash = Utils.generate_image_hash(image_id)
 
         r_matrix_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value, url_hash, image_id)
 

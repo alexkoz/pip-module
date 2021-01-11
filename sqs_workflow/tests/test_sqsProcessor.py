@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 import sys
+import hashlib
 from pathlib import Path
 from unittest import TestCase
 
@@ -98,16 +99,24 @@ class TestSqsProcessor(TestCase):
             should_be_created_path)
 
     def test_generate_url(self):
-        url = "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG?v=1610063255908"
-        url_no_version = "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG"
-        url_question_mark = "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG?"
-        hash = Utils.generate_image_hash(url)
-        hash_no_version = Utils.generate_image_hash(url_no_version)
-        hash_question_mark = Utils.generate_image_hash(url_question_mark)
-        self.assertTrue(hash == "somehash")
-        self.assertTrue(hash == hash_no_version)
-        self.assertTrue(hash == hash_question_mark)
-        
+        hashed_urls = []
+        urls = {
+            "url": "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG?v=1610063255908",
+            "url_no_version": "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG",
+            "url_question_mark": "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG?"
+        }
+        for image_full_url in urls.values():
+            if "?" in image_full_url:
+                image_id = os.path.basename(image_full_url)[:os.path.basename(image_full_url).find('?')]
+            else:
+                image_id = os.path.basename(image_full_url)
+            url_hash = Utils.generate_image_hash(image_id)
+
+            hashed_urls.append(url_hash)
+
+        self.assertTrue(hashed_urls[0] == hashed_urls[1])
+        self.assertTrue(hashed_urls[0] == hashed_urls[2])
+        self.assertTrue(hashed_urls[1] == hashed_urls[2])
 
     def test_run_process(self):
         self.queue_mock_messages = None
@@ -241,7 +250,9 @@ class TestSqsProcessor(TestCase):
         rotate_message = json.dumps(rotate_message)
 
         response = json.loads(self.processor.process_message_in_subprocess(rotate_message))
-        self.assertTrue(response['returnData'] == [[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]])
+        self.assertTrue(response['returnData'] == [[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],
+                                                   [0.0489591807476533, 0.998788638594423, 0.0051531600847442875],
+                                                   [0.01316830223102185, -0.007323075477102751, 0.9998876283890858]])
 
     def test_process_roombox_in_subprocess(self):
 
@@ -376,14 +387,14 @@ class TestSqsProcessor(TestCase):
         self.s3_helper.is_object_exist = rotated_result_on_s3_none
 
         response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
-        self.assertTrue(response['returnData'] == [[0.11, -0.22, -0.33],[0.44, 0.55, 0.66],[0.77, -0.88, 0.99]])
+        self.assertTrue(response['returnData'] == [[0.11, -0.22, -0.33], [0.44, 0.55, 0.66], [0.77, -0.88, 0.99]])
 
         # # PRY results exists on S3, Rotate exists on s3 -- output from rotated_result_on_s3
         self.processor.check_pry_on_s3 = check_pry_on_s3_exists
         self.s3_helper.is_object_exist = rotated_result_on_s3_exists
 
         response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
-        self.assertTrue(response['returnData'] == [[0.11, -0.22, -0.33],[0.44, 0.55, 0.66],[0.77, -0.88, 0.99]])
+        self.assertTrue(response['returnData'] == [[0.11, -0.22, -0.33], [0.44, 0.55, 0.66], [0.77, -0.88, 0.99]])
 
         # PRY results doesn't exists on S3, Rotate doesn't exists on s3 -- output from mock_pry
         if not os.path.exists(dir_input):
@@ -404,14 +415,18 @@ class TestSqsProcessor(TestCase):
 
         response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
 
-        self.assertTrue(response['returnData'] == [[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]])
+        self.assertTrue(response['returnData'] == [[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],
+                                                   [0.0489591807476533, 0.998788638594423, 0.0051531600847442875],
+                                                   [0.01316830223102185, -0.007323075477102751, 0.9998876283890858]])
 
         # PRY results doesn't exists on S3, Rotate exists on s3 -- output from rotated_result_on_s3
         self.processor.check_pry_on_s3 = check_pry_on_s3_none
         self.s3_helper.is_object_exist = rotated_result_on_s3_exists
 
         response = json.loads(self.processor.process_message_in_subprocess(rmatrix_message))
-        self.assertTrue(response['returnData'] == [[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],[0.0489591807476533, 0.998788638594423, 0.0051531600847442875],[0.01316830223102185, -0.007323075477102751, 0.9998876283890858]])
+        self.assertTrue(response['returnData'] == [[0.9987129910559471, -0.04888576451258531, -0.013510866889431278],
+                                                   [0.0489591807476533, 0.998788638594423, 0.0051531600847442875],
+                                                   [0.01316830223102185, -0.007323075477102751, 0.9998876283890858]])
 
     def test_process_door_detection_in_subprocess(self):
 
@@ -793,7 +808,7 @@ class TestSqsProcessor(TestCase):
                                                         "--input_path /input/img.jpg --output_path /output/path/")
             logging.info(f'process_result: {process_result}')
 
-            if "Process has failed" in  process_result:
+            if "Process has failed" in process_result:
                 fail_counter += 1
             else:
                 ok_counter += 1

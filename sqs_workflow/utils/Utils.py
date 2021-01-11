@@ -3,6 +3,7 @@ import urllib
 import os
 import requests
 import shutil
+import hashlib
 
 
 class Utils:
@@ -84,5 +85,5 @@ class Utils:
 
     @staticmethod
     def generate_image_hash(url: str) -> str:
-        hashlib.md5(url.encode('utf-8')).hexdigest()
-        return ""
+        generated_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
+        return generated_hash
