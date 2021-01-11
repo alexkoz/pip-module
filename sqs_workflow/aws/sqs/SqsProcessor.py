@@ -420,18 +420,14 @@ class SqsProcessor:
                 for message in list_of_messages:
                     # todo swallow the exception
                     # todo send error to return message
-                    try:
-                        message_body = processor.prepare_for_processing(message.body)
-                        message_body = processor.process_message_in_subprocess(message_body)
-                        if message_body is not None:
-                            logging.info(f"Setting message body:{message_body}")
-                            processor.complete_processing_message(message, message_body)
-                    except Exception as e:
-                        logging.info(f"Processing failed with exception:{str(e)}")
-                        error_message = json.loads(message.body)
-                        error_message['error'] = str(e)
-                        message_body = json.dumps(error_message)
+                    message_body = processor.process_message_in_subprocess(message.body)
+                    message_body = processor.prepare_for_processing(message_body)
+                    if message_body is not None:
+                        logging.info(f"Setting message body:{message_body}")
                         processor.complete_processing_message(message, message_body)
+                    else:
+                        logging.info(f"Did not get message body for message:{message.id}")
+
 
                 logging.info(f"Keep pulling messages queue:{queue_name}")
                 list_of_messages = processor.pull_messages(1)
