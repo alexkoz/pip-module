@@ -1,4 +1,3 @@
-import hashlib
 import json
 import logging
 import os
@@ -268,7 +267,8 @@ class SqsProcessor:
             image_id = os.path.basename(image_full_url)[:os.path.basename(image_full_url).find('?')]
         else:
             image_id = os.path.basename(image_full_url)
-        url_hash = Utils.generate_image_hash(image_id)
+
+        url_hash = Utils.generate_image_hash(image_full_url)
 
         r_matrix_result = self.check_pry_on_s3(ProcessingTypesEnum.RMatrix.value, url_hash, image_id)
 
@@ -386,7 +386,7 @@ class SqsProcessor:
             file_name = os.path.basename(url_file_name)[:os.path.basename(url_file_name).find('?')]
         else:
             file_name = os.path.basename(url_file_name)
-        url_hash = Utils.generate_image_hash(url_file_name.encode('utf-8'))
+        url_hash = Utils.generate_image_hash(url_file_name)
         logging.info(f"Download url:{url_file_name} file:{file_name} hash:{url_hash}")
         input_path = os.path.join(self.input_processing_directory, url_hash)
         output_path = os.path.join(self.output_processing_directory, url_hash)

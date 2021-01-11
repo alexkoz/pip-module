@@ -85,5 +85,11 @@ class Utils:
 
     @staticmethod
     def generate_image_hash(url: str) -> str:
+        if "?" in image_full_url:
+            image_id = os.path.basename(image_full_url)[:os.path.basename(image_full_url).find('?')]
+        else:
+            image_id = os.path.basename(image_full_url)
+        url_hash = Utils.generate_image_hash(image_id)
+
         generated_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
         return generated_hash

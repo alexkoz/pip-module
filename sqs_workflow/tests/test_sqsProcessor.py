@@ -99,24 +99,16 @@ class TestSqsProcessor(TestCase):
             should_be_created_path)
 
     def test_generate_url(self):
-        hashed_urls = []
-        urls = {
-            "url": "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG?v=1610063255908",
-            "url_no_version": "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG",
-            "url_question_mark": "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG?"
-        }
-        for image_full_url in urls.values():
-            if "?" in image_full_url:
-                image_id = os.path.basename(image_full_url)[:os.path.basename(image_full_url).find('?')]
-            else:
-                image_id = os.path.basename(image_full_url)
-            url_hash = Utils.generate_image_hash(image_id)
+        url = "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG?v=1610063255908"
+        url_no_version = "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG"
+        url_question_mark = "https://img.docusketch.com/items/ks7z494236/5ff79d08a2979b18dcf20386/Tour/original-images/68j3wi3p37.JPG?"
+        hash = Utils.generate_image_hash(url)
+        hash_no_version = Utils.generate_image_hash(url_no_version)
+        hash_question_mark = Utils.generate_image_hash(url_question_mark)
+        self.assertTrue(hash == "somehash")
+        self.assertTrue(hash == hash_no_version)
+        self.assertTrue(hash == hash_question_mark)
 
-            hashed_urls.append(url_hash)
-
-        self.assertTrue(hashed_urls[0] == hashed_urls[1])
-        self.assertTrue(hashed_urls[0] == hashed_urls[2])
-        self.assertTrue(hashed_urls[1] == hashed_urls[2])
 
     def test_run_process(self):
         self.queue_mock_messages = None
