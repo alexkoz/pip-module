@@ -139,7 +139,7 @@ class SqsProcessor:
         logging.info(f'Created S3 object key:{s3_path} file:{image_absolute_path}')
 
     def run_preprocessing(self, message_object, inference_id: str):
-        logging.info(f'Start preprocessing similarity inference:{inference_id}')
+        logging.info(f'Start preprocessing pipeline inference:{inference_id}')
         messages_for_sending = SimilarityProcessor.start_pre_processing(message_object)
         for send_message in messages_for_sending:
             self.send_message_to_queue(send_message, self.queue_url)
@@ -379,7 +379,6 @@ class SqsProcessor:
 
         url_file_name = message_object[StringConstants.FILE_URL_KEY]
 
-
         url_hash, file_name = Utils.generate_image_hash(url_file_name)
         logging.info(f"Download url:{url_file_name} file:{file_name} hash:{url_hash}")
         input_path = os.path.join(self.input_processing_directory, url_hash)
@@ -427,7 +426,7 @@ class SqsProcessor:
                         logging.info(f"Setting message body:{message_body}")
                         processor.complete_processing_message(message, message_body)
                     else:
-                        logging.info(f"Did not get message body for message:{message.id}")
+                        logging.info(f"Did not get message body for message:{message}")
 
                 logging.info(f"Keep pulling messages queue:{queue_name}")
                 list_of_messages = processor.pull_messages(1)
