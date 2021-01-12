@@ -327,7 +327,7 @@ class SqsProcessor:
         if not subprocess_result.returncode == 0:
             message = f'Process has failed for process:{executable} script:{script} message:{executable_params}.'
             logging.info(message)
-            return message
+            return json.dumps({"error": message})
 
         logging.info(f'subprocess code: {subprocess_result.returncode} output: {subprocess_result.stdout}')
         output = subprocess_result.stdout.decode("utf-8").rstrip()

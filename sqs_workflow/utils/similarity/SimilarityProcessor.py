@@ -78,6 +78,8 @@ class SimilarityProcessor:
         for s3_key in list_results_keys:
             logging.info(f'Start processing key:{s3_key}')
             result_string = s3_helper.read_s3_object(s3_key)
+            #todo test if result string is empty or contains error message
+            #todo if error message then skip and return layout == []
             if result_string:
                 logging.info(f'Step json result:{result_string}')
                 step_result = json.loads(s3_helper.read_s3_object(s3_key))
