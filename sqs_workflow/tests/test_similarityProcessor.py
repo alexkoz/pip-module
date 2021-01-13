@@ -64,8 +64,7 @@ class TestSimilarityProcessor(TestCase):
                  "fileUrl": "http://domen.com/empty.JPG"}
             ]
         }
-        # todo add 3 door-detecting
-        # todo one of door-d is with error
+
         list_result = [
             os.path.join('api', 'inference', ProcessingTypesEnum.RoomBox.value, '1111', 'img1.JPG', 'result.json'),
             os.path.join('api', 'inference', ProcessingTypesEnum.RoomBox.value, '1111', 'img2.JPG', 'result.json'),
@@ -94,3 +93,30 @@ class TestSimilarityProcessor(TestCase):
         self.assertEqual(new_message_object['panos'][1]['layout'][8]['id'], 'door_108')
         # todo door detector is apprriate with error
         # todo door detector is apprriate without error
+
+    def test_start_pre_processing(self):
+        message_object = {
+            StringConstants.FLOOR_ID_KEY: 1,
+            "fpUrl": "url",
+            StringConstants.PANOS_KEY: [
+                'pano1', 'pano2'
+            ],
+            StringConstants.EXECUTABLE_PARAMS_KEY: '--input_path ' + os.path.join(str(Path.home()), 'projects',
+                                                                                  'python', 'misc', 'sqs_workflow',
+                                                                                  'sqs_workflow', 'test_assets',
+                                                                                  'test_w_2_panos_without_layout.json'),
+            StringConstants.STEPS_KEY: ["ROOM_BOX", "DOOR_DETECTION", "OBJECTS_DETECTION"],
+            StringConstants.DOCUMENT_PATH_KEY: "some_document_path_key"
+        }
+
+        list_of_messages = self.similarity_processor.start_pre_processing(message_object)
+
+        self.assertTrue(len(list_of_messages) == 7)
+        self.assertTrue(json.loads(list_of_messages[0])['fileUrl'].endswith('1m164u2113.JPG'))
+        self.assertTrue(json.loads(list_of_messages[0])['messageType'] == 'ROOM_BOX')
+        self.assertTrue(json.loads(list_of_messages[1])['fileUrl'].endswith('29utxb8t4f.JPG'))
+        self.assertTrue(json.loads(list_of_messages[0])['messageType'] == 'ROOM_BOX')
+        self.assertTrue(json.loads(list_of_messages[3])['messageType'] == 'DOOR_DETECTION')
+        self.assertTrue(json.loads(list_of_messages[5])['messageType'] == 'OBJECTS_DETECTION')
+        self.assertTrue(json.loads(list_of_messages[6])['messageType'] == 'SIMILARITY')
+
