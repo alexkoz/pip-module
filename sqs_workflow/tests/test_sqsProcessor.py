@@ -128,6 +128,14 @@ class TestSqsProcessor(TestCase):
                                                     roombox_script,
                                                     StringConstants.EXECUTABLE_PARAMS_KEY), roombox_result)
 
+        # Check case with empty output
+        empty_output_script = os.path.join(self.common_path, 'aids', 'dummy_empty_output.py')
+        empty_res = '{"layout": []}'
+
+        self.assertTrue(
+            self.processor.run_process(roombox_executable, empty_output_script, StringConstants.EXECUTABLE_PARAMS_KEY),
+            empty_res)
+
     @staticmethod
     def is_similarity_ready_document(s3_helper, message_object):
         input_path = os.path.join(SqsProcessor("-immoviewer-ai").input_processing_directory,
