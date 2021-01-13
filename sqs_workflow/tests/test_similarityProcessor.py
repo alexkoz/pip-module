@@ -5,7 +5,6 @@ import os
 import sys
 from pathlib import Path
 from unittest import TestCase
-
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.tests.S3HelperMock import S3HelperMock
 from sqs_workflow.tests.TestUtils import TestUtils
@@ -65,88 +64,33 @@ class TestSimilarityProcessor(TestCase):
                  "fileUrl": "http://domen.com/empty.JPG"}
             ]
         }
+        # todo add 3 door-detecting
+        # todo one of door-d is with error
         list_result = [
             os.path.join('api', 'inference', ProcessingTypesEnum.RoomBox.value, '1111', 'img1.JPG', 'result.json'),
             os.path.join('api', 'inference', ProcessingTypesEnum.RoomBox.value, '1111', 'img2.JPG', 'result.json'),
             os.path.join('api', 'inference', ProcessingTypesEnum.RoomBox.value, '1111', 'empty.JPG', 'result.json'),
+
             os.path.join('api', 'inference', ProcessingTypesEnum.DoorDetecting.value, '1111', 'img1.JPG',
                          'result.json'),
             os.path.join('api', 'inference', ProcessingTypesEnum.DoorDetecting.value, '1111', 'img2.JPG',
                          'result.json'),
             os.path.join('api', 'inference', ProcessingTypesEnum.DoorDetecting.value, '1111', 'empty.JPG',
-                         'result.json')]
+                         'result.json'),
+
+            os.path.join('api', 'inference', ProcessingTypesEnum.ObjectsDetecting.value, '1111', 'img1.JPG',
+                         'result.json'),
+            os.path.join('api', 'inference', ProcessingTypesEnum.ObjectsDetecting.value, '1111', 'img2.JPG',
+                         'result.json'),
+            os.path.join('api', 'inference', ProcessingTypesEnum.ObjectsDetecting.value, '1111', 'empty.JPG',
+                         'result.json'),
+
+        ]
 
         new_message_object = SimilarityProcessor.assemble_results_into_document(s3_helper_mock, message_object,
                                                                                 list_result)
         self.assertEqual(new_message_object['panos'][0]['fileUrl'], "http://domen.com/img1.JPG")
         self.assertEqual(new_message_object['panos'][1]['layout'][0]['type'], 'corner')
         self.assertEqual(new_message_object['panos'][1]['layout'][8]['id'], 'door_108')
-
-    # def test_start_pre_processing(self):
-    #
-    #     SqsProcessor.define_sqs_queue_properties = TestSqsProcessor.define_sqs_queue_properties
-    #     sqs_processor = SqsProcessor('-immoviewer-ai')
-    #
-    #     preprocessing_message = {
-    #         StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Preprocessing.value,
-    #         StringConstants.ORDER_ID_KEY: "5da5d5164cedfd0050363a2e",
-    #         StringConstants.INFERENCE_ID_KEY: 1111,
-    #         StringConstants.FLOOR_ID_KEY: 1,
-    #         StringConstants.TOUR_ID_KEY: "1342386",
-    #         StringConstants.DOCUMENT_PATH_KEY: f"{self.common_path}/test_assets/two_panos.json",
-    #         StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value]
-    #     }
-    #     json_message_object = sqs_processor.prepare_for_processing(json.dumps(preprocessing_message))
-    #     similarity_message = json.loads(json_message_object)
-    #     file_path = similarity_message[StringConstants.EXECUTABLE_PARAMS_KEY].replace('--input_path', '') \
-    #         .split()[0].strip()
-    #
-    #     with open(file_path) as f:
-    #         json_message_object = json.load(f)
-    #
-    #     list_json_messages = self.similarity_processor.start_pre_processing(similarity_message)
-    #     self.assertTrue(
-    #         len(list_json_messages) == (len(preprocessing_message[StringConstants.STEPS_KEY]) * len(
-    #             json_message_object[StringConstants.PANOS_KEY]) + 1))
-    #     for json_message in list_json_messages:
-    #         message_object = json.loads(json_message)
-    #         if message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.Similarity.value:
-    #             self.assertTrue(len(message_object[StringConstants.STEPS_KEY]) == 2)
-    #             self.assertTrue(StringConstants.DOCUMENT_PATH_KEY not in message_object)
-    #         else:
-    #             self.assertTrue(
-    #                 message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.DoorDetecting.value
-    #                 or message_object[StringConstants.MESSAGE_TYPE_KEY] == ProcessingTypesEnum.RoomBox.value)
-
-    # def test_is_similarity_ready(self):
-    #
-    #     Utils.download_from_http = TestSqsProcessor.download_from_http
-    #     similarity_message_w_document_path = {
-    #         StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Similarity.value,
-    #         StringConstants.DOCUMENT_PATH_KEY: f"{self.common_path}/test_assets/fccc6d02b113260b57db5569e8f9c897/order_1012550_floor_1.json.json",
-    #         StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
-    #         StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64"
-    #     }
-    #
-    #     res = self.similarity_processor.is_similarity_ready(S3HelperMock([]), similarity_message_w_document_path)
-    #     self.assertTrue(len(res[StringConstants.PANOS_KEY]) == 23)
-    #
-    #     hash_document_path = hashlib.md5(
-    #         similarity_message_w_document_path.get(StringConstants.DOCUMENT_PATH_KEY).encode('utf-8')).hexdigest()
-    #     filename = 'filename.json'
-    #     absolute_input_path = os.path.join(os.environ['INPUT_DIRECTORY'], hash_document_path, filename)
-    #
-    #     similarity_message_w_steps_document_path = {
-    #
-    #         StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Similarity.value,
-    #         StringConstants.DOCUMENT_PATH_KEY: f"{self.common_path}/test_assets/with_layout/order_1017707_floor_1.json",
-    #         StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
-    #         StringConstants.INFERENCE_ID_KEY: 100,
-    #         StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
-    #         StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value],
-    #         StringConstants.PANOS_KEY: "pano1",
-    #         StringConstants.EXECUTABLE_PARAMS_KEY: f"--input_path {absolute_input_path} --output_path {os.environ['OUTPUT_DIRECTORY']}"
-    #     }
-    #
-    #     res2 = self.similarity_processor.is_similarity_ready(S3HelperMock([]), similarity_message_w_steps_document_path)
-    #     self.assertTrue(res2[StringConstants.PANOS_KEY][0]['layout'])
+        # todo door detector is apprriate with error
+        # todo door detector is apprriate without error
