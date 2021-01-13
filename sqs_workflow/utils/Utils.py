@@ -54,6 +54,7 @@ class Utils:
 
     @staticmethod
     def download_from_http(url: str, absolute_file_path=None) -> str:
+        logging.info(f"Start downloading file:{url} to path:{absolute_file_path}")
         if not url.endswith('.json'):
             return Utils.download_from_http_and_save(url, absolute_file_path)
         logging.info(f'Document url:{url} will be downloaded')
