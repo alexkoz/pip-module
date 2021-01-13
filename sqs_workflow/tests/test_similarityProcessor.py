@@ -2,6 +2,7 @@ import hashlib
 import json
 import logging
 import os
+import shutil
 import sys
 from pathlib import Path
 from unittest import TestCase
@@ -120,3 +121,38 @@ class TestSimilarityProcessor(TestCase):
         self.assertTrue(json.loads(list_of_messages[5])['messageType'] == 'OBJECTS_DETECTION')
         self.assertTrue(json.loads(list_of_messages[6])['messageType'] == 'SIMILARITY')
 
+    def test_process_result_files(self):
+        # Makes a copy of origin JSON to make changes
+        path_to_origin_file = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow',
+                                           'sqs_workflow', 'test_assets', 'test_w_2_panos_without_layout.json')
+        path_to_copy_origin = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow',
+                                           'sqs_workflow', 'tmp', 'test_json_for_test_process_result_files.json')
+        shutil.copyfile(path_to_origin_file, path_to_copy_origin)
+
+        document_object = {
+            'doc_obj_param_1': 1,
+            'doc_obj_param_2': 2,
+            'doc_obj_param_3': 'value 3',
+        }
+        message_object = {
+            StringConstants.FLOOR_ID_KEY: 1,
+            "fpUrl": "url",
+            StringConstants.PANOS_KEY: [
+                'pano1', 'pano2'
+            ],
+            StringConstants.EXECUTABLE_PARAMS_KEY: '--input_path ' + os.path.join(str(Path.home()), 'projects',
+                                                                                  'python', 'misc', 'sqs_workflow',
+                                                                                  'sqs_workflow', 'tmp',
+                                                                                  'test_json_for_test_process_result_files.json'),
+            StringConstants.STEPS_KEY: ["ROOM_BOX", "DOOR_DETECTION", "OBJECTS_DETECTION"],
+            StringConstants.DOCUMENT_PATH_KEY: "some_document_path_key"
+        }
+
+        self.similarity_processor.process_result_files(document_object, message_object)
+
+        # Checks the correctness of the entry
+        with open(os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow', 'sqs_workflow', 'tmp',
+                               'test_json_for_test_process_result_files.json')) as result_file:
+            content = result_file.read()
+            self.assertTrue(json.loads(content) == document_object)
+            result_file.close()
