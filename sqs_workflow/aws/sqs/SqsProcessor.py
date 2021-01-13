@@ -333,7 +333,8 @@ class SqsProcessor:
         logging.info(f'subprocess code: {subprocess_result.returncode} output: {subprocess_result.stdout}')
         output = subprocess_result.stdout.decode("utf-8").rstrip()
         if not output:
-            output = "[]"
+            logging.info(f'subprocess subprocess is empty. So return empty layout object')
+            output = json.dumps({'layout': []})
         logging.info(f"Output:{output}")
         return output
 
