@@ -2,18 +2,20 @@ import json
 import logging
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
+from pathlib import Path
 from unittest import TestCase
+import concurrent.futures
+
 import boto3
 import requests
 
-from pathlib import Path
-from datetime import datetime
 from sqs_workflow.aws.s3.S3Helper import S3Helper
 from sqs_workflow.aws.sqs.SqsProcessor import SqsProcessor
 from sqs_workflow.utils.ProcessingTypesEnum import ProcessingTypesEnum
 from sqs_workflow.utils.StringConstants import StringConstants
 from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcessor
-from sqs_workflow.e2e_tests.utils import E2EUtils
 
 
 class E2ETestSqsProcessor(TestCase):
@@ -71,6 +73,50 @@ class E2ETestSqsProcessor(TestCase):
         if attempts == 7:
             logging.info(f'Out of attempts')
         return list_of_messages
+
+    def test_load_e2e(self):
+        bucket = "immoviewer-ai-test"
+        prefix = "storage/segmentation/"
+        self.s3_helper.s3_bucket = bucket
+        list_of_files = self.s3_helper.list_s3_objects(prefix)
+        list_of_files = list_of_files[:300]
+        inference_id = "e2e-inference/"
+        message_index = 0
+        messages = []
+        for s3_file in list_of_files:
+            document_url = f'https://{bucket}.s3-eu-west-1.amazonaws.com/{s3_file}'
+            message_index = message_index + 1
+            preprocessing_message = {
+                StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Preprocessing.value,
+                "orderId": "5da5d5164cedfd0050363a2e",
+                "floor": 1,
+                "tourId": "1342386",
+                StringConstants.INFERENCE_ID_KEY: f"{inference_id}{str(message_index)}",
+                StringConstants.DOCUMENT_PATH_KEY: document_url,
+                StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value,
+                                            ProcessingTypesEnum.ObjectsDetecting.value]
+            }
+            messages.append(preprocessing_message)
+        executor = ThreadPoolExecutor(5)
+        self.processor.queue_url = 'https://eu-central-1.queue.amazonaws.com/700659137911/staging-immoviewer-ai'
+        messages_results = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            # Start the load operations and mark each future with its URL
+            future_to_url = {executor.submit(self.processor.send_message_to_queue, json.dumps(message),
+                                             self.processor.queue_url): message for message in messages}
+            for future in concurrent.futures.as_completed(future_to_url):
+                url = future_to_url[future]
+                try:
+                    data = future.result()
+                    messages_results.append(data)
+                except Exception as exc:
+                    logging.error('%r generated an exception: %s' % (url, exc))
+                else:
+                    logging.info('%r page is %d bytes' % (url, len(data)))
+        print(messages_results)
+        self.assertTrue(len(messages_results) > 0)
+
+
 
     def test_e2e(self):
         # E2EUtils.purge_queue(self.processor.queue_url)
@@ -203,4 +249,3 @@ class E2ETestSqsProcessor(TestCase):
 
         self.assertTrue(len(self.s3_helper.list_s3_objects(f'api/inference/OBJECTS_DETECTION/{inference_id}/')) == 1)
         print('done')
-
