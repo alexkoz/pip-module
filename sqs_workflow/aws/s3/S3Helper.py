@@ -9,18 +9,12 @@ class S3Helper:
     def __init__(self):
         self.s3_bucket = f"{os.environ['S3_BUCKET']}-{os.environ['APP_BRANCH']}"
 
-        client = None
-        while not client:
-            try:
-                self.s3_client = boto3.client(
-                    's3',
-                    aws_access_key_id=os.environ['IMMO_ACCESS'],
-                    aws_secret_access_key=os.environ['IMMO_SECRET'],
-                    region_name=os.environ['S3_REGION']
-                )
-            except:
-                client = None
-
+        self.s3_client = boto3.client(
+            's3',
+            aws_access_key_id=os.environ['IMMO_ACCESS'],
+            aws_secret_access_key=os.environ['IMMO_SECRET'],
+            region_name=os.environ['S3_REGION']
+        )
         assert self.s3_bucket
         assert self.s3_client
 
