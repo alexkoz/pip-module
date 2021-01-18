@@ -313,7 +313,7 @@ class SqsProcessor:
             processing_result = self.run_objects_detecting(message_object, message_type, inference_id, image_id,
                                                            image_full_url)
 
-        message_object['returnData'] = json.loads(json.dumps(processing_result) or "[]")
+        message_object['returnData'] = json.loads(json.dumps(processing_result) or json.dumps({'layout': []}))
         del message_object[StringConstants.EXECUTABLE_PARAMS_KEY]
         logging.info(f"Finished processing and updated message:{message_object} save result on s3.")
         return json.dumps(message_object)
