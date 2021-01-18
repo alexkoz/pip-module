@@ -7,7 +7,7 @@ import boto3
 class S3Helper:
 
     def __init__(self):
-
+        logging.info(f"Environments: {os.environ}")
         self.s3_bucket = f"{os.environ['S3_BUCKET']}-{os.environ['APP_BRANCH']}"
         self.s3_client = boto3.client(
             's3',
