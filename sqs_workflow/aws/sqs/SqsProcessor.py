@@ -18,9 +18,9 @@ from sqs_workflow.utils.similarity.SimilarityProcessor import SimilarityProcesso
 
 class SqsProcessor:
 
-    def __init__(self, queue_name, s3_helper):
+    def __init__(self, queue_name):
         self.alert_service = AlertService()
-        self.s3_helper = s3_helper#S3Helper()
+        self.s3_helper = S3Helper()
         self.input_processing_directory = os.environ['INPUT_DIRECTORY']
         self.output_processing_directory = os.environ['OUTPUT_DIRECTORY']
         if "immo" in queue_name:
@@ -413,11 +413,11 @@ class SqsProcessor:
         return json.dumps(message_object), input_path, output_path
 
     @staticmethod
-    def run_queue_processor(queue_name, s3_helper):
+    def run_queue_processor(queue_name):
         try:
             logging.info(f'Started process for queue:{queue_name}')
             Utils.check_environment()
-            processor = SqsProcessor(queue_name, s3_helper)
+            processor = SqsProcessor(queue_name)
             list_of_messages = processor.pull_messages(1)
             logging.info(f'Pulled messages {len(list_of_messages)} s from queue:{queue_name}')
             while len(list_of_messages) > 0:
