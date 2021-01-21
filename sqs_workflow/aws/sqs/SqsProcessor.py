@@ -426,7 +426,9 @@ class SqsProcessor:
                     # todo swallow the exception
                     # todo send error to return message
                     message_body, input_path, output_path = processor.prepare_for_processing(message.body)
-                    message_body = processor.process_message_in_subprocess(message_body)
+                    if not processor.is_directory_empty(input_path):
+                        logging.info(f"")
+                        message_body = processor.process_message_in_subprocess(message_body)
                     if message_body is not None:
                         logging.info(f"Setting message body:{message_body}")
                         processor.complete_processing_message(message, message_body)
@@ -445,3 +447,8 @@ class SqsProcessor:
                 list_of_messages = processor.pull_messages(1)
         except Exception as e:
             logging.critical(e, exc_info=True)  # log exception info at CRITICAL log level
+
+    #todo test
+    @staticmethod
+    def is_directory_empty(dir_absolute_path) -> bool:
+        pass
