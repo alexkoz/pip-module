@@ -448,7 +448,8 @@ class SqsProcessor:
         except Exception as e:
             logging.critical(e, exc_info=True)  # log exception info at CRITICAL log level
 
-    #todo test
     @staticmethod
     def is_directory_empty(dir_absolute_path) -> bool:
-        pass
+        if not dir_absolute_path:
+            return True
+        return False

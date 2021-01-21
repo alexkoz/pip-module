@@ -1002,3 +1002,11 @@ class TestSqsProcessor(TestCase):
         self.assertRaises(AssertionError,
                           lambda: self.processor.run_roombox('message_object', 'message_type', 'inference_id',
                                                              'image_id', 'image_full_url'))
+
+    def test_is_directory_empty(self):
+        not_empty_path = 'test_path/test_path/'
+        self.assertFalse(self.processor.is_directory_empty(not_empty_path))
+
+        empty_path = ''
+        self.assertTrue(self.processor.is_directory_empty(empty_path))
+
