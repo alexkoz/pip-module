@@ -5,6 +5,7 @@ import os
 import time
 from concurrent.futures import ThreadPoolExecutor
 from unittest import TestCase
+from pathlib import Path
 
 import boto3
 
@@ -72,14 +73,23 @@ class E2EAids(TestCase):
         return list_of_messages
 
     def test_create_similarity_document(self):
-        s3_helper = None
-        message_object = {
+        s3_helper = S3Helper()
+        input_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow', 'sqs_workflow', 'tmp',
+                                  'test_input_file.json')
+        output_path = ''
+        message_object = {StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Similarity.value,
+                          StringConstants.STEPS_DOCUMENT_PATH_KEY: "https://immoviewer-ai-test.s3-eu-west-1.amazonaws.com/storage/segmentation/preprocessing-no-layout_public_floors_data_from_01.06.2020/order_1012698_floor_-1.json",
+                          StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value,
+                                                      ProcessingTypesEnum.ObjectsDetecting.value,
+                                                      ProcessingTypesEnum.DoorDetecting.value],
+                          StringConstants.INFERENCE_ID_KEY: "e2e-inference/100",
+                          StringConstants.EXECUTABLE_PARAMS_KEY: f'--input_path {input_path} --output_path {output_path}'}
 
-        }
         document_object = SimilarityProcessor.is_similarity_ready(s3_helper, message_object)
-        # dump into file
-        pass
-
+        print('finish')
+        with open(os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow', 'sqs_workflow', 'tmp',
+                               'test_result_similarity_file.json'), 'w') as outfile:
+            json.dump(document_object, outfile)
 
     def test_load_e2e(self):
         bucket = "immoviewer-ai-test"
@@ -101,7 +111,8 @@ class E2EAids(TestCase):
                     "tourId": "1342386",
                     StringConstants.INFERENCE_ID_KEY: f"{inference_id}{str(message_index)}",
                     StringConstants.DOCUMENT_PATH_KEY: document_url,
-                    StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value, ProcessingTypesEnum.DoorDetecting.value,
+                    StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value,
+                                                ProcessingTypesEnum.DoorDetecting.value,
                                                 ProcessingTypesEnum.ObjectsDetecting.value]
                 }
                 messages.append(preprocessing_message)
@@ -122,6 +133,3 @@ class E2EAids(TestCase):
                     logging.info('%r page is %d bytes' % (url, len(data)))
         print(messages_results)
         self.assertTrue(len(messages_results) > 0)
-
-
-
