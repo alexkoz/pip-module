@@ -71,6 +71,7 @@ class SqsProcessor:
     def receive_messages_from_queue(self, max_number_of_messages: int, queue_url):
         response_messages = self.queue.receive_messages(QueueUrl=queue_url,
                                                         MaxNumberOfMessages=max_number_of_messages)
+        logging.info(f'ReceiptHandle: {response_messages["Messages"][0]["ReceiptHandle"]}')
         if len(response_messages) != 0:
             logging.info(f'response_message content:{response_messages[0].body}')
         return response_messages
