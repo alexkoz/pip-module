@@ -1004,9 +1004,28 @@ class TestSqsProcessor(TestCase):
                                                              'image_id', 'image_full_url'))
 
     def test_is_directory_empty(self):
-        not_empty_path = 'test_path/test_path/'
-        self.assertFalse(self.processor.is_directory_empty(not_empty_path))
+        # Directory exists and is not empty -- return True
+        not_empty_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow', 'sqs_workflow',
+                                      'tmp',
+                                      'test_is_directory', 'not_empty')
+        Path(not_empty_path).mkdir(parents=True, exist_ok=True)
+        with open(os.path.join(not_empty_path, "test_file.txt"), 'w+') as temp_file:
+            temp_file.write('test-content')
+            temp_file.close()
+        self.assertTrue(self.processor.is_not_directory_empty(not_empty_path))
 
-        empty_path = ''
-        self.assertTrue(self.processor.is_directory_empty(empty_path))
+        # Directory exists and is empty -- return False
+        empty_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow', 'sqs_workflow', 'tmp',
+                                  'test_is_directory', 'empty')
+        Path(empty_path).mkdir(parents=True, exist_ok=True)
+        self.assertFalse(self.processor.is_not_directory_empty(empty_path))
 
+        # Directory is not exists -- return False
+        wrong_path = os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow', 'sqs_workflow', 'tmp',
+                                  'test_is_directory', 'wrong_path')
+        self.assertFalse(self.processor.is_not_directory_empty(wrong_path))
+
+        # Clear test folders and asset
+        shutil.rmtree(
+            os.path.join(str(Path.home()), 'projects', 'python', 'misc', 'sqs_workflow', 'sqs_workflow', 'tmp',
+                         'test_is_directory'))
