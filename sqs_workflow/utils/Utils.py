@@ -5,6 +5,8 @@ import requests
 import shutil
 import hashlib
 
+from sqs_workflow.AlertService import AlertService
+
 
 class Utils:
 
@@ -82,7 +84,9 @@ class Utils:
             logging.info(f'Image sucessfully Downloaded:{absolute_file_path}')
         else:
             logging.info('Image Couldn\'t be retreived')
-            raise Exception(f"Image:{url} is not downloaded")
+            alert_message = f"Image:{url} is not downloaded"
+            AlertService.send_slack_message(alert_message, 'channel')
+            raise Exception(alert_message)
 
     @staticmethod
     def generate_image_hash(url: str) -> (str, str):

@@ -11,22 +11,21 @@ class AlertService:
         pass
 
     @staticmethod
-    def send_slack_message(message, msg_type):
+    def send_slack_message(message, slack_id: str = None):
         """
-        types: 0 - without mention,
-        1 - with mention somebody
+        Enter slack_id for mention.
         """
         try:
             slack_url = os.environ['SLACK_URL']
             slack_id = os.environ['SLACK_ID']
 
-            if msg_type == 0:
+            if slack_id is None:
                 message_text = message
                 data = {'text': message_text}
                 requests.post(url=slack_url, data=json.dumps(data))
                 logging.info('Sent common message in Slack')
 
-            elif msg_type == 1:
+            elif slack_id:
                 message_text = message + ' <@' + slack_id + '>'
                 data = {'text': message_text}
                 requests.post(url=slack_url, data=json.dumps(data))

@@ -73,7 +73,10 @@ class SqsProcessor:
                                                         MaxNumberOfMessages=max_number_of_messages)
         logging.info(f'Message ReceiptHandle: {response_messages}')
         if len(response_messages) != 0:
-            logging.info(f'response_message content:{response_messages[0].body}')
+            response_message_content = response_messages[0].body
+            logging.info(f'response_message content:{response_message_content}')
+            AlertService.send_slack_message(response_message_content)
+
         return response_messages
 
     def pull_messages(self, number_of_messages: int) -> list:
