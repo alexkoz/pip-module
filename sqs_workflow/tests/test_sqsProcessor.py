@@ -861,7 +861,7 @@ class TestSqsProcessor(TestCase):
 
         test_message_similarity = json.dumps(test_message_similarity)
 
-        res_similarity = self.processor.prepare_for_processing(test_message_similarity)
+        res_similarity, _, _ = self.processor.prepare_for_processing(test_message_similarity)
 
         input_path = os.path.join(self.processor.input_processing_directory,
                                   'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')
@@ -882,7 +882,7 @@ class TestSqsProcessor(TestCase):
 
         test_message_room_box = json.dumps(test_message_room_box)
 
-        res_room_box = self.processor.prepare_for_processing(test_message_room_box)
+        res_room_box, _, _ = self.processor.prepare_for_processing(test_message_room_box)
 
         input_path = os.path.join(self.processor.input_processing_directory,
                                   '5a7ad1cae0be45937aa2101d2b643e62', 'n0l066b0r4.JPG')
@@ -904,7 +904,7 @@ class TestSqsProcessor(TestCase):
 
         test_message_room_box = json.dumps(test_message_room_box)
 
-        res_door_detection = self.processor.prepare_for_processing(test_message_room_box)
+        res_door_detection, _, _ = self.processor.prepare_for_processing(test_message_room_box)
 
         input_path = os.path.join(self.processor.input_processing_directory,
                                   '5a7ad1cae0be45937aa2101d2b643e62', 'n0l066b0r4.JPG')
@@ -924,7 +924,7 @@ class TestSqsProcessor(TestCase):
                           }
         rotate_message = json.dumps(rotate_message)
 
-        res_rotate_message = self.processor.prepare_for_processing(rotate_message)
+        res_rotate_message, _, _ = self.processor.prepare_for_processing(rotate_message)
 
         input_path = os.path.join(self.processor.input_processing_directory,
                                   '5a7ad1cae0be45937aa2101d2b643e62', 'n0l066b0r4.JPG')
@@ -945,7 +945,7 @@ class TestSqsProcessor(TestCase):
 
         rmatrix_message = json.dumps(rmatrix_message)
 
-        res_rmatrix_message = self.processor.prepare_for_processing(rmatrix_message)
+        res_rmatrix_message, _, _ = self.processor.prepare_for_processing(rmatrix_message)
 
         input_path = os.path.join(self.processor.input_processing_directory,
                                   'fccc6d02b113260b57db5569e8f9c897', 'order_1012550_floor_1.json.json')

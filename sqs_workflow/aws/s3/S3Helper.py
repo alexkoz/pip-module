@@ -1,17 +1,15 @@
 import logging
 import os
-from sqs_workflow.utils.StringConstants import StringConstants
 
 import boto3
 
 
 class S3Helper:
 
-
     def __init__(self):
 
         self.s3_bucket = f"{os.environ['S3_BUCKET']}-{os.environ['APP_BRANCH']}"
-        self.s3_client = boto3.client(
+        self.s3_client = boto3.session.Session().client(
             's3',
             aws_access_key_id=os.environ['IMMO_ACCESS'],
             aws_secret_access_key=os.environ['IMMO_SECRET'],
@@ -44,7 +42,7 @@ class S3Helper:
         # full_url_tag = f'{StringConstants.FILE_URL_KEY}={full_url_tag}'
         # logging.info(f"Tag for object:{full_url_tag}")
         obj.put(Body=object_body)
-                # Tagging=full_url_tag)
+        # Tagging=full_url_tag)
         if is_public:
             object_acl = s3.ObjectAcl(self.s3_bucket, s3_key)
             object_acl.put(ACL='public-read')
@@ -62,6 +60,19 @@ class S3Helper:
                                    self.s3_bucket,
                                    s3_key)
         logging.info(f'Uploaded new file: {s3_key} to s3')
+
+    def sync_directory_with_s3(self, local_dir: str, s3_prefix: str):
+        if os.environ['HOME'] in s3_prefix:
+            s3_prefix = str(s3_prefix.split(os.environ['HOME'])[1])
+            if s3_prefix.startswith('/'):
+                s3_prefix = s3_prefix[1:]
+            logging.info(f"Remove home for s3 prefix:{s3_prefix}")
+
+        for file_name in os.listdir(local_dir):
+            self.save_file_object_on_s3(
+                os.path.join(s3_prefix, str(file_name)),
+                os.path.join(local_dir, str(file_name)))
+            logging.info(f"Saved file:{file_name} on s3")
 
     def download_file_object_from_s3(self,
                                      s3_key: str,

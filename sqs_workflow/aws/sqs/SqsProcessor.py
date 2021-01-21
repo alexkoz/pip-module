@@ -313,7 +313,7 @@ class SqsProcessor:
             processing_result = self.run_objects_detecting(message_object, message_type, inference_id, image_id,
                                                            image_full_url)
 
-        message_object['returnData'] = json.loads(json.dumps(processing_result) or "[]")
+        message_object['returnData'] = json.loads(json.dumps(processing_result) or json.dumps({'layout': []}))
         del message_object[StringConstants.EXECUTABLE_PARAMS_KEY]
         logging.info(f"Finished processing and updated message:{message_object} save result on s3.")
         return json.dumps(message_object)
@@ -360,7 +360,7 @@ class SqsProcessor:
             logging.info(f'result.json in {pry_s3_key} does not exist')
             return None  # return None when -> str ?
 
-    def prepare_for_processing(self, message_body: str) -> str:
+    def prepare_for_processing(self, message_body: str) -> (str, str, str):
 
         logging.info(f"Start preprocessing for message:{message_body}")
         message_object = json.loads(message_body)
@@ -410,7 +410,7 @@ class SqsProcessor:
         message_object[
             StringConstants.EXECUTABLE_PARAMS_KEY] = f' --input_path {os.path.join(input_path, file_name)} --output_path {output_path}'
         logging.info(f"Downloaded and prepared executables:{message_object[StringConstants.EXECUTABLE_PARAMS_KEY]}")
-        return json.dumps(message_object)
+        return json.dumps(message_object), input_path, output_path
 
     @staticmethod
     def run_queue_processor(queue_name):
@@ -424,11 +424,19 @@ class SqsProcessor:
                 for message in list_of_messages:
                     # todo swallow the exception
                     # todo send error to return message
-                    message_body = processor.prepare_for_processing(message.body)
+                    message_body, input_path, output_path = processor.prepare_for_processing(message.body)
                     message_body = processor.process_message_in_subprocess(message_body)
                     if message_body is not None:
                         logging.info(f"Setting message body:{message_body}")
                         processor.complete_processing_message(message, message_body)
+                    elif "Process has failed for process" in message_body:
+                        logging.info(f"Inference for message:{message_body} has failed. Start saving all resources.")
+                        processor.s3_helper.sync_directory_with_s3(os.path.join(os.environ['HOME'], "groovy"),
+                                                                   output_path)
+                        processor.s3_helper.sync_directory_with_s3(input_path,
+                                                                   output_path)
+                        processor.s3_helper.sync_directory_with_s3(output_path,
+                                                                   output_path)
                     else:
                         logging.info(f"Did not get message body for message:{message}")
 
