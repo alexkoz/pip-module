@@ -3,9 +3,8 @@ import json
 import logging
 import os
 import time
-from concurrent.futures import ThreadPoolExecutor
-from unittest import TestCase
 from pathlib import Path
+from unittest import TestCase
 
 import boto3
 
@@ -71,6 +70,18 @@ class E2EAids(TestCase):
         if attempts == 7:
             logging.info(f'Out of attempts')
         return list_of_messages
+
+    def test_message_room_box(self):
+
+        def pull_messages_mock(self, number_of_messages):
+            message = {
+                "body": "{}"
+            }
+            return [message]
+
+        SqsProcessor.pull_messages = pull_messages_mock
+        SqsProcessor.run_queue_processor("-immoviewer-ai")
+        pass
 
     def test_create_similarity_document(self):
         s3_helper = S3Helper()

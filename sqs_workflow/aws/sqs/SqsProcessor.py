@@ -452,14 +452,14 @@ class SqsProcessor:
             logging.critical(e, exc_info=True)  # log exception info at CRITICAL log level
 
     @staticmethod
-    def is_not_directory_empty(dir_absolute_path) -> bool:
+    def is_not_directory_empty(dir_absolute_path: str) -> bool:
         if os.path.isdir(dir_absolute_path):
             if not os.listdir(dir_absolute_path):
-                logging.info("Directory is empty")
+                logging.info(f"Directory:{dir_absolute_path} is empty")
                 return False
             else:
-                logging.info("Directory is not empty")
+                logging.info(f"Directory:{dir_absolute_path} is not empty")
                 return True
-        logging.info("Directory is not exist")
+        logging.info(f"Directory:{dir_absolute_path} is not exist")
         return False
 
