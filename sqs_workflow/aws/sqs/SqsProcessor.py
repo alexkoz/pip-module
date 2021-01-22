@@ -75,7 +75,7 @@ class SqsProcessor:
         if len(response_messages) != 0:
             response_message_content = response_messages[0].body
             logging.info(f'response_message content:{response_message_content}')
-            AlertService.send_slack_message(response_message_content)
+            AlertService.send_slack_message(f'Response message content: {response_message_content}')
 
         return response_messages
 
@@ -452,14 +452,9 @@ class SqsProcessor:
             logging.critical(e, exc_info=True)  # log exception info at CRITICAL log level
 
     @staticmethod
-    def is_not_directory_empty(dir_absolute_path: str) -> bool:
+    def is_directory_empty(dir_absolute_path: str) -> bool:
         if os.path.isdir(dir_absolute_path):
-            if not os.listdir(dir_absolute_path):
-                logging.info(f"Directory:{dir_absolute_path} is empty")
-                return False
-            else:
-                logging.info(f"Directory:{dir_absolute_path} is not empty")
-                return True
+            return not os.listdir(dir_absolute_path)
         logging.info(f"Directory:{dir_absolute_path} is not exist")
-        return False
+        return True
 
