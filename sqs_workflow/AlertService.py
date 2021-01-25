@@ -25,7 +25,7 @@ class AlertService:
                 requests.post(url=slack_url, data=json.dumps(data))
                 logging.info('Sent common message in Slack')
 
-            elif slack_id:
+            elif slack_id is not None:
                 message_text = message + ' <@' + slack_id + '>'
                 data = {'text': message_text}
                 requests.post(url=slack_url, data=json.dumps(data))

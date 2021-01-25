@@ -74,9 +74,18 @@ class E2EAids(TestCase):
     def test_message_room_box(self):
 
         def pull_messages_mock(self, number_of_messages):
-            message = {
-                "body": "{}"
-            }
+            class Message:
+                body: str
+
+                def delete(self):
+                    pass
+            message = Message()
+            message.body = json.dumps({StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.RoomBox.value,
+                                           StringConstants.FILE_URL_KEY: "https://img.docusketch.com/items/s967284636/5fa1df49014bf357cf250d53/Tour/ai-images/s7zu187383.JPG",
+                                           StringConstants.TOUR_ID_KEY: "5fa1df49014bf357cf250d52",
+                                           StringConstants.PANO_ID_KEY: "5fa1df55014bf357cf250d64",
+                                           StringConstants.INFERENCE_ID_KEY: "3333",
+                                           })
             return [message]
 
         SqsProcessor.pull_messages = pull_messages_mock
