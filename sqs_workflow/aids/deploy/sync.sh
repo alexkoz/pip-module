@@ -35,6 +35,14 @@ update_application "/home/ubuntu/projects/python/ai-research"
 update_application "/home/ubuntu/projects/python/ai-object-recognition"
 update_application "/home/ubuntu/projects/python/panorama-lineout"
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') Start updating wizard."
+
+remove_wizard="rm -rf /var/www/html/* "
+
+wizard_command="aws --profile ai-wizard-deploy-on-s3 s3 cp s3://ai-processing-$APP_BRANCH/wizard  /var/www/html/  --recursive"
+eval wizard_command
+echo "$(date '+%Y-%m-%d %H:%M:%S') Wizard uploaded."
+
 ec2_data=$(ec2metadata --public-ipv4 --instance-id --ami-id)
 echo "$(date '+%Y-%m-%d %H:%M:%S') Send slack notification for $ec2_data"
 
