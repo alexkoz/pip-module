@@ -42,6 +42,7 @@ remove_wizard="rm -rf /var/www/html/* "
 eval $remove_wizard
 
 wizard_command="aws --profile ai-wizard-deploy-on-s3 s3 cp s3://ai-processing-$APP_BRANCH/wizard  /var/www/html/  --recursive"
+echo $wizard_command
 eval $wizard_command
 echo "$(date '+%Y-%m-%d %H:%M:%S') Wizard uploaded."
 
