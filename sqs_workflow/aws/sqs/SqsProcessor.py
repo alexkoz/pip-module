@@ -75,7 +75,6 @@ class SqsProcessor:
         if len(response_messages) != 0:
             response_message_content = response_messages[0].body
             logging.info(f'response_message content:{response_message_content}')
-            AlertService.send_slack_message(f'Response message content: {response_message_content}')
 
         return response_messages
 
