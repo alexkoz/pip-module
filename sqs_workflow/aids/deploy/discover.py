@@ -17,7 +17,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     application_branch = args.branch
     print(f"Start discovering instances for branch:{application_branch}")
-    session = boto3.session.Session(profile_name='docu-deploy', region_name=os.environ['AWS_REGION'])
+    session = boto3.session.Session(profile_name='docu', region_name=os.environ['AWS_REGION'])
     as_client = session.client('autoscaling')
     ec2_client = session.client('ec2')
 
