@@ -20,7 +20,7 @@ class SimilarityProcessor:
         :rtype: object
         """
         if StringConstants.DOCUMENT_PATH_KEY in message_object:
-            logging.info(f'Found similarity return True')
+            logging.info(f'Found similarity document:{message_object[StringConstants.DOCUMENT_PATH_KEY]}')
             document_object = json.loads(Utils.download_from_http(message_object[StringConstants.DOCUMENT_PATH_KEY]))
         else:
             steps_document = json.loads(

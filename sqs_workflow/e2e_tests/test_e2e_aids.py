@@ -135,8 +135,19 @@ class E2EAids(TestCase):
                                                 ProcessingTypesEnum.DoorDetecting.value,
                                                 ProcessingTypesEnum.ObjectsDetecting.value]
                 }
+                preprocessing_message = {
+                    StringConstants.MESSAGE_TYPE_KEY: ProcessingTypesEnum.Similarity.value,
+                    "orderId": "5da5d5164cedfd0050363a2e",
+                    "floor": 1,
+                    "tourId": "1342386",
+                    StringConstants.INFERENCE_ID_KEY: f"{inference_id}{str(message_index)}",
+                    StringConstants.STEPS_DOCUMENT_PATH_KEY: document_url,
+                    StringConstants.STEPS_KEY: [ProcessingTypesEnum.RoomBox.value,
+                                                ProcessingTypesEnum.DoorDetecting.value,
+                                                ProcessingTypesEnum.ObjectsDetecting.value]
+                }
                 messages.append(preprocessing_message)
-        self.processor.queue_url = 'https://eu-central-1.queue.amazonaws.com/700659137911/staging-immoviewer-ai'
+        self.processor.queue_url = 'https://eu-central-1.queue.amazonaws.com/700659137911/sandy-immoviewer-ai'
         messages_results = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             # Start the load operations and mark each future with its URL

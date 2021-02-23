@@ -9,7 +9,7 @@ do
         echo "$entry"
         message_id=$(date +%s )
         echo $message_id
-        message_body="{ \"inferenceId\":\"zahar-test/$message_id\",  \"messageType\":\"SIMILARITY\",\"orderId\":\"5da5d5164cedfd0050363a2e\",\"documentPath\":\"https://immoviewer-ai-research.s3-eu-west-1.amazonaws.com/storage/segmentation/floors_data_from_01.06.2020/$entry\"}"
+        message_body="{ \"inferenceId\":\"e2e-inference/$line_index\",  \"messageType\":\"SIMILARITY\",\"orderId\":\"5da5d5164cedfd0050363a2e\",\"stepsDocumentPath\":\"https://immoviewer-ai-research.s3-eu-west-1.amazonaws.com/storage/segmentation/floors_data_from_01.06.2020/$entry\"}"
           echo "$(date) Message:$line_index message_body:$message_body"
           aws --profile clipnow sqs send-message \
              --region eu-central-1 \
@@ -18,6 +18,7 @@ do
           ((line_index=line_index+1))
           sleep 3s
           echo "$(date) Sent message:$line_index"
+          line_index=$((line_index+1))
     fi
 
 done

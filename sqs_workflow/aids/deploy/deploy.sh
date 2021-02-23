@@ -46,7 +46,7 @@ echo "Now sleep 10 seconds"
 sleep 10
 echo "Start creating AMI"
 image_name="ai-$APP_BRANCH-$(date '+%Y-%m-%d-%H-%M')"
-aws --profile clipnow ec2 create-image --instance-id $(ec2metadata --instance-id) \
+aws --profile docu ec2 create-image --instance-id $(ec2metadata --instance-id) \
   --description $image_name \
   --name $image_name \
   --no-reboot \
