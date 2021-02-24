@@ -11,8 +11,8 @@ class S3Helper:
         self.s3_bucket = f"{os.environ['S3_BUCKET']}-{os.environ['APP_BRANCH']}"
         self.s3_client = boto3.session.Session().client(
             's3',
-            aws_access_key_id=os.environ['IMMO_ACCESS'],
-            aws_secret_access_key=os.environ['IMMO_SECRET'],
+            aws_access_key_id=os.environ['ACCESS'],
+            aws_secret_access_key=os.environ['SECRET'],
             region_name=os.environ['S3_REGION']
         )
         assert self.s3_bucket

@@ -116,7 +116,7 @@ class E2EAids(TestCase):
         prefix = "storage/segmentation/preprocessing-no-layout_public_floors_data_from_01.06.2020/"
         self.s3_helper.s3_bucket = bucket
         list_of_files = self.s3_helper.list_s3_objects(prefix)
-        list_of_files = list_of_files[:150]
+        list_of_files = list_of_files[:40]
         inference_id = "e2e-inference/"
         message_index = 0
         messages = []
