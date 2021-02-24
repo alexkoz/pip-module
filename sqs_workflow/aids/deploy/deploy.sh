@@ -42,8 +42,8 @@ update_application "/home/ubuntu/projects/python/ai-research"
 update_application "/home/ubuntu/projects/python/ai-object-recognition"
 update_application "/home/ubuntu/projects/python/panorama-lineout"
 
-echo "Now sleep 10 seconds"
-sleep 10
+echo "Now sleep 20 seconds"
+sleep 20
 echo "Start creating AMI"
 image_name="ai-$APP_BRANCH-$(date '+%Y-%m-%d-%H-%M')"
 aws --profile docu ec2 create-image --instance-id $(ec2metadata --instance-id) \
