@@ -37,11 +37,11 @@ update_application "/home/ubuntu/projects/python/panorama-lineout"
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') Start updating wizard."
 
-remove_wizard="rm -rf /var/www/html/* "
+remove_wizard="sudo rm -rf /var/www/html/* "
 
 eval $remove_wizard
 
-wizard_command="aws --profile clipnow s3 cp s3://ai-processing-$APP_BRANCH/wizard  /var/www/html/  --recursive"
+wizard_command="aws --profile clipnow s3 cp s3://ai-process-$APP_BRANCH/wizard  /var/www/html/  --recursive"
 echo $wizard_command
 eval $wizard_command
 echo "$(date '+%Y-%m-%d %H:%M:%S') Wizard uploaded."
