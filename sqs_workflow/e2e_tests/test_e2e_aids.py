@@ -116,7 +116,7 @@ class E2EAids(TestCase):
         prefix = "storage/segmentation/preprocessing-no-layout_public_floors_data_from_01.06.2020/"
         self.s3_helper.s3_bucket = bucket
         list_of_files = self.s3_helper.list_s3_objects(prefix)
-        list_of_files = list_of_files[:40]
+        list_of_files = list_of_files[:10]
         inference_id = "e2e-inference/"
         message_index = 0
         messages = []
@@ -137,7 +137,7 @@ class E2EAids(TestCase):
                 }
 
                 messages.append(preprocessing_message)
-        self.processor.queue_url = 'https://eu-central-1.queue.amazonaws.com/700659137911/sandy-immoviewer-ai'
+        self.processor.queue_url = 'https://eu-central-1.queue.amazonaws.com/700659137911/staging-immoviewer-ai'
         messages_results = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
             # Start the load operations and mark each future with its URL

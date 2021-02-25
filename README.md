@@ -8,7 +8,7 @@ bash aids/environment.sh
 To run tests
 
 ```bash
-python -m unittest discover -s /Users/your-user/projects/sqs_workflow/sqs_workflow/tests -p 'test_*.py'
+python -m unittest discover -s sqs_workflow/tests -p 'test_*.py'
 ```
 
 ## Environment variables:
@@ -110,22 +110,10 @@ Output message example after processing:
           "room": "wd5qf67fg2.JPG",
           "text": "Door",
           "points": [
-            {
-              "x": -167.719764139121,
-              "y": -14.715253347286422
-            },
-            {
-              "x": -151.52249553174076,
-              "y": -13.899205223210682
-            },
-            {
-              "x": -151.52249553174076,
-              "y": 34.802072140212175
-            },
-            {
-              "x": -167.71976409404397,
-              "y": 36.41544893621932
-            }
+            {"x": -167.719764139121,"y": -14.715253347286422},
+            {"x": -151.52249553174076,"y": -13.899205223210682},
+            {"x": -151.52249553174076,"y": 34.802072140212175},
+            {"x": -167.71976409404397,"y": 36.41544893621932}
           ],
           "zOrder": 3,
           "color": 16777215,

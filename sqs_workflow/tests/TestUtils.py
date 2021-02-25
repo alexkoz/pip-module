@@ -34,7 +34,9 @@ class TestUtils:
         os.environ[f'{ProcessingTypesEnum.ObjectsDetecting.value}_SCRIPT'] = os.path.join(aids, 'dummy_objects_detection.py')
         os.environ['IMMO_AWS_PROFILE'] = "clipnow"
         os.environ['IMMO_ACCESS'] = "clipnow"
+        os.environ['ACCESS'] = "clipnow"
         os.environ['IMMO_SECRET'] = "clipnow"
+        os.environ['SECRET'] = "clipnow"
         os.environ['IMMO_REGION_NAME'] = 'eu-west-1'
         os.environ['DOCU_AWS_PROFILE'] = 'sqs'
         os.environ['DOCU_ACCESS'] = 'sqs'
