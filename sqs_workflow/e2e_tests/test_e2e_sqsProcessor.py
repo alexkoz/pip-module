@@ -72,7 +72,6 @@ class E2ETestSqsProcessor(TestCase):
             logging.info(f'Out of attempts')
         return list_of_messages
 
-
     def test_e2e(self):
         # E2EUtils.purge_queue(self.processor.queue_url)
         # E2EUtils.purge_queue(self.processor.return_queue_url)
